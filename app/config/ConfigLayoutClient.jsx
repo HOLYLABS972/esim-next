@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Lock, Settings, Users, Share2, LogOut, MapPin, Package, CreditCard, Palette, ShoppingBag } from 'lucide-react';
+import { Lock, Settings, Users, Share2, LogOut, MapPin, Package, CreditCard, Palette, ShoppingBag, Battery } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { supabase } from '../../src/lib/supabase';
@@ -231,6 +231,7 @@ export default function ConfigLayoutClient({ children }) {
     { href: navBase('/config/affiliates'), icon: Share2, label: 'Affiliates' },
     { href: navBase('/config/countries'), icon: MapPin, label: 'Countries' },
     { href: navBase('/config/plans'), icon: Package, label: 'Plans' },
+    { href: navBase('/config/topups'), icon: Battery, label: 'Topups' },
     { href: navBase('/config/payment'), icon: CreditCard, label: 'Payment' },
   ];
 
