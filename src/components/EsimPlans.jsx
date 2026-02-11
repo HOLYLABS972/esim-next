@@ -681,7 +681,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
 
   // Preload global/regional for the store-like design on the plans page only (not on home)
   useEffect(() => {
-    if (!isStoreLayoutPage || isHomePage) return;
+    if (!isStoreLayoutPage) return;
 
     let cancelled = false;
     const loadStorePlans = async () => {
@@ -908,7 +908,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
                 <div className="flex items-center justify-between gap-4 mb-4">
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                     {storeCountriesCount} {t('plans.countries', 'countries')}
-                    {!isHomePage && storeRegionsCount > 0 && <> · {storeRegionsCount} {t('plans.regions', 'regions')}</>}
+                    {storeRegionsCount > 0 && <> · {storeRegionsCount} {t('plans.regions', 'regions')}</>}
                   </p>
                 </div>
                 <div className="relative">
@@ -927,8 +927,8 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
               </div>
             </div>
 
-            {/* Global & regional tariffs — hidden on home; on /esim-plans only when there is data */}
-            {!isHomePage && (storeRegionalCards.length > 0 || storeGlobalPlans.length > 0) && (
+            {/* Global & regional tariffs — show on all store pages including home */}
+            {(storeRegionalCards.length > 0 || storeGlobalPlans.length > 0) && (
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 {t('plans.globalAndRegional', 'Global & regional plans')}
