@@ -476,6 +476,11 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   }, [filterType]);
 
   const handleCountrySelect = async (country) => {
+    // Global entry — use preloaded global plans
+    if (country._isGlobal && storeGlobalPlans.length > 0) {
+      openPlansList(storeGlobalPlans, { countryCode: 'GL', flag: '🌍' });
+      return;
+    }
     setLoadingPlans(true);
     try {
       const res = await fetch(`/api/public/plans?country=${country.code}`);
@@ -878,7 +883,29 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   const storePopularCountries = (() => {
     const list = [...countries];
     list.sort((a, b) => (b.plansCount || 0) - (a.plansCount || 0));
-    return list.slice(0, 6);
+    const top = list.slice(0, 6);
+
+    // Prepend Global as the first popular option
+    if (storeGlobalPlans.length > 0) {
+      const globalLabel = countriesData?.labels?.global?.[locale] ?? 'Global';
+      top.unshift({
+        id: 'GL',
+        _id: 'GL',
+        code: 'GL',
+        name: globalLabel,
+        flagEmoji: '🌍',
+        plansCount: storeGlobalPlans.length,
+        minPrice: storeGlobalMinPrice,
+        minPriceOriginal: storeGlobalMinPriceOriginal,
+        minPriceRub: storeGlobalMinPriceRub,
+        minPriceRubOriginal: storeGlobalMinPriceRubOriginal,
+        minPriceIls: storeGlobalMinPriceIls,
+        minPriceIlsOriginal: storeGlobalMinPriceIlsOriginal,
+        _isGlobal: true,
+      });
+    }
+
+    return top;
   })();
 
   const storeCountriesGrid = searchTerm
@@ -916,8 +943,8 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
               </div>
             </div>
 
-            {/* Global & regional tariffs — show on all store pages including home */}
-            {(storeRegionalCards.length > 0 || storeGlobalPlans.length > 0) && (
+            {/* Global & regional tariffs — removed per request, Global included in Popular instead */}
+            {false && (storeRegionalCards.length > 0 || storeGlobalPlans.length > 0) && (
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                 {t('plans.globalAndRegional', 'Global & regional plans')}
