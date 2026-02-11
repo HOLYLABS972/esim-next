@@ -859,8 +859,8 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
         const minPriceIlsOriginal = minPriceIls;
         const codes = new Set(plans.flatMap(p => extractCountryCodesFromPlan(p)));
         const regionNameFromDb = (regionKey === 'Regional' || regionKey === 'regional')
-          ? (countriesData?.labels?.regional?.[locale] ?? '')
-          : (countriesData?.labels?.regions?.[regionKey]?.[locale] ?? '');
+          ? (countriesData?.labels?.regional?.[locale] || { ru: 'Региональный', he: 'אזורי', ar: 'إقليمي' }[locale] || 'Regional')
+          : (countriesData?.labels?.regions?.[regionKey]?.[locale] || regionKey);
         return {
           regionKey,
           regionName: regionNameFromDb,
@@ -1045,8 +1045,8 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
                       <div className="p-4 border-t border-gray-100 dark:border-gray-700">
                         <div className="text-base font-semibold text-gray-900 dark:text-white truncate">
                           {(region.regionKey === 'Regional' || region.regionKey === 'regional')
-                            ? (countriesData?.labels?.regional?.[locale] ?? '')
-                            : (countriesData?.labels?.regions?.[region.regionKey]?.[locale] ?? '')}
+                            ? (countriesData?.labels?.regional?.[locale] || { ru: 'Региональный', he: 'אזורי', ar: 'إقليمي' }[locale] || 'Regional')
+                            : (countriesData?.labels?.regions?.[region.regionKey]?.[locale] || region.regionKey)}
                         </div>
                         <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                           5 {t('plans.tariffs', 'plans')}

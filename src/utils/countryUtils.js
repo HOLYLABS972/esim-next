@@ -391,22 +391,26 @@ function getBasicCountryCode(countryName) {
  * @param {string} locale - Locale: 'en', 'ru', 'he', 'ar'
  * @returns {string} Display name from DB or fallback to base name
  */
-export function translateCountryName(countryOrCode, countryName = '', locale = 'en') {
+export function translateCountryName(countryOrCode, countryNameOrLocale = '', locale = 'en') {
   let country = null;
   let countryCode = countryOrCode;
+  let countryName = countryNameOrLocale;
+  // Detect when second arg is actually a locale (e.g. translateCountryName(country, 'ru'))
+  if (typeof countryNameOrLocale === 'string' && (countryNameOrLocale === 'en' || countryNameOrLocale === 'ru' || countryNameOrLocale === 'he' || countryNameOrLocale === 'ar') && locale === 'en') {
+    locale = countryNameOrLocale;
+    countryName = '';
+  }
   if (typeof countryOrCode === 'object' && countryOrCode !== null) {
     country = countryOrCode;
     countryCode = country.code || country.id || country.airalo_country_code;
     if (locale === 'ru') {
       countryName = country.country_name_ru || country.name_ru || country.name || country.country_name || '';
+    } else if (locale === 'he') {
+      countryName = country.country_name_he || country.name_he || country.name || country.country_name || '';
+    } else if (locale === 'ar') {
+      countryName = country.country_name_ar || country.name_ar || country.name || country.country_name || '';
     } else {
-      countryName = country.name || country.country_name || country.country_name_ru || country.name_ru || '';
-    }
-    if (typeof countryName === 'string' && (countryName === 'en' || countryName === 'ru' || countryName === 'he' || countryName === 'ar' || countryName.length === 2)) {
-      locale = countryName;
-      countryName = locale === 'ru'
-        ? (country.country_name_ru || country.name_ru || country.name || country.country_name || '')
-        : (country.name || country.country_name || country.country_name_ru || country.name_ru || '');
+      countryName = country.name || country.country_name || '';
     }
   }
 
