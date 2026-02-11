@@ -407,21 +407,8 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
     return formatPriceFromItem(item, displayCurrency).formatted;
   };
 
-  // Render plan price (price, price_rub, price_ils) with discount – original red strikethrough + new price
+  // Render plan price — API prices are already discounted, just display as-is
   const renderPlanPriceWithDiscount = (plan) => {
-    const { amount: origAmount, currency } = getDisplayAmountFromItem(plan, displayCurrency);
-    const discountedAmount = origAmount > 0 && discountPct > 0
-      ? Math.max(0.5, (origAmount * (100 - discountPct)) / 100)
-      : origAmount;
-    const hasDiscount = discountPct > 0 && discountedAmount < origAmount;
-    if (hasDiscount) {
-      return (
-        <span className="inline-flex flex-wrap items-baseline gap-x-1.5">
-          <span className="text-red-500 line-through text-sm">{formatPrice(origAmount, currency)}</span>
-          <span className="font-semibold text-gray-900 dark:text-white">{formatPrice(discountedAmount, currency)}</span>
-        </span>
-      );
-    }
     return formatItemPrice(plan);
   };
 
@@ -827,15 +814,16 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
     return Math.max(0.5, (price * (100 - pct)) / 100);
   };
 
+  // Prices from API are already discounted — do NOT apply discount again
   const storeGlobalPricesRaw = storeGlobalPlans.map(p => p.price || 0).filter(p => p > 0);
-  const storeGlobalMinPriceOriginal = storeGlobalPricesRaw.length ? Math.min(...storeGlobalPricesRaw) : null;
-  const storeGlobalMinPrice = storeGlobalMinPriceOriginal != null ? applyDiscountToPrice(storeGlobalMinPriceOriginal) : null;
+  const storeGlobalMinPrice = storeGlobalPricesRaw.length ? Math.min(...storeGlobalPricesRaw) : null;
+  const storeGlobalMinPriceOriginal = storeGlobalMinPrice; // API prices are already final
   const storeGlobalPricesRub = storeGlobalPlans.map(p => p.price_rub || 0).filter(p => p > 0);
-  const storeGlobalMinPriceRubOriginal = storeGlobalPricesRub.length ? Math.min(...storeGlobalPricesRub) : null;
-  const storeGlobalMinPriceRub = storeGlobalMinPriceRubOriginal != null ? applyDiscountToPrice(storeGlobalMinPriceRubOriginal) : null;
+  const storeGlobalMinPriceRub = storeGlobalPricesRub.length ? Math.min(...storeGlobalPricesRub) : null;
+  const storeGlobalMinPriceRubOriginal = storeGlobalMinPriceRub;
   const storeGlobalPricesIls = storeGlobalPlans.map(p => p.price_ils || 0).filter(p => p > 0);
-  const storeGlobalMinPriceIlsOriginal = storeGlobalPricesIls.length ? Math.min(...storeGlobalPricesIls) : null;
-  const storeGlobalMinPriceIls = storeGlobalMinPriceIlsOriginal != null ? applyDiscountToPrice(storeGlobalMinPriceIlsOriginal) : null;
+  const storeGlobalMinPriceIls = storeGlobalPricesIls.length ? Math.min(...storeGlobalPricesIls) : null;
+  const storeGlobalMinPriceIlsOriginal = storeGlobalMinPriceIls;
 
   const storeGlobalCountryCodes = new Set(
     storeGlobalPlans.flatMap(p => extractCountryCodesFromPlan(p))
@@ -854,15 +842,16 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
 
     return Object.entries(grouped)
       .map(([regionKey, plans]) => {
+        // Prices from API are already discounted — use as-is
         const prices = plans.map(p => p.price || 0).filter(p => (p || 0) > 0);
-        const minPriceOriginal = prices.length ? Math.min(...prices) : null;
-        const minPrice = minPriceOriginal != null ? applyDiscountToPrice(minPriceOriginal) : null;
+        const minPrice = prices.length ? Math.min(...prices) : null;
+        const minPriceOriginal = minPrice;
         const pricesRub = plans.map(p => p.price_rub || 0).filter(p => (p || 0) > 0);
-        const minPriceRubOriginal = pricesRub.length ? Math.min(...pricesRub) : null;
-        const minPriceRub = minPriceRubOriginal != null ? applyDiscountToPrice(minPriceRubOriginal) : null;
+        const minPriceRub = pricesRub.length ? Math.min(...pricesRub) : null;
+        const minPriceRubOriginal = minPriceRub;
         const pricesIls = plans.map(p => p.price_ils || 0).filter(p => (p || 0) > 0);
-        const minPriceIlsOriginal = pricesIls.length ? Math.min(...pricesIls) : null;
-        const minPriceIls = minPriceIlsOriginal != null ? applyDiscountToPrice(minPriceIlsOriginal) : null;
+        const minPriceIls = pricesIls.length ? Math.min(...pricesIls) : null;
+        const minPriceIlsOriginal = minPriceIls;
         const codes = new Set(plans.flatMap(p => extractCountryCodesFromPlan(p)));
         const regionNameFromDb = (regionKey === 'Regional' || regionKey === 'regional')
           ? (countriesData?.labels?.regional?.[locale] ?? '')
