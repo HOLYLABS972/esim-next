@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Globe, QrCode, Trash2 } from 'lucide-react';
+import { Globe, QrCode, Trash2, Battery } from 'lucide-react';
 import { useI18n } from '../../contexts/I18nContext';
 import { getLanguageDirection, detectLanguageFromPath } from '../../utils/languageUtils';
 import { usePathname } from 'next/navigation';
@@ -280,13 +280,34 @@ const RecentOrders = ({ orders, loading, onViewQRCode, onDeleteOrder }) => {
                               </span>
                             </button>
                           ) : (
-                            <button
-                              onClick={() => onViewQRCode(order)}
-                              className={`flex items-center px-3 py-2 bg-blue-400/20 text-blue-400 rounded-lg hover:bg-blue-400/30 transition-colors duration-200 ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
-                            >
-                              <QrCode className="w-4 h-4" />
-                              <span className="text-sm hidden md:inline">{t('dashboard.viewQR', 'Детали')}</span>
-                            </button>
+                            <div className={`flex ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}>
+                              {/* Topup button - only for active orders */}
+                              {order.status === 'active' && order.iccid && (
+                                <button
+                                  onClick={() => {
+                                    const countryCode = order.countryCode || order.country_code;
+                                    const topupUrl = countryCode 
+                                      ? `/topup/${encodeURIComponent(order.iccid)}?country=${encodeURIComponent(countryCode)}`
+                                      : `/topup/${encodeURIComponent(order.iccid)}`;
+                                    window.location.href = topupUrl;
+                                  }}
+                                  className={`flex items-center px-3 py-2 bg-green-400/20 text-green-500 rounded-lg hover:bg-green-400/30 transition-colors duration-200 ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
+                                  title={t('dashboard.topupEsim', 'Пополнить eSIM')}
+                                >
+                                  <Battery className="w-4 h-4" />
+                                  <span className="text-sm hidden lg:inline">{t('dashboard.topup', 'Пополнить')}</span>
+                                </button>
+                              )}
+                              
+                              {/* QR/Details button */}
+                              <button
+                                onClick={() => onViewQRCode(order)}
+                                className={`flex items-center px-3 py-2 bg-blue-400/20 text-blue-400 rounded-lg hover:bg-blue-400/30 transition-colors duration-200 ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
+                              >
+                                <QrCode className="w-4 h-4" />
+                                <span className="text-sm hidden md:inline">{t('dashboard.viewQR', 'Детали')}</span>
+                              </button>
+                            </div>
                           )}
                         </div>
                       </div>
