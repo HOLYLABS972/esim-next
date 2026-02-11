@@ -118,6 +118,10 @@ const SharePackagePage = () => {
   const [allRegionalPlans, setAllRegionalPlans] = useState([]);
   const [regionalSubRegionGroups, setRegionalSubRegionGroups] = useState([]);
   const [selectedSubRegion, setSelectedSubRegion] = useState(null);
+  // Plan type tabs: regular / unlimited / sms
+  const [planTypeTab, setPlanTypeTab] = useState('regular');
+  const [allFetchedPlans, setAllFetchedPlans] = useState([]);
+  const [availableTabs, setAvailableTabs] = useState(['regular']);
 
   const loadPackageData = useCallback(async () => {
     if (packageId == null || packageId === '') {
@@ -207,52 +211,131 @@ const SharePackagePage = () => {
       .then((res) => res.ok ? res.json() : { success: false })
       .then((data) => {
         const plans = data?.success ? (data.data?.plans || []) : [];
-        const filtered = plans.filter((p) => {
-          if (isUnlimitedPlan(p)) return false;
-          const mb = getDataMB(p);
-          return TIER_MB.some((tier) => Math.abs(mb - tier) < 100);
-        });
-        if (isRegional) {
-          setAllRegionalPlans(filtered);
-          const groups = {};
-          filtered.forEach((p) => {
-            const sub = extractSubRegion(p);
-            if (!groups[sub]) groups[sub] = [];
-            groups[sub].push(p);
-          });
-          const groupList = Object.entries(groups).map(([name, regionPlans]) => ({
-            name,
-            nameRu: SUB_REGION_NAME_RU[name] || name,
-            plans: regionPlans,
-          })).sort((a, b) => b.plans.length - a.plans.length);
-          setRegionalSubRegionGroups(groupList);
-          setSelectedSubRegion((prev) => {
-            const fromPackage = extractSubRegion(packageData);
-            if (prev && groupList.some((g) => g.name === prev)) return prev;
-            return fromPackage;
-          });
-        } else {
-          setAllRegionalPlans([]);
-          setRegionalSubRegionGroups([]);
-          setSelectedSubRegion(null);
-          const byTier = new Map();
-          filtered.forEach((p) => {
-            const mb = getDataMB(p);
-            const tier = TIER_MB.find((t) => Math.abs(mb - t) < 100);
-            const price = parseFloat(p.price) || 999;
-            if (!byTier.has(tier) || price < (parseFloat(byTier.get(tier).price) || 999)) {
-              byTier.set(tier, p);
-            }
-          });
-          setOtherTierPlans(Array.from(byTier.values()).sort((a, b) => getDataMB(a) - getDataMB(b)));
-        }
+        setAllFetchedPlans(plans);
+
+        // Determine available tabs
+        const hasSms = plans.some((p) => p.sms_included === true);
+        const hasUnlimited = plans.some((p) => isUnlimitedPlan(p));
+        const hasRegular = plans.some((p) => !isUnlimitedPlan(p) && p.sms_included !== true);
+        const tabs = [];
+        if (hasRegular) tabs.push('regular');
+        if (hasUnlimited) tabs.push('unlimited');
+        if (hasSms) tabs.push('sms');
+        setAvailableTabs(tabs.length ? tabs : ['regular']);
+
+        // Auto-detect current package tab
+        const currentIsSms = packageData?.sms_included === true;
+        const currentIsUnlimited = isUnlimitedPlan(packageData);
+        const autoTab = currentIsSms ? 'sms' : currentIsUnlimited ? 'unlimited' : 'regular';
+        setPlanTypeTab((prev) => tabs.includes(autoTab) ? autoTab : tabs[0] || 'regular');
       })
       .catch(() => {
-        setOtherTierPlans([]);
-        setAllRegionalPlans([]);
-        setRegionalSubRegionGroups([]);
+        setAllFetchedPlans([]);
+        setAvailableTabs(['regular']);
       });
   }, [packageData, packageId, urlCountryCode]);
+
+  // Derive tier plans from allFetchedPlans + planTypeTab + subRegion
+  useEffect(() => {
+    if (!packageData || !allFetchedPlans.length) {
+      setOtherTierPlans([]);
+      setAllRegionalPlans([]);
+      setRegionalSubRegionGroups([]);
+      return;
+    }
+    const planType = packageData.plan_type || packageData.package_type || '';
+    const isRegional = planType === 'regional';
+
+    // Filter by tab type
+    let tabFiltered;
+    if (planTypeTab === 'unlimited') {
+      tabFiltered = allFetchedPlans.filter((p) => isUnlimitedPlan(p) && p.sms_included !== true);
+    } else if (planTypeTab === 'sms') {
+      tabFiltered = allFetchedPlans.filter((p) => p.sms_included === true);
+    } else {
+      tabFiltered = allFetchedPlans.filter((p) => !isUnlimitedPlan(p) && p.sms_included !== true);
+    }
+
+    if (planTypeTab === 'unlimited') {
+      // Unlimited plans: group by validity (days) instead of data tier
+      if (isRegional) {
+        setAllRegionalPlans(tabFiltered);
+        const groups = {};
+        tabFiltered.forEach((p) => {
+          const sub = extractSubRegion(p);
+          if (!groups[sub]) groups[sub] = [];
+          groups[sub].push(p);
+        });
+        const groupList = Object.entries(groups).map(([name, regionPlans]) => ({
+          name,
+          nameRu: SUB_REGION_NAME_RU[name] || name,
+          plans: regionPlans,
+        })).sort((a, b) => b.plans.length - a.plans.length);
+        setRegionalSubRegionGroups(groupList);
+        setSelectedSubRegion((prev) => {
+          if (prev && groupList.some((g) => g.name === prev)) return prev;
+          return groupList[0]?.name || null;
+        });
+      } else {
+        setAllRegionalPlans([]);
+        setRegionalSubRegionGroups([]);
+        // Sort unlimited by validity then price
+        const sorted = [...tabFiltered].sort((a, b) => {
+          const dA = parseInt(a.validity || a.day || 0);
+          const dB = parseInt(b.validity || b.day || 0);
+          return dA - dB || (parseFloat(a.price) || 999) - (parseFloat(b.price) || 999);
+        });
+        // Deduplicate by validity (keep cheapest)
+        const byValidity = new Map();
+        sorted.forEach((p) => {
+          const days = parseInt(p.validity || p.day || 0);
+          if (!byValidity.has(days)) byValidity.set(days, p);
+        });
+        setOtherTierPlans(Array.from(byValidity.values()));
+      }
+    } else {
+      // Regular and SMS: filter to standard data tiers
+      const filtered = tabFiltered.filter((p) => {
+        const mb = getDataMB(p);
+        return TIER_MB.some((tier) => Math.abs(mb - tier) < 100);
+      });
+
+      if (isRegional) {
+        setAllRegionalPlans(filtered);
+        const groups = {};
+        filtered.forEach((p) => {
+          const sub = extractSubRegion(p);
+          if (!groups[sub]) groups[sub] = [];
+          groups[sub].push(p);
+        });
+        const groupList = Object.entries(groups).map(([name, regionPlans]) => ({
+          name,
+          nameRu: SUB_REGION_NAME_RU[name] || name,
+          plans: regionPlans,
+        })).sort((a, b) => b.plans.length - a.plans.length);
+        setRegionalSubRegionGroups(groupList);
+        setSelectedSubRegion((prev) => {
+          const fromPackage = extractSubRegion(packageData);
+          if (prev && groupList.some((g) => g.name === prev)) return prev;
+          return fromPackage;
+        });
+      } else {
+        setAllRegionalPlans([]);
+        setRegionalSubRegionGroups([]);
+        setSelectedSubRegion(null);
+        const byTier = new Map();
+        filtered.forEach((p) => {
+          const mb = getDataMB(p);
+          const tier = TIER_MB.find((t) => Math.abs(mb - t) < 100);
+          const price = parseFloat(p.price) || 999;
+          if (!byTier.has(tier) || price < (parseFloat(byTier.get(tier).price) || 999)) {
+            byTier.set(tier, p);
+          }
+        });
+        setOtherTierPlans(Array.from(byTier.values()).sort((a, b) => getDataMB(a) - getDataMB(b)));
+      }
+    }
+  }, [allFetchedPlans, planTypeTab, packageData]);
 
   // For regional: derive otherTierPlans from selected sub-region
   useEffect(() => {
@@ -260,22 +343,36 @@ const SharePackagePage = () => {
     const planType = packageData.plan_type || packageData.package_type || '';
     if (planType !== 'regional' || !selectedSubRegion || allRegionalPlans.length === 0) return;
     const subPlans = allRegionalPlans.filter((p) => extractSubRegion(p) === selectedSubRegion);
-    const filtered = subPlans.filter((p) => {
-      if (isUnlimitedPlan(p)) return false;
-      const mb = getDataMB(p);
-      return TIER_MB.some((tier) => Math.abs(mb - tier) < 100);
-    });
-    const byTier = new Map();
-    filtered.forEach((p) => {
-      const mb = getDataMB(p);
-      const tier = TIER_MB.find((t) => Math.abs(mb - t) < 100);
-      const price = parseFloat(p.price) || 999;
-      if (!byTier.has(tier) || price < (parseFloat(byTier.get(tier).price) || 999)) {
-        byTier.set(tier, p);
-      }
-    });
-    setOtherTierPlans(Array.from(byTier.values()).sort((a, b) => getDataMB(a) - getDataMB(b)));
-  }, [packageData, selectedSubRegion, allRegionalPlans]);
+
+    if (planTypeTab === 'unlimited') {
+      const sorted = [...subPlans].sort((a, b) => {
+        const dA = parseInt(a.validity || a.day || 0);
+        const dB = parseInt(b.validity || b.day || 0);
+        return dA - dB || (parseFloat(a.price) || 999) - (parseFloat(b.price) || 999);
+      });
+      const byValidity = new Map();
+      sorted.forEach((p) => {
+        const days = parseInt(p.validity || p.day || 0);
+        if (!byValidity.has(days)) byValidity.set(days, p);
+      });
+      setOtherTierPlans(Array.from(byValidity.values()));
+    } else {
+      const filtered = subPlans.filter((p) => {
+        const mb = getDataMB(p);
+        return TIER_MB.some((tier) => Math.abs(mb - tier) < 100);
+      });
+      const byTier = new Map();
+      filtered.forEach((p) => {
+        const mb = getDataMB(p);
+        const tier = TIER_MB.find((t) => Math.abs(mb - t) < 100);
+        const price = parseFloat(p.price) || 999;
+        if (!byTier.has(tier) || price < (parseFloat(byTier.get(tier).price) || 999)) {
+          byTier.set(tier, p);
+        }
+      });
+      setOtherTierPlans(Array.from(byTier.values()).sort((a, b) => getDataMB(a) - getDataMB(b)));
+    }
+  }, [packageData, selectedSubRegion, allRegionalPlans, planTypeTab]);
 
 
   const handlePurchase = async () => {
@@ -678,17 +775,56 @@ const SharePackagePage = () => {
             </div>
           )}
 
-          {/* Data tier options: 1GB, 2GB, 5GB, 10GB, 20GB, 50GB */}
+          {/* Plan type tabs: Regular / Unlimited / SMS */}
+          {availableTabs.length > 1 && (
+            <div className="px-4 pb-3">
+              <div className="flex rounded-lg bg-gray-200/80 dark:bg-gray-700/50 p-1 gap-1">
+                {availableTabs.map((tab) => {
+                  const label = tab === 'regular'
+                    ? (locale === 'ru' ? 'Интернет' : 'Data')
+                    : tab === 'unlimited'
+                    ? (locale === 'ru' ? 'Безлимит' : 'Unlimited')
+                    : (locale === 'ru' ? 'С SMS' : 'SMS');
+                  const icon = tab === 'regular' ? '📶' : tab === 'unlimited' ? '♾️' : '💬';
+                  return (
+                    <button
+                      key={tab}
+                      type="button"
+                      onClick={() => setPlanTypeTab(tab)}
+                      className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
+                        planTypeTab === tab
+                          ? 'bg-blue-500 text-white shadow-sm'
+                          : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                      }`}
+                    >
+                      {icon} {label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* Data tier options */}
           {otherTierPlans.length > 0 && (
             <div className="px-4 pb-4">
-              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{t('sharePackage.selectVolume', 'Select data amount')}</h3>
+              <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">
+                {planTypeTab === 'unlimited'
+                  ? t('sharePackage.selectDuration', 'Select duration')
+                  : t('sharePackage.selectVolume', 'Select data amount')}
+              </h3>
               <div className="flex flex-wrap gap-2">
                 {otherTierPlans.map((plan, index) => {
+                  const isUl = planTypeTab === 'unlimited';
                   const planMB = getDataMB(plan);
                   const currentMB = getDataMB(packageData);
                   const planTier = TIER_MB.find((t) => Math.abs(planMB - t) < 100);
                   const currentTier = TIER_MB.find((t) => Math.abs(currentMB - t) < 100);
-                  const isCurrent = planTier != null && planTier === currentTier;
+                  const planDays = parseInt(plan.validity || plan.day || 0);
+                  const currentDays = parseInt(packageData?.validity || packageData?.day || 0);
+                  const isCurrent = isUl
+                    ? (planDays === currentDays && isUnlimitedPlan(packageData))
+                    : (planTier != null && planTier === currentTier);
                   const qs = currentQuery();
                   const slug = plan?.slug ?? plan?.package_id ?? plan?.id ?? plan?._id;
                   return (
@@ -703,7 +839,9 @@ const SharePackagePage = () => {
                       }`}
                     >
                       <span className="font-medium text-gray-900 dark:text-white">
-                        {formatData(plan.data || plan.dataAmount, t('units.gb', 'GB'))}
+                        {isUl
+                          ? `${planDays} ${locale === 'ru' ? 'дн.' : 'd'}`
+                          : formatData(plan.data || plan.dataAmount, t('units.gb', 'GB'))}
                       </span>
                       <span className="block text-sm text-green-600 dark:text-green-400">
                         {formatPriceFromItem(plan, displayCurrency).formatted}
