@@ -143,6 +143,48 @@ export async function fetchTopupPackages(countryCode, originalPlanSlug) {
 
     console.log('📡 Fetching topup packages | country:', code, '| slug:', originalPlanSlug, '| prefix:', operatorPrefix)
 
+    // First, try using the existing API endpoint
+    try {
+      const params = new URLSearchParams({
+        limit: '100',
+        ...(code && { country: code }),
+        ...(operatorPrefix && { slugPrefix: operatorPrefix })
+      })
+      
+      const response = await fetch(`${API_URL}/api/public/topups?${params}`)
+      
+      if (response.ok) {
+        const result = await response.json()
+        
+        if (result.success && result.data?.plans && result.data.plans.length > 0) {
+          console.log('✅ Found', result.data.plans.length, 'topup packages from API')
+          
+          // Transform API response to our format
+          const packages = result.data.plans.map((pkg) => ({
+            id: pkg.id || pkg._id,
+            slug: pkg.slug || pkg.package_id || pkg.id,
+            airaloSlug: pkg.slug || pkg.package_id || pkg.id,
+            name: pkg.name || pkg.title || 'Package',
+            data: pkg.dataAmount || pkg.data || formatDataFromMB(pkg.data_amount_mb),
+            price: parseFloat(pkg.price_usd || pkg.price) || 0,
+            price_rub: pkg.price_rub || Math.round((parseFloat(pkg.price_usd || pkg.price) || 0) * 95),
+            validity: pkg.validity || formatDaysFromNumber(pkg.period) || 'Н/Д',
+            period: pkg.validity || formatDaysFromNumber(pkg.period) || 'Н/Д',
+            country_codes: pkg.country_codes || pkg.country_ids || [code],
+            country_code: pkg.country || code,
+            country_name: null, // API doesn't include country names
+            is_unlimited: pkg.is_unlimited || false,
+            data_amount_mb: null,
+          }))
+          
+          return packages
+        }
+      }
+    } catch (apiError) {
+      console.log('⚠️ API request failed, falling back to direct Supabase query:', apiError.message)
+    }
+
+    // Fallback: Direct Supabase query
     let plans = null
     let error = null
 
@@ -152,8 +194,8 @@ export async function fetchTopupPackages(countryCode, originalPlanSlug) {
         .from('esim_packages')
         .select('*')
         .ilike('package_id', `${operatorPrefix}-%`)
-        .eq('is_active', true)
-        .eq('support_topup', true)
+        .eq('enabled', true)
+        .eq('plan_type', 'topup')
         .order('price_usd', { ascending: true })
         .limit(100)
       plans = result.data
@@ -166,9 +208,9 @@ export async function fetchTopupPackages(countryCode, originalPlanSlug) {
       const result = await supabase
         .from('esim_packages')
         .select('*')
-        .or(`country_code.eq.${code},country_code.ilike.%${code}%`)
-        .eq('is_active', true)
-        .eq('support_topup', true)
+        .or(`country_codes.cs.{${code}},country_id.eq.${code}`)
+        .eq('enabled', true)
+        .eq('plan_type', 'topup')
         .order('price_usd', { ascending: true })
         .limit(100)
       plans = result.data
@@ -185,19 +227,6 @@ export async function fetchTopupPackages(countryCode, originalPlanSlug) {
       return []
     }
 
-    // Fetch country name for display
-    let countryName = null
-    if (code && code !== 'GLOBAL') {
-      const { data: countries } = await supabase
-        .from('esim_countries')
-        .select('country_name, country_name_ru')
-        .eq('airalo_country_code', code)
-        .limit(1)
-      if (countries && countries.length > 0) {
-        countryName = countries[0].country_name_ru || countries[0].country_name || null
-      }
-    }
-
     // Transform Supabase response to our format
     const packages = plans.map((pkg) => ({
       id: pkg.id.toString(),
@@ -209,19 +238,34 @@ export async function fetchTopupPackages(countryCode, originalPlanSlug) {
       price_rub: pkg.price_rub || Math.round((parseFloat(pkg.price_usd) || 0) * 95),
       validity: pkg.validity_days ? formatDaysRu(Number(pkg.validity_days)) : 'Н/Д',
       period: pkg.validity_days ? formatDaysRu(Number(pkg.validity_days)) : 'Н/Д',
-      country_codes: [code],
-      country_code: code,
-      country_name: countryName,
+      country_codes: pkg.country_codes || [code],
+      country_code: pkg.country_id || code,
+      country_name: null, // We'll skip country name lookup for fallback
       is_unlimited: pkg.is_unlimited || false,
       data_amount_mb: pkg.data_amount_mb || null,
     }))
 
-    console.log('✅ Found', packages.length, 'topup packages')
+    console.log('✅ Found', packages.length, 'topup packages from Supabase fallback')
     return packages
   } catch (error) {
     console.error('❌ Error fetching topup packages:', error)
     throw error
   }
+}
+
+// Helper function to format data amount from MB to readable format
+function formatDataFromMB(mb) {
+  if (!mb) return 'Н/Д'
+  const mbNum = Number(mb)
+  if (!Number.isFinite(mbNum) || mbNum <= 0) return 'Н/Д'
+  if (mbNum >= 1000) return `${(mbNum / 1000).toFixed(0)} ГБ`
+  return `${mbNum} МБ`
+}
+
+// Helper function to format days from number
+function formatDaysFromNumber(days) {
+  if (!days) return null
+  return formatDaysRu(Number(days))
 }
 
 /**
