@@ -67,7 +67,11 @@ export async function GET(request) {
       .select('airalo_country_code, country_name, country_name_ru, country_name_he, country_name_ar')
       .eq('is_visible', true); // Only fetch visible countries
 
+    console.log(`🗂️ esim_countries query returned ${allDbCountries?.length ?? 0} rows`);
     if (allDbCountries && allDbCountries.length > 0) {
+      // Debug: log first row to verify columns
+      const sample = allDbCountries.find(r => r.airalo_country_code === 'TR') || allDbCountries[0];
+      console.log(`🔍 Sample row:`, JSON.stringify(sample));
       for (const row of allDbCountries) {
         const c = (row.airalo_country_code || '').toUpperCase();
         if (c) dbNamesByCode[c] = row;
