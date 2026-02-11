@@ -221,7 +221,10 @@
       "codeValid": "Код действителен 1 час",
       "changeEmail": "Изменить email",
       "back": "Назад",
-      "signInWithEmail": "Войти по email"
+      "signInWithEmail": "Войти по email",
+      "signIn": "Войти",
+      "noAccount": "Нет аккаунта?",
+      "signUp": "Регистрация"
     },
     "register": {
       "title": "Создайте свой аккаунт",
