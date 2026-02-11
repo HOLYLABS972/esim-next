@@ -1,0 +1,25 @@
+{
+  "short_name": "RoamJet",
+  "name": "RoamJet - Global eSIM Plans for Travelers",
+  "icons": [
+    {
+      "src": "/images/logo_icon/favicon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo_icon/ioslogo.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo_icon/android.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#468BE6",
+  "background_color": "#E9F6FF"
+}

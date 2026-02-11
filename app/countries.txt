@@ -1,0 +1,219 @@
+Afghanistan	sohbat-mobile	AF	sohbat-mobile-7days-1gb, sohbat-mobile-30days-20gb
+Albania	hej-telecom	AL	hej-telecom-7days-1gb, hej-telecom-30days-20gb
+Algeria	algecom	DZ	algecom-7days-1gb, algecom-30days-20gb
+Andorra	handi	AD	handi-7days-1gb, handi-30days-20gb
+Anguilla	dolphin-mobile	AI	dolphin-mobile-7days-1gb, dolphin-mobile-30days-20gb
+Antigua And Barbuda	17-miles	AG	17-miles-7days-1gb, 17-miles-30days-20gb
+Antigua And Barbuda	17miles	AG	17miles-7days-1gb, 17miles-30days-20gb
+Antilles	saba-mobile	AN	saba-mobile-7days-1gb, saba-mobile-30days-20gb
+Argentina	abrazo	AR	abrazo-7days-1gb, abrazo-30days-20gb
+Armenia	arpi-telecom	AM	arpi-telecom-7days-1gb, arpi-telecom-30days-20gb
+Aruba	noord-communications-in	AW	noord-communications-in-7days-1gb, noord-communications-in-30days-20gb
+Australia	yes-go	AU	yes-go-7days-1gb, yes-go-30days-20gb
+Austria	viennetz-mobil	AT	viennetz-mobil-7days-1gb, viennetz-mobil-30days-20gb
+Azerbaijan	yaxsi-mobile	AZ	yaxsi-mobile-7days-1gb, yaxsi-mobile-30days-20gb
+Azores	pico	PT	pico-7days-1gb, pico-30days-20gb
+Bahamas	jitney-mobile	BS	jitney-mobile-7days-1gb, jitney-mobile-30days-20gb
+Bahrain	saar-mobile	BH	saar-mobile-7days-1gb, saar-mobile-30days-20gb
+Bangladesh	fatafati-in	BD	fatafati-in-7days-1gb, fatafati-in-30days-20gb
+Barbados	barbnet	BB	barbnet-7days-1gb, barbnet-30days-20gb
+Belarus	norach-telecom	BY	norach-telecom-7days-1gb, norach-telecom-30days-20gb
+Belgium	belganet	BE	belganet-7days-1gb, belganet-30days-20gb
+Belize	cho	BZ	cho-7days-1gb, cho-30days-20gb
+Benin	cotton-mobile	BJ	cotton-mobile-7days-1gb, cotton-mobile-30days-20gb
+Bermuda	bermy-mobile	XX	bermy-mobile-7days-1gb, bermy-mobile-30days-20gb
+Bhutan	paro	BT	paro-7days-1gb, paro-30days-20gb
+Bolivia	wa-mobile	BO	wa-mobile-7days-1gb, wa-mobile-30days-20gb
+Bonaire	hatonet	XX	hatonet-7days-1gb, hatonet-30days-20gb
+Bosnia and Herzegovina	bosher	BA	bosher-7days-1gb, bosher-30days-20gb
+Botswana	maun-telecom	BW	maun-telecom-7days-1gb, maun-telecom-30days-20gb
+Brazil	joia	BR	joia-7days-1gb, joia-30days-20gb
+Brunei	muara-mobile	BN	muara-mobile-7days-1gb, muara-mobile-30days-20gb
+Bulgaria	bultel	BG	bultel-7days-1gb, bultel-30days-20gb
+Burkina Faso	volta	BF	volta-7days-1gb, volta-30days-20gb
+Cambodia	connect-cambodia	KH	connect-cambodia-7days-1gb, connect-cambodia-30days-20gb
+Cameroon	kamtok-telecom	CM	kamtok-telecom-7days-1gb, kamtok-telecom-30days-20gb
+Canada	canada-mobile	CA	canada-mobile-7days-1gb, canada-mobile-30days-20gb
+Canary Islands	mansetel	ES	mansetel-7days-1gb, mansetel-30days-20gb
+Cape Verde	fogotel	CV	fogotel-7days-1gb, fogotel-30days-20gb
+Cayman Islands	atlantis-telecom	XX	atlantis-telecom-7days-1gb, atlantis-telecom-30days-20gb
+Central African Republic	chinko	CF	chinko-7days-1gb, chinko-30days-20gb
+Chad	first-well	TD	first-well-7days-1gb, first-well-30days-20gb
+Chile	altoque	CL	altoque-7days-1gb, altoque-30days-20gb
+China	chinacom	CN	chinacom-7days-1gb, chinacom-30days-20gb
+Colombia	hartonet	CO	hartonet-7days-1gb, hartonet-30days-20gb
+Costa Rica	hot-telecom	CR	hot-telecom-7days-1gb, hot-telecom-30days-20gb
+Côte d'Ivoire	nouchi-mobile	XX	nouchi-mobile-7days-1gb, nouchi-mobile-30days-20gb
+Croatia	cronet	HR	cronet-7days-1gb, cronet-30days-20gb
+Curaçao	dushi-mobile	XX	dushi-mobile-7days-1gb, dushi-mobile-30days-20gb
+Cyprus	dekanet	CY	dekanet-7days-1gb, dekanet-30days-20gb
+Czech Republic	prosim	CZ	prosim-7days-1gb, prosim-30days-20gb
+Democratic Republic Of The Congo	pondu-mobile	XX	pondu-mobile-7days-1gb, pondu-mobile-30days-20gb
+Denmark	teledansk	DK	teledansk-7days-1gb, teledansk-30days-20gb
+Dominica	vaina-communications	DM	vaina-communications-7days-1gb, vaina-communications-30days-20gb
+Dominican Republic	acuntel	DO	acuntel-7days-1gb, acuntel-30days-20gb
+Ecuador	bacanet	EC	bacanet-7days-1gb, bacanet-30days-20gb
+Egypt	giza-mobile	EG	giza-mobile-7days-1gb, giza-mobile-30days-20gb
+El Salvador	chivo	SV	chivo-7days-1gb, chivo-30days-20gb
+Estonia	estekom	EE	estekom-7days-1gb, estekom-30days-20gb
+Estonia	estekom-in	EE	estekom-in-7days-1gb, estekom-in-30days-20gb
+Eswatini	eswatini-communications	SZ	eswatini-communications-7days-1gb, eswatini-communications-30days-20gb
+Ethiopia	simien	ET	simien-7days-1gb, simien-30days-20gb
+Faroe Islands	kallur-digital	XX	kallur-digital-7days-1gb, kallur-digital-30days-20gb
+Fiji	vinaka-fiji	FJ	vinaka-fiji-7days-1gb, vinaka-fiji-30days-20gb
+Finland	finn-com	FI	finn-com-7days-1gb, finn-com-30days-20gb
+France	elan	FR	elan-7days-1gb, elan-30days-20gb
+French Guiana	kawcom	XX	kawcom-7days-1gb, kawcom-30days-20gb
+Gabon	libreville	GA	libreville-7days-1gb, libreville-30days-20gb
+Gambia	wassu-telecom	GM	wassu-telecom-7days-1gb, wassu-telecom-30days-20gb
+Georgia	kargi-mobile	GE	kargi-mobile-7days-1gb, kargi-mobile-30days-20gb
+Germany	hallo-mobil	DE	hallo-mobil-7days-1gb, hallo-mobil-30days-20gb
+Ghana	fifi-mobile	GH	fifi-mobile-7days-1gb, fifi-mobile-30days-20gb
+Gibraltar	gibnet	XX	gibnet-7days-1gb, gibnet-30days-20gb
+Greece	meraki-mobile	GR	meraki-mobile-7days-1gb, meraki-mobile-30days-20gb
+Greenland	nuuk-mobile	XX	nuuk-mobile-7days-1gb, nuuk-mobile-30days-20gb
+Grenada	fortnet	GD	fortnet-7days-1gb, fortnet-30days-20gb
+Guadeloupe	guanet	XX	guanet-7days-1gb, guanet-30days-20gb
+Guam	hafa-adai	XX	hafa-adai-7days-1gb, hafa-adai-30days-20gb
+Guatemala	tikal-in-mobile	GT	tikal-in-mobile-7days-1gb, tikal-in-mobile-30days-20gb
+Guatemala	tikal-mobile	GT	tikal-mobile-7days-1gb, tikal-mobile-30days-20gb
+Guinea	guinea-miyahu	GN	guinea-miyahu-7days-1gb, guinea-miyahu-30days-20gb
+Guinea-Bissau	spicetel	GW	spicetel-7days-1gb, spicetel-30days-20gb
+Guyana	gucom	GY	gucom-7days-1gb, gucom-30days-20gb
+Guyana	gucom-in	GY	gucom-in-7days-1gb, gucom-in-30days-20gb
+Haiti	bon-bagay	HT	bon-bagay-7days-1gb, bon-bagay-30days-20gb
+Honduras	honnet	HN	honnet-7days-1gb, honnet-30days-20gb
+Honduras	honnet-in	HN	honnet-in-7days-1gb, honnet-in-30days-20gb
+Hong Kong	hkmobile	HK	hkmobile-7days-1gb, hkmobile-30days-20gb
+Hungary	szia	HU	szia-7days-1gb, szia-30days-20gb
+Iceland	nenna-mobile	IS	nenna-mobile-7days-1gb, nenna-mobile-30days-20gb
+India	indicomm	IN	indicomm-7days-1gb, indicomm-30days-20gb
+Indonesia	indotel	ID	indotel-7days-1gb, indotel-30days-20gb
+Iraq	babel-mobile	IQ	babel-mobile-7days-1gb, babel-mobile-30days-20gb
+Ireland	failte	IE	failte-7days-1gb, failte-30days-20gb
+Isle of Man	islenet	IM	islenet-7days-1gb, islenet-30days-20gb
+Israel	ahava	IL	ahava-7days-1gb, ahava-30days-20gb
+Italy	mamma-mia-in	IT	mamma-mia-in-7days-1gb, mamma-mia-in-30days-20gb
+Jamaica	jammcom	JM	jammcom-7days-1gb, jammcom-30days-20gb
+Japan	moshi-moshi	JP	moshi-moshi-7days-1gb, moshi-moshi-30days-20gb
+Jersey	jersey	JE	jersey-7days-1gb, jersey-30days-20gb
+Jersey	jerseytel	JE	jerseytel-7days-1gb, jerseytel-30days-20gb
+Jordan	jornet	JO	jornet-7days-1gb, jornet-30days-20gb
+Kazakhstan	kazaknet	KZ	kazaknet-7days-1gb, kazaknet-30days-20gb
+Kazakhstan	kazaknet-in	KZ	kazaknet-in-7days-1gb, kazaknet-in-30days-20gb
+Kenya	nakuru-mobile	KE	nakuru-mobile-7days-1gb, nakuru-mobile-30days-20gb
+Kosovo	plisi	XK	plisi-7days-1gb, plisi-30days-20gb
+Kuwait	liberation-mobile	KW	liberation-mobile-7days-1gb, liberation-mobile-30days-20gb
+Kyrgyzstan	doske	KG	doske-7days-1gb, doske-30days-20gb
+Laos	pak-ou-mobile	LA	pak-ou-mobile-7days-1gb, pak-ou-mobile-30days-20gb
+Latvia	labitel	LV	labitel-7days-1gb, labitel-30days-20gb
+Lebanon	salbeh	LB	salbeh-7days-1gb, salbeh-30days-20gb
+Lesotho	maloti	LS	maloti-7days-1gb, maloti-30days-20gb
+Liberia	mariocom	LR	mariocom-7days-1gb, mariocom-30days-20gb
+Liechtenstein	lie-mobile	LI	lie-mobile-7days-1gb, lie-mobile-30days-20gb
+Lithuania	lila-mobile	LT	lila-mobile-7days-1gb, lila-mobile-30days-20gb
+Luxembourg	luxcom	LU	luxcom-7days-1gb, luxcom-30days-20gb
+Macao	macau-mobile	XX	macau-mobile-7days-1gb, macau-mobile-30days-20gb
+Madagascar	madacom	MG	madacom-7days-1gb, madacom-30days-20gb
+Madeira	porto	PT	porto-7days-1gb, porto-30days-20gb
+Malawi	shire-mobile	MW	shire-mobile-7days-1gb, shire-mobile-30days-20gb
+Malaysia	sambungkan	MY	sambungkan-7days-1gb, sambungkan-30days-20gb
+Mali	maliconnected	ML	maliconnected-7days-1gb, maliconnected-30days-20gb
+Malta	maltafone	MT	maltafone-7days-1gb, maltafone-30days-20gb
+Marie-Galante	mawig	XX	mawig-7days-1gb, mawig-30days-20gb
+Martinique	jardin-mobile	XX	jardin-mobile-7days-1gb, jardin-mobile-30days-20gb
+Mauritius	mornecom	MU	mornecom-7days-1gb, mornecom-30days-20gb
+Mauritius	mornecom-in	MU	mornecom-in-7days-1gb, mornecom-in-30days-20gb
+Mayotte	choungui	XX	choungui-7days-1gb, choungui-30days-20gb
+Mexico	chido	MX	chido-7days-1gb, chido-30days-20gb
+Mexico	chido-plus	MX	chido-plus-7days-1gb, chido-plus-30days-20gb
+Moldova	soroca-mobile	MD	soroca-mobile-7days-1gb, soroca-mobile-30days-20gb
+Mongolia	mongo-mobile-fiber	MN	mongo-mobile-fiber-7days-1gb, mongo-mobile-fiber-30days-20gb
+Mongolia	mongo-mobile-fiber-	MN	mongo-mobile-fiber--7days-1gb, mongo-mobile-fiber--30days-20gb
+Montenegro	jezero	ME	jezero-7days-1gb, jezero-30days-20gb
+Montserrat	carrs-telecom	XX	carrs-telecom-7days-1gb, carrs-telecom-30days-20gb
+Morocco	choukran	MA	choukran-7days-1gb, choukran-30days-20gb
+Mozambique	comemoro	MZ	comemoro-7days-1gb, comemoro-30days-20gb
+Namibia	namibia	NA	namibia-7days-1gb, namibia-30days-20gb
+Nauru	naoero-in	NR	naoero-in-7days-1gb, naoero-in-30days-20gb
+Nepal	patancell	NP	patancell-7days-1gb, patancell-30days-20gb
+Netherlands	he-he	NL	he-he-7days-1gb, he-he-30days-20gb
+Netherlands	hehe-plus	NL	hehe-plus-7days-1gb, hehe-plus-30days-20gb
+New Zealand	nzcom	NZ	nzcom-7days-1gb, nzcom-30days-20gb
+Nicaragua	nicarcell	NI	nicarcell-7days-1gb, nicarcell-30days-20gb
+Niger	letecom	NE	letecom-7days-1gb, letecom-30days-20gb
+Nigeria	nigercell	NG	nigercell-7days-1gb, nigercell-30days-20gb
+North Macedonia	matka-mobile	MK	matka-mobile-7days-1gb, matka-mobile-30days-20gb
+Northern Cyprus	adanet	CY	adanet-7days-1gb, adanet-30days-20gb
+Norway	lofotel	NO	lofotel-7days-1gb, lofotel-30days-20gb
+Oman	omancom	OM	omancom-7days-1gb, omancom-30days-20gb
+Oman	omantel	OM	omantel-7days-1gb, omantel-30days-20gb
+Pakistan	sheesh	PK	sheesh-7days-1gb, sheesh-30days-20gb
+Pakistan	sheesh-in	PK	sheesh-in-7days-1gb, sheesh-in-30days-20gb
+Palestine, State of	tine-mobile	PS	tine-mobile-7days-1gb, tine-mobile-30days-20gb
+Palestine, State of	tine-mobile-unlimited	PS	tine-mobile-unlimited-7days-1gb, tine-mobile-unlimited-30days-20gb
+Panama	pancell-digital	PA	pancell-digital-7days-1gb, pancell-digital-30days-20gb
+Papua New Guinea	sivoli-mobile	PG	sivoli-mobile-7days-1gb, sivoli-mobile-30days-20gb
+Papua New Guinea	sivoli-mobile-in	PG	sivoli-mobile-in-7days-1gb, sivoli-mobile-in-30days-20gb
+Paraguay	triple-communications	PY	triple-communications-7days-1gb, triple-communications-30days-20gb
+Peru	habla-telefon	PE	habla-telefon-7days-1gb, habla-telefon-30days-20gb
+Philippines	alpas-mobile	PH	alpas-mobile-7days-1gb, alpas-mobile-30days-20gb
+Poland	lekko	PL	lekko-7days-1gb, lekko-30days-20gb
+Portugal	fofo-mobil	PT	fofo-mobil-7days-1gb, fofo-mobil-30days-20gb
+Puerto Rico	boricua-in-mobile	PR	boricua-in-mobile-7days-1gb, boricua-in-mobile-30days-20gb
+Qatar	pearl-mobile	QA	pearl-mobile-7days-1gb, pearl-mobile-30days-20gb
+Republic of the Congo	sanghatel	XX	sanghatel-7days-1gb, sanghatel-30days-20gb
+Réunion	reunion-mobile	XX	reunion-mobile-7days-1gb, reunion-mobile-30days-20gb
+Romania	noroc	RO	noroc-7days-1gb, noroc-30days-20gb
+Russia	ruski-telecom	RU	ruski-telecom-7days-1gb, ruski-telecom-30days-20gb
+Rwanda	peace-mobile	RW	peace-mobile-7days-1gb, peace-mobile-30days-20gb
+Saba	scenery	XX	scenery-7days-1gb, scenery-30days-20gb
+Saint Barthélemy	barnet	XX	barnet-7days-1gb, barnet-30days-20gb
+Saint Kitts and Nevis	kittcom	KN	kittcom-7days-1gb, kittcom-30days-20gb
+Saint Lucia	lucnet	LC	lucnet-7days-1gb, lucnet-30days-20gb
+Saint Martin (French Part)	marnet	XX	marnet-7days-1gb, marnet-30days-20gb
+Saint Vincent and the Grenadines	tobago	VC	tobago-7days-1gb, tobago-30days-20gb
+Samoa	faaf-mobile	WS	faaf-mobile-7days-1gb, faaf-mobile-30days-20gb
+Saudi Arabia	red-sand	SA	red-sand-7days-1gb, red-sand-30days-20gb
+Saudi Arabia	red-sand-unlimited	SA	red-sand-unlimited-7days-1gb, red-sand-unlimited-30days-20gb
+Scotland	nessietel	GB	nessietel-7days-1gb, nessietel-30days-20gb
+Senegal	retba-mobile	SN	retba-mobile-7days-1gb, retba-mobile-30days-20gb
+Serbia	serbia-mobile	RS	serbia-mobile-7days-1gb, serbia-mobile-30days-20gb
+Seychelles	laziocom	SC	laziocom-7days-1gb, laziocom-30days-20gb
+Sierra Leone	buncenet	SL	buncenet-7days-1gb, buncenet-30days-20gb
+Singapore	connect-lah	SG	connect-lah-7days-1gb, connect-lah-30days-20gb
+Sint Eustatius	statia	XX	statia-7days-1gb, statia-30days-20gb
+Slovakia	dobry-den	SK	dobry-den-7days-1gb, dobry-den-30days-20gb
+Slovenia	zivjo	SI	zivjo-7days-1gb, zivjo-30days-20gb
+South Africa	cellsa	ZA	cellsa-7days-1gb, cellsa-30days-20gb
+South Korea	jang	KR	jang-7days-1gb, jang-30days-20gb
+Spain	guay-mobile	ES	guay-mobile-7days-1gb, guay-mobile-30days-20gb
+Sri Lanka	mitura	LK	mitura-7days-1gb, mitura-30days-20gb
+Suriname	pondocom	SR	pondocom-7days-1gb, pondocom-30days-20gb
+Sweden	van	SE	van-7days-1gb, van-30days-20gb
+Switzerland	pilatus-mobile	CH	pilatus-mobile-7days-1gb, pilatus-mobile-30days-20gb
+Switzerland	pilatus-mobile-in	CH	pilatus-mobile-in-7days-1gb, pilatus-mobile-in-30days-20gb
+Taiwan	xie-xie-unlimited	TW	xie-xie-unlimited-7days-1gb, xie-xie-unlimited-30days-20gb
+Tajikistan	sarez-telecom	TJ	sarez-telecom-7days-1gb, sarez-telecom-30days-20gb
+Tanzania	tanzacomm	TZ	tanzacomm-7days-1gb, tanzacomm-30days-20gb
+Thailand	maew	TH	maew-7days-1gb, maew-30days-20gb
+Timor - Leste	jaco-mobile	TL	jaco-mobile-7days-1gb, jaco-mobile-30days-20gb
+Togo	atakora-mobile	TG	atakora-mobile-7days-1gb, atakora-mobile-30days-20gb
+Tonga	tofua-mobile	TO	tofua-mobile-7days-1gb, tofua-mobile-30days-20gb
+Trinidad and Tobago	tritocom	TT	tritocom-7days-1gb, tritocom-30days-20gb
+Tunisia	el-jem-communications	TN	el-jem-communications-7days-1gb, el-jem-communications-30days-20gb
+Turkey	merhaba	TR	merhaba-7days-1gb, merhaba-30days-20gb
+Turks and Caicos Islands	tuca-mobile	TC	tuca-mobile-7days-1gb, tuca-mobile-30days-20gb
+Uganda	ugish	UG	ugish-7days-1gb, ugish-30days-20gb
+United Arab Emirates	burj-mobile	AE	burj-mobile-7days-1gb, burj-mobile-30days-20gb
+United Kingdom	uki-mobile	GB	uki-mobile-7days-1gb, uki-mobile-30days-20gb
+Uruguay	ballena	UY	ballena-7days-1gb, ballena-30days-20gb
+Uzbekistan	uzbeknet	UZ	uzbeknet-7days-1gb, uzbeknet-30days-20gb
+Vanuatu	efate	VU	efate-7days-1gb, efate-30days-20gb
+Vatican City	ager-in	VA	ager-in-7days-1gb, ager-in-30days-20gb
+Venezuela	aragua-mobile	VE	aragua-mobile-7days-1gb, aragua-mobile-30days-20gb
+Vietnam	xin-chao-in	VN	xin-chao-in-7days-1gb, xin-chao-in-30days-20gb
+Virgin Islands (U.S.)	magens-mobile-in	VI	magens-mobile-in-7days-1gb, magens-mobile-in-30days-20gb
+Zambia	kafue-mobile	ZM	kafue-mobile-7days-1gb, kafue-mobile-30days-20gb
+Zimbabwe	zimcom	ZW	zimcom-7days-1gb, zimcom-30days-20gb
+United States	change	US	change-7days-1gb, change-30days-20gb
