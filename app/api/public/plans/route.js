@@ -184,6 +184,17 @@ export async function GET(request) {
         package_type: plan.package_type || 'local',
         country: countryCode,
         country_codes: countryCodesArray,
+        is_unlimited: plan.is_unlimited || false,
+        sms_included: plan.sms_included || false,
+        day: plan.validity_days,
+        data_amount_mb: dataMB,
+        country_name: plan.country_name || null,
+        country_name_ru: plan.country_name_ru || null,
+        country_name_he: plan.country_name_he || null,
+        country_name_ar: plan.country_name_ar || null,
+        original_price: discountPct > 0 ? origUsd : null,
+        original_price_rub: discountPct > 0 ? origRub : null,
+        original_price_ils: discountPct > 0 ? origIls : null,
         createdAt: plan.created_at,
         updatedAt: plan.updated_at
       };
