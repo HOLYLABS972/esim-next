@@ -267,7 +267,7 @@ export async function GET(request) {
           ]
         : [];
 
-    const allEntries = [...globalEntry, ...regionalEntry, ...allCountries];
+    const allEntries = [...globalEntry, ...allCountries];
 
     // Labels by locale – always from DB only (no fallback)
     const labels = {
