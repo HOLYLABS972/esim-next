@@ -121,7 +121,7 @@ export async function GET(request) {
     const tierKey = (p) => {
       const dataMB = p.data_amount_mb ?? (parseInt(p.data_amount, 10) || 0);
       const tier = [1024, 2048, 3072, 5120, 10240, 20480, 51200, 102400].find((t) => Math.abs((dataMB || 0) - t) < 100) || (p.is_unlimited ? 'unlimited' : dataMB);
-      const scope = p.country_code || (p.package_type === 'global' ? 'GL' : p.package_type === 'regional' ? `RG:${p.operator || p.slug || ''}` : '') || '';
+      const scope = (p.package_type === 'global') ? 'GL' : (p.package_type === 'regional') ? `RG:${p.operator || p.slug || ''}` : (p.country_code || '');
       return `${scope}|${tier}|${p.validity_days ?? 0}`;
     };
     const byKey = new Map();
