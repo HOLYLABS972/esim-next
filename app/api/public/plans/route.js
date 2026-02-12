@@ -142,7 +142,10 @@ export async function GET(request) {
     const applyDiscount = (val) => (val != null && val > 0 ? Math.max(MIN_PRICE_FLOOR, (val * (100 - discountPct)) / 100) : val);
 
     const transformedPlans = dedupedPlans.map(plan => {
-      const countryCode = (plan.country_code && plan.country_code.trim()) || null;
+      const isRegionalOrGlobal = plan.package_type === 'regional' || plan.package_type === 'global';
+      const rawCountryCode = (plan.country_code && plan.country_code.trim()) || null;
+      // For regional/global plans, don't expose the long country_code list — use null
+      const countryCode = isRegionalOrGlobal ? null : rawCountryCode;
       const countryCodesArray = countryCode ? (countryCode.includes(',') ? countryCode.split(',').map(c => c.trim()).filter(Boolean) : [countryCode]) : [];
       
       // Calculate data amount in MB or GB
