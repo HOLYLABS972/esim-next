@@ -2,7 +2,10 @@ import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || '';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || '';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+// Vercel's Supabase integration may override SUPABASE_SERVICE_ROLE_KEY with an sb_secret_ key
+// which doesn't work with the Supabase JS REST client. Prefer the JWT format.
+const _srk = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const supabaseServiceKey = _srk.startsWith('eyJ') ? _srk : (process.env.SUPABASE_SERVICE_JWT || '');
 
 // Single client instance for client-side operations
 export const supabase = supabaseUrl && supabaseAnonKey
