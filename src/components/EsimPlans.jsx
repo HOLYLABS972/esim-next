@@ -454,6 +454,10 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
     }
 
     let countriesToFilter = searchTerm ? searchResults : countries;
+    // Remove global/regional entries from search results
+    if (searchTerm) {
+      countriesToFilter = countriesToFilter.filter(c => c.type !== 'global' && c.type !== 'regional');
+    }
     let filtered = filterCountries(countriesToFilter);
 
     // Apply type-based filtering
