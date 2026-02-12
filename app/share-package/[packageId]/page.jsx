@@ -834,7 +834,7 @@ const SharePackagePage = () => {
                           if (firstPlan) {
                             const slug = firstPlan?.slug ?? firstPlan?.package_id ?? firstPlan?.id;
                             const qs = currentQuery();
-                            if (slug) router.push(`/share-package/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`);
+                            if (slug) { setPackageData(firstPlan); router.push(`/share-package/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`); }
                           }
                         }, 50);
                       }}
@@ -878,7 +878,7 @@ const SharePackagePage = () => {
                     <button
                       key={plan.id || plan.slug || index}
                       type="button"
-                      onClick={() => { if (!isCurrent && slug) router.push(`/share-package/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`); }}
+                      onClick={() => { if (!isCurrent && slug) { setPackageData(plan); router.push(`/share-package/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`); } }}
                       className={`px-4 py-2 rounded-lg border text-left transition-colors ${
                         isCurrent
                           ? 'bg-blue-500/30 border-blue-500 dark:border-blue-400 ring-1 ring-blue-500 dark:ring-blue-400'
