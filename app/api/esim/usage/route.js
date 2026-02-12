@@ -39,19 +39,23 @@ async function getAiraloAccessToken() {
 
   const tokenData = await response.json();
   
-  if (!tokenData.access_token) {
+  // Airalo wraps token in data.access_token
+  const token = tokenData.access_token || tokenData.data?.access_token;
+  const expiresIn = tokenData.expires_in || tokenData.data?.expires_in || 3600;
+
+  if (!token) {
     console.error('[Airalo API] No access_token in response:', tokenData);
     throw new Error('Invalid token response');
   }
 
-  // Cache the token (default to 1 hour if expires_in not provided)
-  const expiresInMs = (tokenData.expires_in || 3600) * 1000;
-  accessTokenCache.token = tokenData.access_token;
+  // Cache the token
+  const expiresInMs = expiresIn * 1000;
+  accessTokenCache.token = token;
   accessTokenCache.expiresAt = Date.now() + expiresInMs - 60000; // 1 minute buffer
 
-  console.log('[Airalo API] Got new access token, expires in', tokenData.expires_in, 'seconds');
+  console.log('[Airalo API] Got new access token, expires in', expiresIn, 'seconds');
   
-  return accessTokenCache.token;
+  return token;
 }
 
 export async function POST(request) {
