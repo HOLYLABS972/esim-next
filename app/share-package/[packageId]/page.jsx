@@ -801,26 +801,42 @@ const SharePackagePage = () => {
                       type="button"
                       onClick={() => {
                         setPlanTypeTab(tab);
-                        // Navigate to 1GB plan of the new tab
-                        const tabPlans = tab === 'unlimited'
-                          ? allFetchedPlans.filter((p) => isUnlimitedPlan(p) && p.sms_included !== true)
-                          : tab === 'sms'
-                            ? allFetchedPlans.filter((p) => p.sms_included === true)
-                            : allFetchedPlans.filter((p) => !isUnlimitedPlan(p) && p.sms_included !== true);
-                        // For regional, filter by selected sub-region
-                        const pType = packageData?.plan_type || packageData?.package_type || '';
-                        const isReg = pType === 'regional' || pType === 'global';
-                        const relevantPlans = isReg && selectedSubRegion
-                          ? tabPlans.filter(p => extractSubRegion(p) === selectedSubRegion)
-                          : tabPlans;
-                        const firstPlan = tab === 'unlimited'
-                          ? relevantPlans.sort((a, b) => (parseInt(a.validity || a.day || 0)) - (parseInt(b.validity || b.day || 0)))[0]
-                          : relevantPlans.filter(p => { const mb = getDataMB(p); return TIER_MB.some(t => Math.abs(mb - t) < 100); }).sort((a, b) => getDataMB(a) - getDataMB(b))[0];
-                        if (firstPlan) {
-                          const slug = firstPlan?.slug ?? firstPlan?.package_id ?? firstPlan?.id;
-                          const qs = currentQuery();
-                          if (slug) router.push(`/share-package/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`);
-                        }
+                        // Navigate to first plan of the new tab
+                        // Wait for otherTierPlans to update via useEffect, then navigate
+                        // Use setTimeout to let state settle
+                        setTimeout(() => {
+                          const pType = packageData?.plan_type || packageData?.package_type || '';
+                          const isReg = pType === 'regional' || pType === 'global';
+                          const currentOperator = packageData?.operator || '';
+                          const currentCountry = packageData?.country || packageData?.country_code || '';
+                          
+                          let tabPlans = tab === 'unlimited'
+                            ? allFetchedPlans.filter((p) => isUnlimitedPlan(p) && p.sms_included !== true)
+                            : tab === 'sms'
+                              ? allFetchedPlans.filter((p) => p.sms_included === true)
+                              : allFetchedPlans.filter((p) => !isUnlimitedPlan(p) && p.sms_included !== true);
+                          
+                          // For country plans, prefer same operator or same package_type
+                          if (!isReg && currentCountry) {
+                            const sameType = tabPlans.filter(p => (p.package_type || p.plan_type) === 'country' || (p.country === currentCountry && !p._isGlobal));
+                            if (sameType.length > 0) tabPlans = sameType;
+                          }
+                          // For regional, filter by selected sub-region
+                          if (isReg && selectedSubRegion) {
+                            const subFiltered = tabPlans.filter(p => extractSubRegion(p) === selectedSubRegion);
+                            if (subFiltered.length > 0) tabPlans = subFiltered;
+                          }
+                          
+                          const firstPlan = tab === 'unlimited'
+                            ? [...tabPlans].sort((a, b) => (parseInt(a.validity || a.day || 0)) - (parseInt(b.validity || b.day || 0)))[0]
+                            : tabPlans.filter(p => { const mb = getDataMB(p); return TIER_MB.some(t => Math.abs(mb - t) < 100); }).sort((a, b) => getDataMB(a) - getDataMB(b))[0]
+                              || tabPlans[0];
+                          if (firstPlan) {
+                            const slug = firstPlan?.slug ?? firstPlan?.package_id ?? firstPlan?.id;
+                            const qs = currentQuery();
+                            if (slug) router.push(`/share-package/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`);
+                          }
+                        }, 50);
                       }}
                       className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         planTypeTab === tab
