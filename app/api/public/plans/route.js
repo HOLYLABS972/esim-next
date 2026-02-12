@@ -19,7 +19,7 @@ export async function GET(request) {
       throw new Error('Supabase not configured');
     }
     
-    console.log('📦 Fetching plans from Supabase...', { countryCode, planType, limit });
+    console.log('📦 Fetching plans from Supabase...', { countryCode, planType, limit, keyType: (process.env.SUPABASE_SERVICE_JWT || '').slice(0, 5) || (process.env.SUPABASE_SERVICE_ROLE_KEY || '').slice(0, 5) || 'NONE' });
     
     let query = supabaseAdmin
       .from('esim_packages')
@@ -60,7 +60,7 @@ export async function GET(request) {
       throw error;
     }
     
-    console.log(`✅ Loaded ${plans?.length || 0} plans from Supabase (esim_packages only)`);
+    console.log(`✅ Loaded ${plans?.length || 0} plans from Supabase (esim_packages only)`, { error, firstPlanId: plans?.[0]?.id });
     
     // Transform Supabase data to match expected format (country from package.country_code only)
     // STRICTLY filter out topup plans - keep unlimited and SMS plans so they can be filtered by the UI
@@ -210,6 +210,7 @@ export async function GET(request) {
           plans: transformedPlans,
           count: transformedPlans.length,
           source: 'supabase',
+          _debug: { rawCount: plans?.length || 0, filteredCount: filteredPlans?.length || 0, planType, countryCode, keyPrefix: (process.env.SUPABASE_SERVICE_JWT || process.env.SUPABASE_SERVICE_ROLE_KEY || '').slice(0,10) },
         },
       },
       {
