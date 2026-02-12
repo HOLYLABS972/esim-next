@@ -351,6 +351,30 @@ const SharePackagePage = () => {
     }
   }, [allFetchedPlans, planTypeTab, packageData]);
 
+  // For regional: recalculate available tabs when sub-region changes
+  useEffect(() => {
+    if (!packageData || !selectedSubRegion || !allFetchedPlans.length) return;
+    const planType = packageData.plan_type || packageData.package_type || '';
+    if (planType !== 'regional' && planType !== 'global') return;
+    // Get ALL plans for selected sub-region (before tab filtering)
+    const subAllPlans = allFetchedPlans.filter((p) => {
+      // Filter topups out
+      const slug = (p.package_id || p.slug || '').toLowerCase();
+      if (slug.includes('topup') || slug.includes('top-up')) return false;
+      return extractSubRegion(p) === selectedSubRegion;
+    });
+    const hasSms = subAllPlans.some((p) => p.sms_included === true);
+    const hasUnlimited = subAllPlans.some((p) => isUnlimitedPlan(p));
+    const hasRegular = subAllPlans.some((p) => !isUnlimitedPlan(p) && p.sms_included !== true);
+    const tabs = [];
+    if (hasRegular) tabs.push('regular');
+    if (hasUnlimited) tabs.push('unlimited');
+    if (hasSms) tabs.push('sms');
+    setAvailableTabs(tabs.length ? tabs : ['regular']);
+    // If current tab no longer available, reset to first available
+    setPlanTypeTab((prev) => tabs.includes(prev) ? prev : tabs[0] || 'regular');
+  }, [selectedSubRegion, allFetchedPlans, packageData]);
+
   // For regional: derive otherTierPlans from selected sub-region
   useEffect(() => {
     if (!packageData) return;
