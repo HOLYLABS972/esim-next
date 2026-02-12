@@ -41,8 +41,9 @@ function extractSubRegion(plan) {
   if (regionSource.includes('hello-africa') || regionSource.includes('africa')) return 'Africa';
   if (regionSource.includes('island-hopper') || regionSource.includes('caribbean')) return 'Caribbean';
   if (regionSource.includes('asia')) return 'Asia';
-  if (regionSource.includes('middle-east') || regionSource.includes('mena')) return 'Middle East';
-  if (regionSource.includes('oceania')) return 'Oceania';
+  if (regionSource.includes('middle-east') || regionSource.includes('mena') || regionSource.includes('menalink')) return 'Middle East';
+  if (regionSource.includes('oceania') || regionSource.includes('oceanlink')) return 'Oceania';
+  if (regionSource.includes('safarilink') || regionSource.includes('cellsa') || regionSource.includes('chinko')) return 'Africa';
   if (regionSource.includes('cis')) return 'CIS Countries';
   if (regionSource.includes('rogers') || regionSource.includes('telus') || regionSource.includes('bell') || regionSource.includes('videotron')) return 'North America';
   if (regionSource.includes('optus') || regionSource.includes('telstra')) return 'Oceania';

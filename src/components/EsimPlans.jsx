@@ -605,16 +605,20 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
           extractedRegion = 'Asia';
         }
         // Middle East
-        else if (regionSource.includes('middle-east') || regionSource.includes('mena')) {
+        else if (regionSource.includes('middle-east') || regionSource.includes('mena') || regionSource.includes('menalink')) {
           extractedRegion = 'Middle East';
         }
         // Oceania
-        else if (regionSource.includes('oceania')) {
+        else if (regionSource.includes('oceania') || regionSource.includes('oceanlink')) {
           extractedRegion = 'Oceania';
         }
-        // If no region detected and it's a regional plan, default to Oceania (since "Other" is typically Oceania)
+        // Africa (additional operators)
+        else if (regionSource.includes('safarilink') || regionSource.includes('cellsa') || regionSource.includes('chinko')) {
+          extractedRegion = 'Africa';
+        }
+        // If no region detected and it's a regional plan, default to Other
         else if (!extractedRegion || extractedRegion.toLowerCase() === 'n/a') {
-          extractedRegion = 'Oceania';
+          extractedRegion = 'Other';
         }
       }
 
