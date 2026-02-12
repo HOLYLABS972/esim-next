@@ -74,11 +74,11 @@ export async function GET(request, context) {
 
     const transformed = transformPlan(plan, discountPct);
     
-    console.log('✅ Found package:', transformed.id, 'raw_usd:', plan.price_usd, 'raw_rub:', plan.price_rub, 'disc:', discountPct, 'final_usd:', transformed.price);
+    console.log('✅ Found package:', transformed.id, 'raw_usd:', plan.price_usd, 'raw_rub:', plan.price_rub, 'disc:', discountPct, 'final_usd:', transformed.price, 'supabase_url:', process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'NONE');
     
     return NextResponse.json({
       success: true,
-      _debug: { raw_usd: plan.price_usd, raw_rub: plan.price_rub, discountPct },
+      _debug: { raw_usd: plan.price_usd, raw_rub: plan.price_rub, discountPct, supabase_url: (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'NONE').replace(/https?:\/\//, '').slice(0, 20) },
       data: { plan: transformed }
     });
     
