@@ -122,7 +122,9 @@ export async function GET(request) {
       const dataMB = p.data_amount_mb ?? (parseInt(p.data_amount, 10) || 0);
       const tier = [1024, 2048, 3072, 5120, 10240, 20480, 51200, 102400].find((t) => Math.abs((dataMB || 0) - t) < 100) || (p.is_unlimited ? 'unlimited' : dataMB);
       const scope = (p.package_type === 'global') ? 'GL' : (p.package_type === 'regional') ? `RG:${p.operator || p.slug || ''}` : (p.country_code || '');
-      return `${scope}|${tier}|${p.validity_days ?? 0}`;
+      // Separate SMS/voice plans from data-only plans so they don't get deduped together
+      const planVariant = (p.sms_included || p.voice_included) ? 'sms' : p.is_unlimited ? 'unlim' : 'data';
+      return `${scope}|${tier}|${p.validity_days ?? 0}|${planVariant}`;
     };
     const byKey = new Map();
     for (const plan of filteredPlans) {
