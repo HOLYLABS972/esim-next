@@ -150,6 +150,11 @@ const SharePackagePage = () => {
       if (response.ok && data?.success && data?.data?.plan) {
         setPackageData(data.data.plan);
       } else {
+        // If topup package, redirect to base package
+        if (response.status === 404 && data?.redirect) {
+          router.replace(`/share-package/${data.redirect}`);
+          return;
+        }
         setPackageData(null);
         if (response.status === 404) {
           toast.error(t('errors.planNotFound', 'Тариф не найден'));

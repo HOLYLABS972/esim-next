@@ -16,6 +16,17 @@ export async function GET(request, context) {
       return NextResponse.json({ success: false, error: 'Package ID is required' }, { status: 400 });
     }
 
+    // If someone requests a topup package, strip the -topup suffix and look up the base SIM package
+    const topupSuffix = '-topup';
+    if (packageId.endsWith(topupSuffix)) {
+      const baseId = packageId.slice(0, -topupSuffix.length);
+      return NextResponse.json({
+        success: false,
+        error: 'Topup packages are not available for direct purchase',
+        redirect: baseId
+      }, { status: 404 });
+    }
+
     if (!supabaseAdmin) {
       return NextResponse.json({ success: false, error: 'Supabase not configured' }, { status: 503 });
     }
