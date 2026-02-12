@@ -223,13 +223,11 @@ const SharePackagePage = () => {
         setAllFetchedPlans(plans);
 
         // Determine available tabs
-        const hasSms = plans.some((p) => p.sms_included === true);
         const hasUnlimited = plans.some((p) => isUnlimitedPlan(p));
         const hasRegular = plans.some((p) => !isUnlimitedPlan(p) && p.sms_included !== true);
         const tabs = [];
         if (hasRegular) tabs.push('regular');
         if (hasUnlimited) tabs.push('unlimited');
-        if (hasSms) tabs.push('sms');
         setAvailableTabs(tabs.length ? tabs : ['regular']);
 
         // Auto-detect current package tab
