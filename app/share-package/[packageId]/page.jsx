@@ -205,33 +205,47 @@ const SharePackagePage = () => {
       ? plans.filter((p) => isSms(p))
       : plans.filter((p) => !isSms(p));
 
-    // Data tiers (cheapest per tier)
+    // Data tiers (cheapest per tier) — skip 50GB (51200) for internet tab
+    const DISPLAY_TIERS = tab === 'sms' ? TIER_MB : [1024, 2048, 5120, 10240, 20480];
     const dataTiers = filtered.filter((p) => !isUnlimitedPlan(p));
     const byTier = new Map();
     dataTiers.forEach((p) => {
       const mb = getDataMB(p);
-      const tier = TIER_MB.find((t) => Math.abs(mb - t) < 100);
+      const tier = DISPLAY_TIERS.find((t) => Math.abs(mb - t) < 100);
       if (tier == null) return;
       const price = parseFloat(p.price) || parseFloat(p.price_usd) || 999;
       if (!byTier.has(tier) || price < (parseFloat(byTier.get(tier).price) || parseFloat(byTier.get(tier).price_usd) || 999)) {
         byTier.set(tier, p);
       }
     });
-    TIER_MB.forEach((t) => { if (byTier.has(t)) result.push(byTier.get(t)); });
+    DISPLAY_TIERS.forEach((t) => { if (byTier.has(t)) result.push(byTier.get(t)); });
 
-    // Unlimited plans (by validity, cheapest each)
+    // Unlimited: for internet tab show only longest (30d); for SMS tab show all
     const unlimited = filtered.filter((p) => isUnlimitedPlan(p));
-    const byValidity = new Map();
-    unlimited.forEach((p) => {
-      const days = parseInt(p.validity || p.day || p.period || 0);
-      const price = parseFloat(p.price) || parseFloat(p.price_usd) || 999;
-      if (!byValidity.has(days) || price < (parseFloat(byValidity.get(days).price) || parseFloat(byValidity.get(days).price_usd) || 999)) {
-        byValidity.set(days, { ...p, _isUnlimitedTier: true });
+    if (unlimited.length > 0) {
+      if (tab === 'sms') {
+        // SMS tab: show all unlimited variants
+        const byValidity = new Map();
+        unlimited.forEach((p) => {
+          const days = parseInt(p.validity || p.day || p.period || 0);
+          const price = parseFloat(p.price) || parseFloat(p.price_usd) || 999;
+          if (!byValidity.has(days) || price < (parseFloat(byValidity.get(days).price) || parseFloat(byValidity.get(days).price_usd) || 999)) {
+            byValidity.set(days, { ...p, _isUnlimitedTier: true });
+          }
+        });
+        Array.from(byValidity.values())
+          .sort((a, b) => parseInt(a.validity || a.day || 0) - parseInt(b.validity || b.day || 0))
+          .forEach((p) => result.push(p));
+      } else {
+        // Internet tab: show only the longest validity unlimited (typically 30d)
+        const longest = unlimited.reduce((best, p) => {
+          const days = parseInt(p.validity || p.day || p.period || 0);
+          const bestDays = parseInt(best.validity || best.day || best.period || 0);
+          return days > bestDays ? p : best;
+        });
+        result.push({ ...longest, _isUnlimitedTier: true });
       }
-    });
-    Array.from(byValidity.values())
-      .sort((a, b) => parseInt(a.validity || a.day || 0) - parseInt(b.validity || b.day || 0))
-      .forEach((p) => result.push(p));
+    }
 
     return result;
   };
