@@ -31,9 +31,11 @@ const SUB_REGION_NAME_RU = {
   Oceania: 'Океания',
   'CIS Countries': 'Страны СНГ',
   Other: 'Другие',
+  Global: 'Глобальный',
 };
 
 function extractSubRegion(plan) {
+  if (plan?._isGlobal || (plan?.package_type === 'global') || (plan?.plan_type === 'global')) return 'Global';
   const regionSource = ((plan?.operator || '') + ' ' + (plan?.package_id || plan?.slug || '')).toLowerCase();
   if (regionSource.includes('latamlink') || regionSource.includes('latam') || regionSource.includes('latin-america')) return 'Latin America';
   if (regionSource.includes('americanmex') || regionSource.includes('north-america')) return 'North America';
@@ -203,15 +205,21 @@ const SharePackagePage = () => {
     const countryCode = packageData.country_code || packageData.country || urlCountryCode || '';
     const isGlobal = planType === 'global';
     const isRegional = planType === 'regional';
-    const url = isGlobal
-      ? '/api/public/plans?type=global&limit=500'
-      : isRegional
-        ? '/api/public/plans?type=regional&limit=500'
-        : `/api/public/plans?country=${countryCode}&limit=500`;
-    fetch(url)
-      .then((res) => res.ok ? res.json() : { success: false })
-      .then((data) => {
-        const plans = data?.success ? (data.data?.plans || []) : [];
+    const url = (isGlobal || isRegional)
+      ? null // fetch both global + regional
+      : `/api/public/plans?country=${countryCode}&limit=500`;
+    const fetchPlans = (isGlobal || isRegional)
+      ? Promise.all([
+          fetch('/api/public/plans?type=regional&limit=500').then(r => r.ok ? r.json() : { success: false }),
+          fetch('/api/public/plans?type=global&limit=500').then(r => r.ok ? r.json() : { success: false }),
+        ]).then(([regData, glData]) => {
+          const regPlans = (regData?.success ? regData.data?.plans || [] : []);
+          const glPlans = (glData?.success ? glData.data?.plans || [] : []).map(p => ({ ...p, _isGlobal: true, package_type: 'regional', plan_type: 'regional' }));
+          return [...regPlans, ...glPlans];
+        })
+      : fetch(url).then(res => res.ok ? res.json() : { success: false }).then(data => data?.success ? (data.data?.plans || []) : []);
+    fetchPlans
+      .then((plans) => {
         setAllFetchedPlans(plans);
 
         // Determine available tabs
@@ -245,7 +253,7 @@ const SharePackagePage = () => {
       return;
     }
     const planType = packageData.plan_type || packageData.package_type || '';
-    const isRegional = planType === 'regional';
+    const isRegional = planType === 'regional' || planType === 'global';
 
     // Filter by tab type
     let tabFiltered;
@@ -342,7 +350,7 @@ const SharePackagePage = () => {
   useEffect(() => {
     if (!packageData) return;
     const planType = packageData.plan_type || packageData.package_type || '';
-    if (planType !== 'regional' || !selectedSubRegion || allRegionalPlans.length === 0) return;
+    if ((planType !== 'regional' && planType !== 'global') || !selectedSubRegion || allRegionalPlans.length === 0) return;
     const subPlans = allRegionalPlans.filter((p) => extractSubRegion(p) === selectedSubRegion);
 
     if (planTypeTab === 'unlimited') {

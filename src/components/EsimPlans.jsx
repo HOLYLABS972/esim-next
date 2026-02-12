@@ -476,9 +476,9 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   }, [filterType]);
 
   const handleCountrySelect = async (country) => {
-    // Global entry — use preloaded global plans
+    // Global entry — navigate to global plan in unified regional+global view
     if (country._isGlobal && storeGlobalPlans.length > 0) {
-      openPlansList(storeGlobalPlans, { countryCode: 'GL', flag: '🌍' });
+      openPlansList(storeGlobalPlans, { countryCode: 'RG', flag: '🌍' });
       return;
     }
     setLoadingPlans(true);
@@ -554,26 +554,36 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   };
 
   const fetchPlansByType = async (planType) => {
-    // Use Supabase API endpoint that loads from Supabase
-    const response = await fetch(`/api/public/plans?type=${planType}&limit=10000`);
-
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status}`);
+    let allPlans;
+    if (planType === 'regional' || planType === 'global') {
+      // Unified: fetch both regional + global, merge global as "Global" region
+      const [regRes, glRes] = await Promise.all([
+        fetch('/api/public/plans?type=regional&limit=10000'),
+        fetch('/api/public/plans?type=global&limit=10000'),
+      ]);
+      const regData = regRes.ok ? await regRes.json() : { success: false };
+      const glData = glRes.ok ? await glRes.json() : { success: false };
+      const regPlans = regData?.success ? regData.data?.plans || [] : [];
+      const glPlans = (glData?.success ? glData.data?.plans || [] : []).map(p => ({ ...p, _isGlobal: true, extractedRegion: 'Global' }));
+      allPlans = [...regPlans, ...glPlans];
+      // Force planType to regional for downstream logic
+      planType = 'regional';
+    } else {
+      const response = await fetch(`/api/public/plans?type=${planType}&limit=10000`);
+      if (!response.ok) throw new Error(`API request failed: ${response.status}`);
+      const data = await response.json();
+      if (!data?.success || !data?.data) throw new Error(data?.error || 'Failed to load plans');
+      allPlans = data.data.plans || [];
     }
-
-    const data = await response.json();
-    if (!data?.success || !data?.data) {
-      throw new Error(data?.error || 'Failed to load plans');
-    }
-
-    const allPlans = data.data.plans || [];
 
     // Add extracted region info to plans (for regional plans, extract from operator/slug)
     const plansWithRegions = allPlans.map(plan => {
       let extractedRegion = plan.region || plan.region_slug;
 
+      // Global plans already tagged
+      if (plan._isGlobal) extractedRegion = 'Global';
       // For regional plans, extract region from operator or slug if not already set
-      if (planType === 'regional' && (!extractedRegion || extractedRegion.toLowerCase() === 'n/a')) {
+      if (planType === 'regional' && !plan._isGlobal && (!extractedRegion || extractedRegion.toLowerCase() === 'n/a')) {
         const slug = (plan.slug || '').toLowerCase();
         const operator = (plan.operator || '').toLowerCase();
 
@@ -842,7 +852,12 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   const storeGlobalImageUrl = getRegionImageUrlBySlug(storeGlobalImageSlug) || getRegionImageUrlBySlug('global-172');
 
   const storeRegionalCards = (() => {
-    const grouped = storeRegionalPlans.reduce((acc, plan) => {
+    // Merge global plans into regional as "Global" region
+    const allPlans = [
+      ...storeRegionalPlans,
+      ...storeGlobalPlans.map(p => ({ ...p, extractedRegion: 'Global', _isGlobal: true })),
+    ];
+    const grouped = allPlans.reduce((acc, plan) => {
       const key = plan.extractedRegion || plan.region || plan.region_slug || 'Oceania';
       if (!acc[key]) acc[key] = [];
       acc[key].push(plan);
@@ -879,7 +894,12 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
           plans,
         };
       })
-      .sort((a, b) => (b.countriesCount || 0) - (a.countriesCount || 0));
+      .sort((a, b) => {
+        // Global always first
+        if (a.regionKey === 'Global') return -1;
+        if (b.regionKey === 'Global') return 1;
+        return (b.countriesCount || 0) - (a.countriesCount || 0);
+      });
   })();
 
   const storeRegionsCount = storeRegionalCards.length;
@@ -1315,6 +1335,8 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                               }, {});
 
                               const sortedRegions = Object.keys(groupedByRegion).sort((a, b) => {
+                                if (a === 'Global') return -1;
+                                if (b === 'Global') return 1;
                                 // Sort by translated name if possible
                                 const nameA = translateRegionName(a, locale, regionLabels) || a;
                                 const nameB = translateRegionName(b, locale, regionLabels) || b;
@@ -1612,6 +1634,8 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                               }, {});
 
                               const sortedRegions = Object.keys(groupedByRegion).sort((a, b) => {
+                                if (a === 'Global') return -1;
+                                if (b === 'Global') return 1;
                                 // Sort by translated name if possible
                                 const nameA = translateRegionName(a, locale, regionLabels) || a;
                                 const nameB = translateRegionName(b, locale, regionLabels) || b;
