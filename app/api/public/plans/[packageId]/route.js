@@ -80,6 +80,11 @@ export async function GET(request, context) {
       success: true,
       _debug: { raw_usd: plan.price_usd, raw_rub: plan.price_rub, discountPct, supabase_url: (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'NONE').replace(/https?:\/\//, '').slice(0, 20) },
       data: { plan: transformed }
+    }, {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, max-age=0, must-revalidate',
+        Pragma: 'no-cache',
+      }
     });
     
   } catch (error) {
