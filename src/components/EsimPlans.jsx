@@ -486,23 +486,9 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
       openPlansList(storeGlobalPlans, { countryCode: 'RG', flag: '🌍' });
       return;
     }
-    // If global/regional but plans not loaded yet, fetch them directly
+    // If global/regional but plans not loaded yet, go directly to discover 1GB
     if (isGlobalOrRegional) {
-      setLoadingPlans(true);
-      try {
-        const res = await fetch('/api/public/plans?type=global&limit=10000');
-        if (!res.ok) throw new Error('Failed to load global plans');
-        const data = await res.json();
-        const plans = (data?.success ? data.data?.plans || [] : []).map(p => ({ ...p, _isGlobal: true }));
-        if (plans.length > 0) {
-          openPlansList(plans, { countryCode: 'RG', flag: '🌍' });
-          return;
-        }
-      } catch (err) {
-        console.error('Error loading global plans:', err);
-      } finally {
-        setLoadingPlans(false);
-      }
+      navigateToSharePackage({ slug: 'discover-1gb-7days-px', package_id: 'discover-1gb-7days-px' }, 'RG', '🌍');
       return;
     }
     setLoadingPlans(true);
