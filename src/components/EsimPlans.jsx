@@ -481,8 +481,28 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
 
   const handleCountrySelect = async (country) => {
     // Global or Regional entry — navigate to global 1GB plan in unified regional+global view
-    if ((country._isGlobal || country.code === 'RG' || country.type === 'global' || country.type === 'regional') && storeGlobalPlans.length > 0) {
+    const isGlobalOrRegional = country._isGlobal || country.code === 'RG' || country.type === 'global' || country.type === 'regional';
+    if (isGlobalOrRegional && storeGlobalPlans.length > 0) {
       openPlansList(storeGlobalPlans, { countryCode: 'RG', flag: '🌍' });
+      return;
+    }
+    // If global/regional but plans not loaded yet, fetch them directly
+    if (isGlobalOrRegional) {
+      setLoadingPlans(true);
+      try {
+        const res = await fetch('/api/public/plans?type=global&limit=10000');
+        if (!res.ok) throw new Error('Failed to load global plans');
+        const data = await res.json();
+        const plans = (data?.success ? data.data?.plans || [] : []).map(p => ({ ...p, _isGlobal: true }));
+        if (plans.length > 0) {
+          openPlansList(plans, { countryCode: 'RG', flag: '🌍' });
+          return;
+        }
+      } catch (err) {
+        console.error('Error loading global plans:', err);
+      } finally {
+        setLoadingPlans(false);
+      }
       return;
     }
     setLoadingPlans(true);
