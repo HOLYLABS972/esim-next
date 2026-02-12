@@ -62,17 +62,20 @@ export async function GET(request) {
 
     // Fetch ALL countries from esim_countries (not just those with packages)
     let dbNamesByCode = {};
-    const { data: allDbCountries } = await supabaseAdmin
+    const { data: allDbCountries, error: countriesError } = await supabaseAdmin
       .from('esim_countries')
-      .select('airalo_country_code, country_name, country_name_ru, country_name_he, country_name_ar')
-      .eq('is_visible', true); // Only fetch visible countries
+      .select('airalo_country_code, country_name, country_name_ru, country_name_he, country_name_ar, is_visible');
+    
+    if (countriesError) {
+      console.error('❌ esim_countries query error:', countriesError.message);
+    }
 
-    console.log(`🗂️ esim_countries query returned ${allDbCountries?.length ?? 0} rows`);
-    if (allDbCountries && allDbCountries.length > 0) {
-      // Debug: log first row to verify columns
-      const sample = allDbCountries.find(r => r.airalo_country_code === 'TR') || allDbCountries[0];
+    const visibleCountries = (allDbCountries || []).filter(r => r.is_visible !== false);
+    console.log(`🗂️ esim_countries query returned ${allDbCountries?.length ?? 0} rows, ${visibleCountries.length} visible`);
+    if (visibleCountries.length > 0) {
+      const sample = visibleCountries.find(r => r.airalo_country_code === 'TR') || visibleCountries[0];
       console.log(`🔍 Sample row:`, JSON.stringify(sample));
-      for (const row of allDbCountries) {
+      for (const row of visibleCountries) {
         const c = (row.airalo_country_code || '').toUpperCase();
         if (c) dbNamesByCode[c] = row;
       }
