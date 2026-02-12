@@ -915,9 +915,9 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   const storePopularCountries = (() => {
     const list = [...countries];
     list.sort((a, b) => (b.plansCount || 0) - (a.plansCount || 0));
-    const top = list.slice(0, 6);
+    const top = list.slice(0, 5);
 
-    // Prepend Global as the first popular option
+    // Prepend Global as the first popular option (total = 6)
     if (storeGlobalPlans.length > 0) {
       const globalLabel = countriesData?.labels?.global?.[locale] ?? 'Global';
       top.unshift({
