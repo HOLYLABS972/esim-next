@@ -70,8 +70,16 @@ export async function GET(request) {
       console.error('❌ esim_countries query error:', countriesError.message);
     }
 
-    const visibleCountries = (allDbCountries || []).filter(r => r.is_visible !== false);
-    console.log(`🗂️ esim_countries query returned ${allDbCountries?.length ?? 0} rows, ${visibleCountries.length} visible`);
+    const hiddenCodes = new Set();
+    const visibleCountries = (allDbCountries || []).filter(r => {
+      if (r.is_visible === false) {
+        const c = (r.airalo_country_code || '').toUpperCase();
+        if (c) hiddenCodes.add(c);
+        return false;
+      }
+      return true;
+    });
+    console.log(`🗂️ esim_countries query returned ${allDbCountries?.length ?? 0} rows, ${visibleCountries.length} visible, ${hiddenCodes.size} hidden`);
     if (visibleCountries.length > 0) {
       const sample = visibleCountries.find(r => r.airalo_country_code === 'TR') || visibleCountries[0];
       console.log(`🔍 Sample row:`, JSON.stringify(sample));
@@ -79,6 +87,11 @@ export async function GET(request) {
         const c = (row.airalo_country_code || '').toUpperCase();
         if (c) dbNamesByCode[c] = row;
       }
+    }
+
+    // Remove hidden countries from plans
+    for (const code of hiddenCodes) {
+      delete codeToPlans[code];
     }
 
     // Add countries from DB that don't have packages yet
