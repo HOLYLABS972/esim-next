@@ -78,7 +78,7 @@ export async function GET(request, context) {
     
     return NextResponse.json({
       success: true,
-      _debug: { raw_usd: plan.price_usd, raw_rub: plan.price_rub, discountPct, supabase_url: (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'NONE').replace(/https?:\/\//, '').slice(0, 20) },
+      _debug: { raw_usd: plan.price_usd, raw_rub: plan.price_rub, discountPct, supabase_url: (process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'NONE').replace(/https?:\/\//, '').slice(0, 20), ts: Date.now(), hasServiceKey: !!process.env.SUPABASE_SERVICE_ROLE_KEY },
       data: { plan: transformed }
     }, {
       headers: {
