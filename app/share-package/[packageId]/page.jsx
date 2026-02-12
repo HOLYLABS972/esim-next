@@ -331,7 +331,8 @@ const SharePackagePage = () => {
     const planType = packageData.plan_type || packageData.package_type || '';
     if ((planType !== 'regional' && planType !== 'global') || !selectedSubRegion || allRegionalPlans.length === 0) return;
     const subPlans = allRegionalPlans.filter((p) => extractSubRegion(p) === selectedSubRegion);
-    setHasSmsPlans(subPlans.some((p) => p.sms_included || p.voice_included));
+    // Hide SMS tab for Global (Discover+ shown only in internet tab as regular plans)
+    setHasSmsPlans(selectedSubRegion !== 'Global' && subPlans.some((p) => p.sms_included || p.voice_included));
     setOtherTierPlans(buildTierPlans(subPlans, planTab));
   }, [packageData, selectedSubRegion, allRegionalPlans, planTab]);
 
