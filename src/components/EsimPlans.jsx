@@ -481,7 +481,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
 
   const handleCountrySelect = async (country) => {
     // Global or Regional entry — navigate to global 1GB plan in unified regional+global view
-    if ((country._isGlobal || country.code === 'RG' || country.type === 'regional') && storeGlobalPlans.length > 0) {
+    if ((country._isGlobal || country.code === 'RG' || country.type === 'global' || country.type === 'regional') && storeGlobalPlans.length > 0) {
       openPlansList(storeGlobalPlans, { countryCode: 'RG', flag: '🌍' });
       return;
     }
