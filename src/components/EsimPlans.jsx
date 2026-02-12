@@ -559,8 +559,8 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
 
   const fetchPlansByType = async (planType) => {
     let allPlans;
-    if (planType === 'regional' || planType === 'global') {
-      // Unified: fetch both regional + global, merge global as "Global" region
+    if (planType === 'regional') {
+      // Regional: fetch both regional + global, merge global as "Global" region
       const [regRes, glRes] = await Promise.all([
         fetch('/api/public/plans?type=regional&limit=10000'),
         fetch('/api/public/plans?type=global&limit=10000'),
@@ -570,8 +570,12 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
       const regPlans = regData?.success ? regData.data?.plans || [] : [];
       const glPlans = (glData?.success ? glData.data?.plans || [] : []).map(p => ({ ...p, _isGlobal: true, extractedRegion: 'Global' }));
       allPlans = [...regPlans, ...glPlans];
-      // Force planType to regional for downstream logic
-      planType = 'regional';
+    } else if (planType === 'global') {
+      // Global only — separate from regional
+      const glRes = await fetch('/api/public/plans?type=global&limit=10000');
+      const glData = glRes.ok ? await glRes.json() : { success: false };
+      allPlans = (glData?.success ? glData.data?.plans || [] : []).map(p => ({ ...p, _isGlobal: true, extractedRegion: 'Global' }));
+      planType = 'regional'; // for downstream region extraction
     } else {
       const response = await fetch(`/api/public/plans?type=${planType}&limit=10000`);
       if (!response.ok) throw new Error(`API request failed: ${response.status}`);
