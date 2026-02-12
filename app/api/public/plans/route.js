@@ -23,7 +23,7 @@ export async function GET(request) {
     
     let query = supabaseAdmin
       .from('esim_packages')
-      .select('id, slug, package_id, title, title_ru, operator, country_code, country_id, price_usd, price_rub, price_ils, data_amount, data_amount_mb, validity_days, is_active, is_unlimited, package_type, plan_type, region_id, voice_minutes, sms_count, created_at, updated_at')
+      .select('id, slug, package_id, title, title_ru, operator, country_code, country_id, price_usd, price_rub, price_ils, price_eur, price_aud, price_cad, data_amount, data_amount_mb, validity_days, is_active, is_unlimited, package_type, plan_type, region_id, voice_included, sms_included, speed, created_at, updated_at')
       .eq('is_active', true);
     
     // Filter out topup plans - we'll filter in JS code instead of query to avoid null issues
