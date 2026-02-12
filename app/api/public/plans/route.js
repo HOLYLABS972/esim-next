@@ -132,7 +132,12 @@ export async function GET(request) {
         byKey.set(key, plan);
       }
     }
-    const dedupedPlans = Array.from(byKey.values());
+    // Filter out phantom plans with no proper package_id (numeric-only slugs can't be looked up)
+    const validPlans = Array.from(byKey.values()).filter(p => {
+      const pid = p.package_id || p.slug || '';
+      return pid.length > 0 && !/^\d+$/.test(pid);
+    });
+    const dedupedPlans = validPlans;
 
     // Fetch discount from admin_config
     let discountPct = 0;
@@ -166,8 +171,8 @@ export async function GET(request) {
       return {
         _id: plan.id.toString(),
         id: plan.id.toString(),
-        slug: plan.package_id || plan.id.toString(),
-        package_id: plan.package_id || plan.id.toString(),
+        slug: (plan.package_id && plan.package_id.length > 0) ? plan.package_id : (plan.slug && plan.slug.length > 0) ? plan.slug : plan.id.toString(),
+        package_id: (plan.package_id && plan.package_id.length > 0) ? plan.package_id : (plan.slug && plan.slug.length > 0) ? plan.slug : plan.id.toString(),
         name: cleanTitle,  // Use generated clean title (English fallback)
         title: plan.title || cleanTitle,  // Use database title if available, otherwise generated
         title_ru: plan.title_ru || null,  // CRITICAL: Include Russian title from database
