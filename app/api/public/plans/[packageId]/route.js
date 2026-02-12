@@ -82,7 +82,10 @@ export async function GET(request, context) {
 const MIN_PRICE_FLOOR = 0.5;
 
 function transformPlan(plan, discountPct = 0) {
-  const countryCode = (plan.country_code && plan.country_code.trim()) || null;
+  const isRegionalOrGlobal = plan.package_type === 'regional' || plan.package_type === 'global';
+  const rawCountryCode = (plan.country_code && plan.country_code.trim()) || null;
+  // For regional/global plans, don't expose the long country_code list
+  const countryCode = isRegionalOrGlobal ? null : rawCountryCode;
   const countryCodesArray = countryCode
     ? (countryCode.includes(',') ? countryCode.split(',').map((c) => c.trim()).filter(Boolean) : [countryCode])
     : [];
