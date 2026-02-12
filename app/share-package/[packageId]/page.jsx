@@ -799,7 +799,29 @@ const SharePackagePage = () => {
                     <button
                       key={tab}
                       type="button"
-                      onClick={() => setPlanTypeTab(tab)}
+                      onClick={() => {
+                        setPlanTypeTab(tab);
+                        // Navigate to 1GB plan of the new tab
+                        const tabPlans = tab === 'unlimited'
+                          ? allFetchedPlans.filter((p) => isUnlimitedPlan(p) && p.sms_included !== true)
+                          : tab === 'sms'
+                            ? allFetchedPlans.filter((p) => p.sms_included === true)
+                            : allFetchedPlans.filter((p) => !isUnlimitedPlan(p) && p.sms_included !== true);
+                        // For regional, filter by selected sub-region
+                        const pType = packageData?.plan_type || packageData?.package_type || '';
+                        const isReg = pType === 'regional' || pType === 'global';
+                        const relevantPlans = isReg && selectedSubRegion
+                          ? tabPlans.filter(p => extractSubRegion(p) === selectedSubRegion)
+                          : tabPlans;
+                        const firstPlan = tab === 'unlimited'
+                          ? relevantPlans.sort((a, b) => (parseInt(a.validity || a.day || 0)) - (parseInt(b.validity || b.day || 0)))[0]
+                          : relevantPlans.filter(p => { const mb = getDataMB(p); return TIER_MB.some(t => Math.abs(mb - t) < 100); }).sort((a, b) => getDataMB(a) - getDataMB(b))[0];
+                        if (firstPlan) {
+                          const slug = firstPlan?.slug ?? firstPlan?.package_id ?? firstPlan?.id;
+                          const qs = currentQuery();
+                          if (slug) router.push(`/share-package/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`);
+                        }
+                      }}
                       className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-colors ${
                         planTypeTab === tab
                           ? 'bg-blue-500 text-white shadow-sm'
