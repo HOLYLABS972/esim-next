@@ -63,10 +63,11 @@ export async function GET(request, context) {
 
     const transformed = transformPlan(plan, discountPct);
     
-    console.log('✅ Found package:', transformed.id);
+    console.log('✅ Found package:', transformed.id, 'raw_usd:', plan.price_usd, 'raw_rub:', plan.price_rub, 'disc:', discountPct, 'final_usd:', transformed.price);
     
     return NextResponse.json({
       success: true,
+      _debug: { raw_usd: plan.price_usd, raw_rub: plan.price_rub, discountPct },
       data: { plan: transformed }
     });
     
