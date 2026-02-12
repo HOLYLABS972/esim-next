@@ -279,7 +279,7 @@ const SharePackagePage = () => {
           name,
           nameRu: SUB_REGION_NAME_RU[name] || name,
           plans: regionPlans,
-        })).sort((a, b) => b.plans.length - a.plans.length);
+        })).sort((a, b) => { if (a.name === 'Global') return -1; if (b.name === 'Global') return 1; return b.plans.length - a.plans.length; });
         setRegionalSubRegionGroups(groupList);
         setSelectedSubRegion((prev) => {
           if (prev && groupList.some((g) => g.name === prev)) return prev;
@@ -321,7 +321,7 @@ const SharePackagePage = () => {
           name,
           nameRu: SUB_REGION_NAME_RU[name] || name,
           plans: regionPlans,
-        })).sort((a, b) => b.plans.length - a.plans.length);
+        })).sort((a, b) => { if (a.name === 'Global') return -1; if (b.name === 'Global') return 1; return b.plans.length - a.plans.length; });
         setRegionalSubRegionGroups(groupList);
         setSelectedSubRegion((prev) => {
           const fromPackage = extractSubRegion(packageData);
