@@ -53,7 +53,7 @@ export default function Signup() {
         >
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg p-8">
             <div className="mb-8">
-              <h2 className="text-center text-2xl font-bold text-gray-900 dark:text-white" style={{ fontFamily: 'Open Sans, sans-serif' }}>
+              <h2 className="text-center text-2xl font-bold text-gray-900 dark:text-white" >
                 {t('auth.signup.title', 'Create an account')}
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">

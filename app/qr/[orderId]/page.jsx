@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Smartphone, QrCode, Loader2, AlertCircle } from 'lucide-react';
+import { QRCodeSVG } from 'qrcode.react';
 
 export default function PublicQRCodePage() {
   const params = useParams();
@@ -127,10 +128,12 @@ export default function PublicQRCodePage() {
             <div className="mb-6">
               <div className="bg-white p-4 rounded-xl mb-4">
                 <div className="flex items-center justify-center">
-                  <img
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=256x256&data=${encodeURIComponent(qrData.lpa || qrData.qrCode)}`}
-                    alt="eSIM QR Code"
-                    className="w-64 h-64 object-contain"
+                  <QRCodeSVG
+                    value={qrData.lpa || qrData.qrCode}
+                    size={256}
+                    level="M"
+                    bgColor="#ffffff"
+                    fgColor="#000000"
                   />
                 </div>
               </div>
