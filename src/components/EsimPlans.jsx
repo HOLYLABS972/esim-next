@@ -75,7 +75,7 @@ const STORE_MAP_SVG_URL = '/images/frontend/home/361053945_fb50482a-76fc-47ca-82
 
 // Match mobile app region card images (Supabase Storage)
 const SUPABASE_REGION_IMAGE_BASE_URL =
-  'https://kfawcvdjsqrcquknwgac.supabase.co/storage/v1/object/public/region_image';
+  'https://supabase.holylabs.net/storage/v1/object/public/region_image';
 
 const REGION_IMAGE_FILES = {
   'global-172': 'global-172.avif',
