@@ -59,8 +59,6 @@ export default async function PayRedirect({ params }) {
   });
 
   if (isTest) params2.append('IsTest', '1');
-  params2.append('SuccessURL', 'https://globalbanka.roamjet.net/api/robokassa/callback');
-  params2.append('FailURL', 'https://globalbanka.roamjet.net/payment-failed?reason=payment_cancelled');
 
   const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params2.toString()}`;
 
