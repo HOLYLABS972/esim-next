@@ -1,50 +1,69 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { supabaseAdmin } from '../../../src/lib/supabase';
+import crypto from 'crypto';
 
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+export const dynamic = 'force-dynamic';
 
-export default function PayRedirect() {
-  const params = useParams();
-  const orderId = params?.orderId;
-  const [error, setError] = useState(null);
+export default async function PayRedirect({ params }) {
+  const p = typeof params?.then === 'function' ? await params : params;
+  const orderId = parseInt(p?.orderId, 10);
 
-  useEffect(() => {
-    if (!orderId) return;
-
-    // Fetch order from API and generate Robokassa URL
-    async function redirect() {
-      try {
-        const res = await fetch(`/api/pay/${orderId}`);
-        const data = await res.json();
-        if (data.paymentUrl) {
-          window.location.href = data.paymentUrl;
-        } else {
-          setError(data.error || 'Payment URL not found');
-        }
-      } catch (e) {
-        setError('Failed to load payment');
-      }
-    }
-    redirect();
-  }, [orderId]);
-
-  if (error) {
+  if (!orderId || isNaN(orderId)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-        <div className="text-center">
-          <p className="text-xl">❌ {error}</p>
-          <p className="mt-2 text-gray-400">Попробуйте снова через бот</p>
-        </div>
+        <p>❌ Неверный номер заказа</p>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-4"></div>
-        <p>Перенаправление на оплату...</p>
+  // Fetch order
+  const { data: order } = await supabaseAdmin
+    .from('esim_orders')
+    .select('id, price_rub, status, country_name')
+    .eq('id', orderId)
+    .eq('status', 'pending')
+    .maybeSingle();
+
+  if (!order) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-900 text-white">
+        <p>❌ Заказ не найден или уже оплачен</p>
       </div>
-    </div>
-  );
+    );
+  }
+
+  // Fetch Robokassa config
+  const { data: config } = await supabaseAdmin
+    .from('admin_config')
+    .select('robokassa_merchant_login, robokassa_pass_one, robokassa_mode')
+    .limit(1)
+    .single();
+
+  const login = config.robokassa_merchant_login;
+  const pass1 = config.robokassa_pass_one;
+  const isTest = config.robokassa_mode === 'test';
+  const amount = order.price_rub;
+  const description = `eSIM ${order.country_name || ''} #${orderId}`;
+
+  const sigStr = `${login}:${amount}:${orderId}:${pass1}`;
+  const sig = crypto.createHash('md5').update(sigStr).digest('hex');
+
+  const params2 = new URLSearchParams({
+    MerchantLogin: login,
+    OutSum: amount.toString(),
+    InvId: orderId.toString(),
+    Description: description,
+    SignatureValue: sig,
+    Culture: 'ru',
+    Encoding: 'utf-8'
+  });
+
+  if (isTest) params2.append('IsTest', '1');
+  params2.append('SuccessURL', 'https://globalbanka.roamjet.net/api/robokassa/callback');
+  params2.append('FailURL', 'https://globalbanka.roamjet.net/payment-failed?reason=payment_cancelled');
+
+  const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params2.toString()}`;
+
+  // Server-side redirect — sets Referer header to globalbanka.roamjet.net
+  redirect(paymentUrl);
 }

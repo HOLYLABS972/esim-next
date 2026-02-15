@@ -64,6 +64,11 @@ export async function GET(request, context) {
 
     const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params2.toString()}`;
 
+    // If request accepts HTML (browser), do 302 redirect. Otherwise return JSON.
+    const accept = request.headers.get('accept') || '';
+    if (accept.includes('text/html')) {
+      return NextResponse.redirect(paymentUrl, 302);
+    }
     return NextResponse.json({ success: true, paymentUrl });
   } catch (e) {
     console.error('Pay redirect error:', e);
