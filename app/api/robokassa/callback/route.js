@@ -1868,6 +1868,58 @@ export async function POST(request) {
         // The POST callback only updates order status to 'active' (payment completed)
         console.log(`ℹ️ [${requestId}] eSIM creation is handled by n8n workflow, not in callback`);
 
+        // If order came from Telegram bot, send QR code + install button to chat
+        if (updatedOrder.metadata?.source === 'telegram_bot' && updatedOrder.metadata?.chat_id) {
+          const botToken = '8548539577:AAGUOWgi3DOgRUuE04YYKrn6-aLWwj35VkQ';
+          const chatId = updatedOrder.metadata.chat_id;
+          
+          try {
+            // Fetch QR code and install URL from order
+            const qrUrl = updatedOrder.qr_code_url;
+            const lpa = updatedOrder.lpa;
+            const iccid = updatedOrder.iccid;
+            const appleInstallUrl = updatedOrder.direct_apple_installation_url || 
+              (lpa ? `https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=${lpa}` : null);
+            
+            let text = `✅ *Оплата получена!*\n\n` +
+              `📦 Заказ #${updatedOrder.id}\n` +
+              `🌍 ${updatedOrder.country_name || ''}\n\n`;
+            
+            const keyboard = [];
+            
+            if (qrUrl) {
+              text += `📱 QR-код для установки eSIM готов!\n\n` +
+                `Откройте ссылку ниже и отсканируйте QR-код камерой телефона, или нажмите кнопку установки.`;
+              keyboard.push([{ text: '📱 QR-код', url: qrUrl }]);
+            }
+            
+            if (appleInstallUrl) {
+              keyboard.push([{ text: '⬇️ Установить eSIM (iPhone)', url: appleInstallUrl }]);
+            }
+            
+            // Always add a link to the web dashboard
+            keyboard.push([{ text: '🌐 Открыть в браузере', url: `https://globalbanka.roamjet.net/dashboard/qr-code/${updatedOrder.airalo_order_id || updatedOrder.id}` }]);
+            
+            if (!qrUrl && !appleInstallUrl) {
+              text += `⏳ eSIM активируется, QR-код будет отправлен в течение нескольких минут.`;
+            }
+            
+            await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                chat_id: chatId,
+                text: text,
+                parse_mode: 'Markdown',
+                reply_markup: keyboard.length > 0 ? { inline_keyboard: keyboard } : undefined
+              })
+            });
+            console.log(`📱 [${requestId}] Sent Telegram notification to chat ${chatId}`);
+          } catch (tgErr) {
+            console.error(`❌ [${requestId}] Failed to send Telegram notification:`, tgErr.message);
+          }
+        }
+
         // Trigger n8n webhook so workflow can create eSIM (reliable alternative to IMAP)
         // NOTE: This runs on the server only. Check server logs (not mobile app logs) for webhook fire.
         const n8nWebhookUrl = process.env.N8N_ORDER_PAID_WEBHOOK_URL || process.env.NEXT_PUBLIC_N8N_ORDER_PAID_WEBHOOK_URL;
