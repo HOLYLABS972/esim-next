@@ -58,10 +58,6 @@ export async function GET(request, context) {
 
     if (isTest) params2.append('IsTest', '1');
 
-    const secureDomain = 'https://globalbanka.roamjet.net';
-    params2.append('SuccessURL', `${secureDomain}/api/robokassa/callback`);
-    params2.append('FailURL', `${secureDomain}/payment-failed?reason=payment_cancelled`);
-
     const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params2.toString()}`;
 
     // If request accepts HTML (browser), do 302 redirect. Otherwise return JSON.
