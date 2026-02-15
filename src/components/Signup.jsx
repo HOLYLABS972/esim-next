@@ -80,7 +80,7 @@ export default function Signup() {
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                       className="input-field pl-12"
-                      placeholder="Your name"
+                      placeholder={t('auth.signup.namePlaceholder', 'Your name')}
                     />
                   </div>
                 </div>

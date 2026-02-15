@@ -243,7 +243,20 @@
       "registrationFailed": "Ошибка отправки кода подтверждения"
     },
     "welcomeMessage": "Добро пожаловать в RoamJet - ваше глобальное решение eSIM",
-    "trustedByThousands": "Доверяют тысячи путешественников по всему миру"
+    "trustedByThousands": "Доверяют тысячи путешественников по всему миру",
+    "signup": {
+      "title": "Создать аккаунт",
+      "subtitle": "Введите данные для регистрации",
+      "displayName": "Имя",
+      "emailLabel": "Email адрес",
+      "passwordLabel": "Пароль",
+      "passwordHint": "Минимум 6 символов",
+      "submit": "Создать аккаунт",
+      "haveAccount": "Уже есть аккаунт?",
+      "signIn": "Войти",
+      "namePlaceholder": "Ваше имя",
+      "emailPlaceholder": "ваш@email.com"
+    }
   },
   "contact": {
     "title": "Связаться с нами",
