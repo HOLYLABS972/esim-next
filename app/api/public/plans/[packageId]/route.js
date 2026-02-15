@@ -37,10 +37,10 @@ export async function GET(request, context) {
 
     let plan = null;
 
-    // 1) Try by package_id (slug) first — matches share-package URLs; join esim_countries for DB-sourced names
+    // 1) Try by package_id (slug) first — matches share-package URLs
     const { data: bySlug, error: slugError } = await supabaseAdmin
       .from('esim_packages')
-      .select('*, esim_countries(country_name, country_name_ru, country_name_he, country_name_ar)')
+      .select('*')
       .eq('is_active', true)
       .eq('package_id', packageId)
       .maybeSingle();
@@ -51,12 +51,27 @@ export async function GET(request, context) {
     if (!plan && isNumericId) {
       const { data: byId, error: idError } = await supabaseAdmin
         .from('esim_packages')
-        .select('*, esim_countries(country_name, country_name_ru, country_name_he, country_name_ar)')
+        .select('*')
         .eq('is_active', true)
         .eq('id', numericId)
         .maybeSingle();
       if (idError && idError.code !== 'PGRST116') throw idError;
       plan = byId;
+    }
+
+    // Look up country names from esim_countries by country_code
+    if (plan) {
+      const cc = (plan.country_code || '').split(',')[0].trim();
+      if (cc && cc.length === 2) {
+        const { data: countryRow } = await supabaseAdmin
+          .from('esim_countries')
+          .select('country_name, country_name_ru, country_name_he, country_name_ar')
+          .eq('country_code', cc)
+          .maybeSingle();
+        plan.esim_countries = countryRow || null;
+      } else {
+        plan.esim_countries = null;
+      }
     }
 
     if (!plan) {
