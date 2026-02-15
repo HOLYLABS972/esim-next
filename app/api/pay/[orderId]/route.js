@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin } from '../../../../src/lib/supabase';
-import crypto from 'crypto';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,58 +13,41 @@ export async function GET(request, context) {
     }
 
     // Fetch order
-    const { data: order, error: orderError } = await supabaseAdmin
+    const { data: order } = await supabaseAdmin
       .from('esim_orders')
-      .select('id, price_rub, status, country_name, metadata')
+      .select('id, price_rub, status, country_name, customer_email')
       .eq('id', orderId)
       .eq('status', 'pending')
       .maybeSingle();
 
-    if (orderError || !order) {
+    if (!order) {
       return NextResponse.json({ error: 'Order not found or already paid' }, { status: 404 });
     }
 
-    // Fetch Robokassa config
-    const { data: config } = await supabaseAdmin
-      .from('admin_config')
-      .select('robokassa_merchant_login, robokassa_pass_one, robokassa_mode')
-      .limit(1)
-      .single();
-
-    if (!config) {
-      return NextResponse.json({ error: 'Payment config not found' }, { status: 503 });
-    }
-
-    const login = config.robokassa_merchant_login;
-    const pass1 = config.robokassa_pass_one;
-    const isTest = config.robokassa_mode === 'test';
-    const amount = order.price_rub;
-    const description = `eSIM ${order.country_name || ''} #${orderId}`;
-
-    // Generate signature
-    const sigStr = `${login}:${amount}:${orderId}:${pass1}`;
-    const sig = crypto.createHash('md5').update(sigStr).digest('hex');
-
-    const params2 = new URLSearchParams({
-      MerchantLogin: login,
-      OutSum: amount.toString(),
-      InvId: orderId.toString(),
-      Description: description,
-      SignatureValue: sig,
-      Culture: 'ru',
-      Encoding: 'utf-8'
+    // Call the same create-payment endpoint the website uses
+    const origin = request.headers.get('origin') || request.headers.get('referer') || 'https://globalbanka.roamjet.net';
+    const baseUrl = origin.startsWith('http') ? new URL(origin).origin : 'https://globalbanka.roamjet.net';
+    
+    const payRes = await fetch(`${baseUrl}/api/robokassa/create-payment`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        order: orderId,
+        total: order.price_rub,
+        currency: 'RUB',
+        email: order.customer_email || '',
+        description: `eSIM ${order.country_name || ''} #${orderId}`,
+        domain: 'https://globalbanka.roamjet.net'
+      })
     });
 
-    if (isTest) params2.append('IsTest', '1');
-
-    const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params2.toString()}`;
-
-    // If request accepts HTML (browser), do 302 redirect. Otherwise return JSON.
-    const accept = request.headers.get('accept') || '';
-    if (accept.includes('text/html')) {
-      return NextResponse.redirect(paymentUrl, 302);
+    const payData = await payRes.json();
+    
+    if (payData.success && payData.paymentUrl) {
+      return NextResponse.json({ success: true, paymentUrl: payData.paymentUrl });
     }
-    return NextResponse.json({ success: true, paymentUrl });
+    
+    return NextResponse.json({ error: payData.error || 'Payment creation failed' }, { status: 500 });
   } catch (e) {
     console.error('Pay redirect error:', e);
     return NextResponse.json({ error: e.message }, { status: 500 });
