@@ -711,7 +711,7 @@ const SharePackagePage = () => {
             </div>
           </div>
 
-          {/* Regional: sub-region selector (Asia, Europe, CIS, etc.) */}
+          {/* Regional/Global: sub-region selector (Asia, Europe, CIS, etc.) */}
           {(packageData?.plan_type === 'regional' || packageData?.package_type === 'regional' || packageData?.plan_type === 'global' || packageData?.package_type === 'global') && regionalSubRegionGroups.length > 0 && (
             <div className="px-4 pb-4">
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{t('sharePackage.selectRegion', 'Select region')}</h3>

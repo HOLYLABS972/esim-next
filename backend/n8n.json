@@ -1,0 +1,448 @@
+{
+    "nodes": [
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://partners-api.airalo.com/v2/orders",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $('Authenticate with API1').item.json.data.access_token }}"
+              },
+              {
+                "name": "Accept",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "quantity",
+                "value": "1"
+              },
+              {
+                "name": "package_id",
+                "value": "={{ $('Get Order from Supabase1').item.json.metadata.package_slug }}"
+              },
+              {
+                "name": "type",
+                "value": "sim"
+              },
+              {
+                "name": "to_email",
+                "value": "={{ $('Get Order from Supabase1').item.json.customer_email }}"
+              },
+              {
+                "name": "sharing_option[]",
+                "value": "link"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "1e955793-c9e6-498d-a969-52b78595fcb1",
+        "name": "Create Order1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          4768,
+          1360
+        ]
+      },
+      {
+        "parameters": {
+          "conditions": {
+            "options": {
+              "caseSensitive": true,
+              "leftValue": "",
+              "typeValidation": "strict",
+              "version": 1
+            },
+            "conditions": [
+              {
+                "id": "check-order-type",
+                "leftValue": "={{ $('Get Order from Supabase1').item.json.order_type }}",
+                "rightValue": "esim_topup",
+                "operator": {
+                  "type": "string",
+                  "operation": "equals"
+                }
+              }
+            ],
+            "combinator": "and"
+          },
+          "options": {}
+        },
+        "id": "056efcce-f639-4281-a684-a7af71c8c1eb",
+        "name": "Check Order Type1",
+        "type": "n8n-nodes-base.if",
+        "typeVersion": 2,
+        "position": [
+          4272,
+          1168
+        ]
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "https://partners-api.airalo.com/v2/token",
+          "sendHeaders": true,
+          "specifyHeaders": "=keypair",
+          "headerParameters": {
+            "parameters": [
+              {}
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "client_id",
+                "value": "=5f260affb036f58486895b58a0fbb803"
+              },
+              {
+                "name": "client_secret",
+                "value": "=x8BesR7YdqZrRFAYRyQx5GFf6KGWs8wgEMTlpSr3"
+              },
+              {
+                "name": "grant_type",
+                "value": "client_credentials"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "98c8c440-7828-4532-91cb-0a36d315ad57",
+        "name": "Authenticate with API1",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          3712,
+          1104
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "get",
+          "tableId": "esim_orders",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "airalo_order_id",
+                "keyValue": "={{ $json.extractedNumber }}"
+              }
+            ]
+          }
+        },
+        "id": "76f7ba4d-be34-450d-91f8-8db50dca18e3",
+        "name": "Get Order from Supabase1",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          3312,
+          1520
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "v19AFkD0nrBKR93k",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "jsCode": "const emailText = $input.first().json.textPlain || $input.first().json.textHtml || '';\nconst match = emailText.match(/\\b\\d{13}\\b/);\nconst extractedNumber = match ? match[0] : null;\n\nreturn [{\n  json: {\n    ...$input.first().json,\n    extractedNumber,\n    textPlain: $input.first().json.textPlain,\n    textHtml: $input.first().json.textHtml\n  }\n}];"
+        },
+        "id": "ab1c01ac-3688-4741-bfeb-99f086c00502",
+        "name": "Extract Invoice Number1",
+        "type": "n8n-nodes-base.code",
+        "typeVersion": 2,
+        "position": [
+          2752,
+          1392
+        ]
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "esim_orders",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "airalo_order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Get Order from Supabase1').item.json.airalo_order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "iccid",
+                "fieldValue": "={{ $json.data.sims[0].iccid }}"
+              },
+              {
+                "fieldId": "plan_name",
+                "fieldValue": "={{ $json.data.package }}"
+              },
+              {
+                "fieldId": "lpa",
+                "fieldValue": "={{ $json.data.sims[0].lpa }}"
+              },
+              {
+                "fieldId": "qr_code_url",
+                "fieldValue": "={{ $json.data.sims[0].qrcode_url }}"
+              },
+              {
+                "fieldId": "status",
+                "fieldValue": "active"
+              },
+              {
+                "fieldId": "qr_code",
+                "fieldValue": "={{ $json.data.sims[0].qrcode }}"
+              },
+              {
+                "fieldId": "direct_apple_installation_url",
+                "fieldValue": "={{ $json.data.sims[0].direct_apple_installation_url }}"
+              }
+            ]
+          }
+        },
+        "id": "6f255609-7283-4207-84f6-f96bf5b82be6",
+        "name": "Update eSIM Order in Supabase",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          6912,
+          1552
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "v19AFkD0nrBKR93k",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "operation": "update",
+          "tableId": "esim_orders",
+          "filters": {
+            "conditions": [
+              {
+                "keyName": "airalo_order_id",
+                "condition": "eq",
+                "keyValue": "={{ $('Get Order from Supabase1').item.json.airalo_order_id }}"
+              }
+            ]
+          },
+          "fieldsUi": {
+            "fieldValues": [
+              {
+                "fieldId": "status",
+                "fieldValue": "active"
+              },
+              {
+                "fieldId": "iccid",
+                "fieldValue": "={{ ($('Get Order from Supabase1').item.json.metadata && $('Get Order from Supabase1').item.json.metadata.existingEsimIccid) || $('Get Order from Supabase1').item.json.iccid }}"
+              }
+            ]
+          }
+        },
+        "id": "c1036925-e9e6-4dde-994a-2ca45dc9c8f5",
+        "name": "Update Topup Order in Supabase1",
+        "type": "n8n-nodes-base.supabase",
+        "typeVersion": 1,
+        "position": [
+          6912,
+          992
+        ],
+        "credentials": {
+          "supabaseApi": {
+            "id": "v19AFkD0nrBKR93k",
+            "name": "Supabase account"
+          }
+        }
+      },
+      {
+        "parameters": {
+          "method": "POST",
+          "url": "=https://partners-api.airalo.com/v2/orders/topups",
+          "sendHeaders": true,
+          "headerParameters": {
+            "parameters": [
+              {
+                "name": "Authorization",
+                "value": "=Bearer {{ $('Authenticate with API1').item.json.data.access_token }}"
+              },
+              {
+                "name": "Accept",
+                "value": "application/json"
+              }
+            ]
+          },
+          "sendBody": true,
+          "bodyParameters": {
+            "parameters": [
+              {
+                "name": "iccid",
+                "value": "={{ $('Get Order from Supabase1').item.json.iccid }}"
+              },
+              {
+                "name": "package_id",
+                "value": "={{ $('Get Order from Supabase1').item.json.metadata.package_slug }}"
+              }
+            ]
+          },
+          "options": {}
+        },
+        "id": "e7db5219-c4bf-4a39-bbfa-90bc7d2be130",
+        "name": "Create Topup",
+        "type": "n8n-nodes-base.httpRequest",
+        "typeVersion": 4.1,
+        "position": [
+          4960,
+          688
+        ]
+      },
+      {
+        "parameters": {
+          "options": {}
+        },
+        "type": "n8n-nodes-base.emailReadImap",
+        "typeVersion": 2,
+        "position": [
+          2032,
+          992
+        ],
+        "id": "6b53e0be-739e-4e27-bbad-12971756cee2",
+        "name": "Email Trigger (IMAP)1",
+        "credentials": {
+          "imap": {
+            "id": "6UirgarJNIghi824",
+            "name": "IMAP account"
+          }
+        }
+      }
+    ],
+    "connections": {
+      "Create Order1": {
+        "main": [
+          [
+            {
+              "node": "Update eSIM Order in Supabase",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Check Order Type1": {
+        "main": [
+          [
+            {
+              "node": "Create Topup",
+              "type": "main",
+              "index": 0
+            }
+          ],
+          [
+            {
+              "node": "Create Order1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Authenticate with API1": {
+        "main": [
+          [
+            {
+              "node": "Check Order Type1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Get Order from Supabase1": {
+        "main": [
+          [
+            {
+              "node": "Authenticate with API1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Extract Invoice Number1": {
+        "main": [
+          [
+            {
+              "node": "Get Order from Supabase1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Create Topup": {
+        "main": [
+          [
+            {
+              "node": "Update Topup Order in Supabase1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      },
+      "Email Trigger (IMAP)1": {
+        "main": [
+          [
+            {
+              "node": "Extract Invoice Number1",
+              "type": "main",
+              "index": 0
+            }
+          ]
+        ]
+      }
+    },
+    "pinData": {
+      "Email Trigger (IMAP)1": [
+        {
+          "textHtml": "",
+          "textPlain": "Получена тестовая оплата:\r\n\r\nЦена: 342.00\r\ninv_id: 1771255078271\r\nМетод оплаты: BankCard\r\n\r\n\r\nС уважением, ROBOKASSA",
+          "metadata": {
+            "return-path": "<robot@robokassa.ru>",
+            "delivered-to": "result@roamjet.net",
+            "received": "from DIR-05 ([10.50.14.195])\tby localhost with LMTP\tid UNjPEUc1k2l9UjcA0J78UA\t(envelope-from <robot@robokassa.ru>)\tfor <result@roamjet.net>; Mon, 16 Feb 2026 10:18:31 -0500",
+            "authentication-results": "asp-relay-pe.jellyfish.systems;\tdkim=none (\"invalid DKIM record\") header.d=robokassa.ru header.s=postfix header.b=P9b1rti0;\tspf=pass (asp-relay-pe.jellyfish.systems: domain of robot@robokassa.ru designates 185.59.216.74 as permitted sender) smtp.mailfrom=robot@robokassa.ru;\tdmarc=pass (policy=reject) header.from=robokassa.ru",
+            "dkim-signature": "v=1; a=rsa-sha256; c=relaxed/simple; d=robokassa.ru;\ts=postfix; t=1771255101;\tbh=UCPjrRmElCxic1eVGLQFCDOZ5+XX7LuCtdw/mFKRuCE=;\th=Subject:Date:From:To;\tb=P9b1rti0XBTfkw90sVzKsL6AiXqFQZzQSCFUkpuVortqEAYicSsMBdbLwdu0OtL/9\t VhgcSgVoy2nGFFZVLYaTZ26hngdgJch/mkxW4UZJUt4KE5HKW381fSvrju/SgtMPYg\t L1FO/tTFUfC7ft24TCZxh7IwYMKcSBVRuHzXxF8eFAeloZiz0mDK1REV/CLFF9DTEN\t aJ72Kp3EB483KoDkiAzzPWGBMefLg198dH3Faj+tCAh+Imi4TppIfHsXgin2bJPBYS\t i+sPhe710gp9Vcuu53v8B0UNqmsrfMs7voy6zEIYOgyIfvxqa8tLheRrgof+LPtjva\t hK1aMNYlmr3gQ==",
+            "content-type": "text/plain; charset=\"utf-8\"",
+            "content-transfer-encoding": "base64",
+            "mime-version": "1.0",
+            "message-id": "<5e127abf-af0b-482c-bc4a-99a860f9dfc1@mail.dll>"
+          },
+          "attributes": {
+            "uid": 82
+          },
+          "subject": "Test notification from ROBOKASSA",
+          "date": "Mon, 16 Feb 2026 18:18:21 +0300",
+          "from": "<robot@robokassa.ru>",
+          "to": "<result@roamjet.net>"
+        }
+      ]
+    },
+    "meta": {
+      "templateCredsSetupCompleted": true,
+      "instanceId": "273cd6cd2a61a45106241ed9b75bd1f77aaaf20ba894f1d929e6e39e273092d5"
+    }
+  }
