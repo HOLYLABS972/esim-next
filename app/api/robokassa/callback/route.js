@@ -1870,7 +1870,7 @@ export async function POST(request) {
 
         // If order came from Telegram bot, send QR code + install button to chat
         if (updatedOrder.metadata?.source === 'telegram_bot' && updatedOrder.metadata?.chat_id) {
-          const botToken = '8548539577:AAGUOWgi3DOgRUuE04YYKrn6-aLWwj35VkQ';
+          const botToken = process.env.TELEGRAM_BOT_TOKEN;
           const chatId = updatedOrder.metadata.chat_id;
           
           try {
