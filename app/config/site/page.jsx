@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 import { Palette, Loader2, Save, Sun, Moon, Image, Languages, DollarSign, Percent } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -25,9 +24,7 @@ const CURRENCIES = [
 
 export default function SitePage() {
   const queryClient = useQueryClient();
-  const searchParams = useSearchParams();
-  const rawStore = searchParams.get('store') || process.env.NEXT_PUBLIC_STORE_ID || 'globalbanka';
-  const storeSlug = rawStore === 'roamjet' ? 'easycall' : rawStore;
+  const storeSlug = 'globalbanka'; // Single brand mode
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

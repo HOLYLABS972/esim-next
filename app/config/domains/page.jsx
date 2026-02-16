@@ -1,15 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
 import { Globe, Plus, Loader2, Trash2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function DomainsPage() {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const rawStore = searchParams.get('store') || process.env.NEXT_PUBLIC_STORE_ID || 'globalbanka';
-  const storeSlug = rawStore === 'roamjet' ? 'easycall' : rawStore;
+  const storeSlug = 'globalbanka'; // Single brand mode
 
   const [domains, setDomains] = useState([]);
   const [brands, setBrands] = useState([]);
@@ -117,23 +113,6 @@ export default function DomainsPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-4">
-          {brands.length > 1 && (
-            <div>
-              <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">Store filter</label>
-              <select
-                value={storeSlug}
-                onChange={(e) => {
-                  const slug = e.target.value;
-                  router.replace(`/config/domains?store=${encodeURIComponent(slug)}`);
-                }}
-                className="rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 text-sm"
-              >
-                {brands.map((b) => (
-                  <option key={b.id} value={b.slug || b.id}>{b.name || b.slug}</option>
-                ))}
-              </select>
-            </div>
-          )}
           <label className="flex items-center gap-2 cursor-pointer">
             <input
               type="checkbox"

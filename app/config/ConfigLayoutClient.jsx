@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { Lock, Settings, Users, Share2, LogOut, MapPin, Package, CreditCard, Palette, ShoppingBag, Battery } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Lock, Users, Share2, LogOut, MapPin, Package, CreditCard, Palette, ShoppingBag, Battery, Bell } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 import { supabase } from '../../src/lib/supabase';
@@ -13,9 +13,6 @@ export default function ConfigLayoutClient({ children }) {
   const [checkingAuth, setCheckingAuth] = useState(true);
   const pathname = usePathname();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const rawStore = searchParams.get('store') || process.env.NEXT_PUBLIC_STORE_ID || 'globalbanka';
-  const storeParam = rawStore === 'roamjet' ? 'easycall' : rawStore;
 
   // Fetch user role from Supabase users table
   const fetchUserRole = async (userId) => {
@@ -103,20 +100,11 @@ export default function ConfigLayoutClient({ children }) {
     };
   }, []);
 
-  // Normalize URL: replace store=roamjet with store=easycall so the bar and links use easycall
-  useEffect(() => {
-    if (rawStore === 'roamjet') {
-      router.replace(pathname + '?store=easycall', { scroll: false });
-    }
-  }, [rawStore, pathname, router]);
-
   useEffect(() => {
     if (user && pathname === '/config') {
-      const store = searchParams.get('store');
-      const qs = store ? `?store=${encodeURIComponent(store === 'roamjet' ? 'easycall' : store)}` : '';
-      router.replace(`/config/affiliates${qs}`);
+      router.replace('/config/affiliates');
     }
-  }, [user, pathname, router, searchParams]);
+  }, [user, pathname, router]);
 
   const handleLogout = async () => {
     if (!supabase) return;
@@ -166,9 +154,8 @@ export default function ConfigLayoutClient({ children }) {
 
   // Unauthenticated: redirect to main login page with return URL so user comes back to config after login
   if (!user) {
-    const returnPath = pathname + (storeParam ? `?store=${encodeURIComponent(storeParam)}` : '');
     if (typeof window !== 'undefined') {
-      window.location.replace(`/login?returnUrl=${encodeURIComponent(returnPath)}`);
+      window.location.replace(`/login?returnUrl=${encodeURIComponent(pathname)}`);
     }
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center transition-colors">
@@ -221,18 +208,17 @@ export default function ConfigLayoutClient({ children }) {
     );
   }
 
-  // Logged-in: nav tabs (Users, Coupons, Countries, Plans, Payment)
-  // Include store param in nav links so Payment config stays scoped to that store
-  const navBase = (path) => (storeParam ? `${path}?store=${encodeURIComponent(storeParam)}` : path);
+  // Logged-in: nav tabs - single brand mode (globalbanka)
   const navItems = [
-    { href: navBase('/config/site'), icon: Palette, label: 'Site' },
-    { href: navBase('/config/users'), icon: Users, label: 'Users' },
-    { href: navBase('/config/orders'), icon: ShoppingBag, label: 'Orders' },
-    { href: navBase('/config/affiliates'), icon: Share2, label: 'Affiliates' },
-    { href: navBase('/config/countries'), icon: MapPin, label: 'Countries' },
-    { href: navBase('/config/plans'), icon: Package, label: 'Plans' },
-    { href: navBase('/config/topups'), icon: Battery, label: 'Topups' },
-    { href: navBase('/config/payment'), icon: CreditCard, label: 'Payment' },
+    { href: '/config/site', icon: Palette, label: 'Site' },
+    { href: '/config/users', icon: Users, label: 'Users' },
+    { href: '/config/orders', icon: ShoppingBag, label: 'Orders' },
+    { href: '/config/notifications', icon: Bell, label: 'Notifications' },
+    { href: '/config/affiliates', icon: Share2, label: 'Affiliates' },
+    { href: '/config/countries', icon: MapPin, label: 'Countries' },
+    { href: '/config/plans', icon: Package, label: 'Plans' },
+    { href: '/config/topups', icon: Battery, label: 'Topups' },
+    { href: '/config/payment', icon: CreditCard, label: 'Payment' },
   ];
 
   return (

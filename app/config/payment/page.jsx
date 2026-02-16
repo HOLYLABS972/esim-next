@@ -1,21 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { CreditCard, Save, Loader2, DollarSign, CheckCircle, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function PaymentPage() {
-  const searchParams = useSearchParams();
-  const rawStore = searchParams.get('store') || process.env.NEXT_PUBLIC_STORE_ID || 'globalbanka';
-  const storeFromUrl = rawStore === 'roamjet' ? 'easycall' : rawStore;
-
-  const [storeId, setStoreId] = useState(storeFromUrl);
+  const storeId = 'globalbanka'; // Single brand mode - hardcoded
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [loadError, setLoadError] = useState(null);
   const [storeName, setStoreName] = useState('');
-  const [paymentMethods, setPaymentMethods] = useState([]);
   const [connections, setConnections] = useState({});
   /** Single payment method per store/domain (radio) */
   const [selectedMethod, setSelectedMethod] = useState('robokassa');
@@ -26,12 +20,8 @@ export default function PaymentPage() {
   });
 
   useEffect(() => {
-    setStoreId(storeFromUrl);
-  }, [storeFromUrl]);
-
-  useEffect(() => {
     loadPayment();
-  }, [storeId]);
+  }, []);
 
   // Sync form fields from loaded connections when form is still empty (ensures inputs show values after load)
   useEffect(() => {
@@ -74,13 +64,11 @@ export default function PaymentPage() {
       if (data.success) {
         const conn = data.connections || {};
         setStoreName(data.storeName || storeId);
-        setPaymentMethods(data.paymentMethods || []);
         setConnections(conn);
         const methods = Array.isArray(data.paymentMethods) && data.paymentMethods.length > 0 ? data.paymentMethods : ['robokassa'];
         setSelectedMethod(['robokassa', 'stripe', 'coinbase'].includes(methods[0]) ? methods[0] : 'robokassa');
         const robokassa = conn.robokassa || {};
         const stripe = conn.stripe || {};
-        const coinbase = conn.coinbase || {};
         const merchantLogin = String(robokassa.merchantLogin ?? robokassa.merchant_login ?? '').trim();
         const passOne = String(robokassa.passOne ?? robokassa.pass_one ?? '').trim();
         const passTwo = String(robokassa.passTwo ?? robokassa.pass_two ?? '').trim();

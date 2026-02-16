@@ -5,12 +5,13 @@ import { useSearchParams } from 'next/navigation';
 
 const BrandContext = createContext(null);
 
+// Hardcoded brand configuration for GlobalBanka - no multidomain support
 const defaultBrand = {
   brandId: null,
-  slug: process.env.NEXT_PUBLIC_STORE_ID || 'globalbanka',
+  slug: 'globalbanka',
   name: 'GlobalBanka',
   logoUrl: null,
-  theme: { mode: 'light', primaryColor: null, fontHeading: 'Inter', fontBody: 'Inter' },
+  theme: { mode: 'light', primaryColor: '#2563eb', fontHeading: 'Inter', fontBody: 'Inter' },
   defaultLanguage: 'en',
   supportedLanguages: ['en', 'ru', 'es', 'fr', 'de', 'ar', 'he'],
   paymentMethods: ['robokassa'],

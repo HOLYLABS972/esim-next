@@ -1,77 +1,30 @@
 /**
- * Brand resolution: domain → brand (id, slug, config).
- * Used by API routes and server components; cached in memory.
+ * Brand resolution: Always uses GlobalBanka (single brand mode).
+ * Multidomain support removed - all requests resolve to globalbanka.
  */
 
 import { supabaseAdmin } from './supabase';
 
 const CACHE_TTL_MS = 60 * 1000; // 1 min so theme/language from Business tab apply soon after save
-const cache = new Map(); // key: normalized domain → { brand, timestamp }
-
-function normalizeDomain(host) {
-  if (!host || typeof host !== 'string') return '';
-  return host.split(':')[0].toLowerCase().replace(/^www\./, '').trim();
-}
+const cache = new Map(); // key: 'globalbanka' → { brand, timestamp }
 
 /**
- * Resolve brand by domain. Returns { id, slug, name, logo_url, theme, default_language, supported_languages } or null.
- * Uses in-memory cache with TTL.
+ * Always returns globalbanka brand (domain parameter ignored).
+ * Kept for backwards compatibility but no longer resolves by domain.
  */
-export async function getBrandByDomain(domain) {
-  const normalized = normalizeDomain(domain);
-  if (!normalized) return null;
-
-  const cached = cache.get(normalized);
-  if (cached && Date.now() - cached.timestamp < CACHE_TTL_MS) {
-    return cached.brand;
-  }
-
-  if (!supabaseAdmin) return null;
-
-  try {
-    const { data: row, error } = await supabaseAdmin
-      .from('brand_domains')
-      .select('brand_id, brands(id, slug, name, logo_url, theme, default_language, supported_languages, is_active)')
-      .eq('domain', normalized)
-      .limit(1)
-      .maybeSingle();
-
-    if (error || !row?.brands) return null;
-    const brand = row.brands;
-    if (!brand || !brand.is_active) return null;
-
-    const result = {
-      id: brand.id,
-      slug: brand.slug,
-      name: brand.name,
-      logo_url: brand.logo_url ?? null,
-      theme: brand.theme ?? { mode: 'light', primaryColor: '#2563eb', fontHeading: 'Inter', fontBody: 'Inter' },
-      default_language: brand.default_language ?? 'en',
-      supported_languages: brand.supported_languages ?? ['en', 'ru', 'es', 'fr', 'de', 'ar', 'he'],
-    };
-    cache.set(normalized, { brand: result, timestamp: Date.now() });
-    return result;
-  } catch (err) {
-    console.warn('brandResolution getBrandByDomain error:', err?.message);
-    return null;
-  }
+export async function getBrandByDomain() {
+  // Always return globalbanka regardless of domain
+  return getBrandBySlug('globalbanka');
 }
 
 /**
- * Resolve brand from request (Host header). For use in API routes and server components.
- * @param {Request} request - Next.js request
+ * Always returns globalbanka brand (request parameter ignored).
+ * For use in API routes and server components.
  * @returns {Promise<{ id, slug, name, logo_url, theme, default_language, supported_languages } | null>}
  */
-export async function getResolvedBrand(request) {
-  const host =
-    request?.headers?.get?.('x-forwarded-host') ||
-    request?.headers?.get?.('host') ||
-    '';
-  const brand = await getBrandByDomain(host);
-  if (brand) return brand;
-  // Fallback: default brand from env or first active brand
-  const defaultSlug = process.env.NEXT_PUBLIC_DEFAULT_BRAND_SLUG || 'globalbanka';
-  return getBrandBySlug(defaultSlug);
+export async function getResolvedBrand() {
+  // Always return globalbanka in single-brand mode
+  return getBrandBySlug('globalbanka');
 }
 
 /**
