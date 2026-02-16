@@ -711,8 +711,8 @@ const SharePackagePage = () => {
             </div>
           </div>
 
-          {/* Regional/Global: sub-region selector (Asia, Europe, CIS, etc.) */}
-          {(packageData?.plan_type === 'regional' || packageData?.package_type === 'regional' || packageData?.plan_type === 'global' || packageData?.package_type === 'global') && regionalSubRegionGroups.length > 0 && (
+          {/* Regional/Global: sub-region selector (Asia, Europe, CIS, etc.) - only show for Global entry, not specific countries */}
+          {(packageData?.plan_type === 'regional' || packageData?.package_type === 'regional' || packageData?.plan_type === 'global' || packageData?.package_type === 'global') && regionalSubRegionGroups.length > 0 && (!searchParams.get('country') || searchParams.get('country') === 'RG') && (
             <div className="px-4 pb-4">
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">{t('sharePackage.selectRegion', 'Select region')}</h3>
               <div className="flex flex-wrap gap-2">

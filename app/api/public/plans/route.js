@@ -36,9 +36,9 @@ export async function GET(request) {
       } else if (codeUpper === 'RG') {
         query = query.eq('package_type', 'regional');
       } else {
-        // Include regional packages that contain the country code (e.g., "BA,RS,ME" for Bosnia)
-        query = query.or(`country_code.eq.${codeUpper},country_code.ilike.%${codeUpper}%`);
-        query = query.neq('package_type', 'global'); // Exclude only global, keep regional
+        // For country-specific queries, only return local plans for that country
+        query = query.eq('country_code', codeUpper);
+        query = query.or(`package_type.eq.local,package_type.is.null`); // Only local plans
       }
     }
     
