@@ -17,8 +17,11 @@ export const dynamic = 'force-dynamic';
  * @param {boolean} [all] - Send to all users with push tokens enabled
  * @param {string} title - Notification title (required)
  * @param {string} body - Notification message (required)
+ * @param {string} [subtitle] - Subtitle text (iOS only)
+ * @param {string} [image] - Image URL (must be HTTPS)
  * @param {Object} [data] - Additional data payload for deep linking
  * @param {string} [channelId] - Android notification channel (default: 'default')
+ * @param {number} [badge] - Badge count (iOS only)
  *
  * Response:
  * @returns {Object} { success, sent, failed, userCount, tickets, errors }
@@ -36,7 +39,7 @@ export const dynamic = 'force-dynamic';
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { userId, userIds, all, title, body: messageBody, data, channelId } = body;
+    const { userId, userIds, all, title, body: messageBody, subtitle, image, data, channelId, badge } = body;
 
     // Validation
     if (!title || !messageBody) {
@@ -140,8 +143,11 @@ export async function POST(request) {
       result = await sendPushNotification(usersWithTokens[0].expo_push_token, {
         title,
         body: messageBody,
+        subtitle,
+        image,
         data: data || {},
         channelId: channelId || 'default',
+        badge,
       });
 
       // If device not registered, clear the token
@@ -160,8 +166,11 @@ export async function POST(request) {
         expoPushToken: u.expo_push_token,
         title,
         body: messageBody,
+        subtitle,
+        image,
         data: data || {},
         channelId: channelId || 'default',
+        badge,
       }));
 
       result = await sendBulkPushNotifications(notifications);

@@ -14,10 +14,15 @@ const expo = new Expo();
  * @param {Object} notification - Notification details
  * @param {string} notification.title - Notification title
  * @param {string} notification.body - Notification body
+ * @param {string} [notification.subtitle] - Subtitle (iOS only)
+ * @param {string} [notification.image] - Image URL (must be HTTPS)
  * @param {Object} [notification.data] - Additional data payload
  * @param {string} [notification.channelId] - Android notification channel
  * @param {string} [notification.sound] - Notification sound (default: 'default')
  * @param {string} [notification.priority] - Notification priority (default: 'high')
+ * @param {number} [notification.badge] - Badge count (iOS only)
+ * @param {string} [notification.categoryId] - Category ID for action buttons
+ * @param {boolean} [notification.mutableContent] - Enable notification service extension (iOS)
  * @returns {Promise<Object>} Send result with success status and ticket ID
  */
 export async function sendPushNotification(expoPushToken, notification) {
@@ -31,6 +36,16 @@ export async function sendPushNotification(expoPushToken, notification) {
     };
   }
 
+  // Validate image URL if provided
+  if (notification.image && !notification.image.startsWith('https://')) {
+    console.warn('⚠️ Image URL must use HTTPS:', notification.image);
+    return {
+      success: false,
+      error: 'Image URL must use HTTPS protocol',
+      details: 'Only HTTPS URLs are supported for notification images'
+    };
+  }
+
   const message = {
     to: expoPushToken,
     sound: notification.sound || 'default',
@@ -40,6 +55,28 @@ export async function sendPushNotification(expoPushToken, notification) {
     priority: notification.priority || 'high',
     channelId: notification.channelId || 'default',
   };
+
+  // Add optional fields if provided
+  if (notification.subtitle) {
+    message.subtitle = notification.subtitle; // iOS only
+  }
+
+  if (notification.image) {
+    // Image must be HTTPS URL
+    message.image = notification.image;
+  }
+
+  if (notification.badge !== undefined) {
+    message.badge = notification.badge; // iOS only
+  }
+
+  if (notification.categoryId) {
+    message.categoryId = notification.categoryId; // For action buttons
+  }
+
+  if (notification.mutableContent) {
+    message.mutableContent = true; // iOS notification service extension
+  }
 
   try {
     console.log('📤 Sending push notification to:', expoPushToken.substring(0, 30) + '...');

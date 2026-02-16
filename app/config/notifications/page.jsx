@@ -12,8 +12,11 @@ export default function NotificationsPage() {
     target: 'all', // 'all' | 'single'
     userId: '',
     title: '',
+    subtitle: '',
     body: '',
+    image: '',
     channelId: 'default',
+    badge: 0,
   });
 
   useEffect(() => {
@@ -58,6 +61,19 @@ export default function NotificationsPage() {
         channelId: form.channelId,
       };
 
+      // Add optional fields if provided
+      if (form.subtitle.trim()) {
+        payload.subtitle = form.subtitle.trim();
+      }
+
+      if (form.image.trim()) {
+        payload.image = form.image.trim();
+      }
+
+      if (form.badge > 0) {
+        payload.badge = form.badge;
+      }
+
       if (form.target === 'all') {
         payload.all = true;
       } else if (form.target === 'single') {
@@ -74,7 +90,7 @@ export default function NotificationsPage() {
 
       if (data.success) {
         toast.success(`✅ Sent to ${data.userCount} user(s)`);
-        setForm({ ...form, title: '', body: '', userId: '' });
+        setForm({ ...form, title: '', subtitle: '', body: '', image: '', userId: '', badge: 0 });
         loadStats(); // Reload stats after sending
       } else {
         toast.error(data.error || 'Failed to send notification');
@@ -95,8 +111,11 @@ export default function NotificationsPage() {
       target: 'all',
       userId: '',
       title: '🎉 Welcome to GlobalBanka!',
+      subtitle: 'Travel eSIM Provider',
       body: 'Stay connected worldwide with our affordable eSIM plans.',
+      image: 'https://globalbanka.roamjet.net/logo.png',
       channelId: 'promotions',
+      badge: 1,
     });
   };
 
@@ -268,6 +287,24 @@ export default function NotificationsPage() {
             </p>
           </div>
 
+          {/* Subtitle (iOS only) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Subtitle (iOS only)
+            </label>
+            <input
+              type="text"
+              value={form.subtitle}
+              onChange={(e) => setForm({ ...form, subtitle: e.target.value.slice(0, 50) })}
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="e.g. Travel eSIM Provider"
+              maxLength={50}
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              {form.subtitle.length}/50 characters · Displays below title on iOS
+            </p>
+          </div>
+
           {/* Body */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -283,6 +320,54 @@ export default function NotificationsPage() {
             />
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               {form.body.length}/240 characters
+            </p>
+          </div>
+
+          {/* Image URL */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Image URL (optional)
+            </label>
+            <input
+              type="url"
+              value={form.image}
+              onChange={(e) => setForm({ ...form, image: e.target.value })}
+              className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="https://example.com/image.png"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Must be HTTPS. Recommended: 1024x1024px or 2:1 ratio. Max size: 10MB
+            </p>
+            {form.image && form.image.startsWith('https://') && (
+              <div className="mt-2">
+                <img
+                  src={form.image}
+                  alt="Preview"
+                  className="h-20 w-20 rounded-lg object-cover border border-gray-300 dark:border-gray-600"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Badge Count (iOS only) */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Badge Count (iOS only)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="99"
+              value={form.badge}
+              onChange={(e) => setForm({ ...form, badge: Math.max(0, Math.min(99, parseInt(e.target.value) || 0)) })}
+              className="w-32 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="0"
+            />
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+              Red badge number on app icon (iOS). Set to 0 to clear badge.
             </p>
           </div>
 
