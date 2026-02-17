@@ -22,12 +22,13 @@ const Login = () => {
   const { loginWithPassword, loginWithGoogle } = useAuth();
   const { t, locale } = useI18n();
 
-  // In Telegram WebApp, skip login entirely — redirect to country picker
+  // In Telegram WebApp, redirect to OTP page instead of showing OAuth options
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.Telegram?.WebApp?.initData) {
-      window.Telegram.WebApp.close();
+    if (typeof window !== 'undefined' && (window.Telegram?.WebApp?.initData || new URLSearchParams(window.location.search).get('source') === 'telegram')) {
+      const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/';
+      router.replace(`/ru/telegram-auth?returnUrl=${encodeURIComponent(returnUrl)}`);
     }
-  }, []);
+  }, [router]);
 
   // Hardcoded by domain: globalbanka.roamjet.net = Yandex + Google + Email, others = Google + Email
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';

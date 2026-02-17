@@ -68,8 +68,8 @@ const SharePackagePage = () => {
   const { t, locale } = useI18n();
   const { defaultCurrency, paymentMethods: brandPaymentMethods } = useBrand();
   const displayCurrency = defaultCurrency || 'USD';
-  const [showEmailPrompt, setShowEmailPrompt] = useState(false);
-  const [purchaseEmail, setPurchaseEmail] = useState('');
+  const [showEmailPrompt] = useState(false);
+  const [purchaseEmail] = useState('');
   const configuredPayment = Array.isArray(brandPaymentMethods) && brandPaymentMethods.length > 0
     ? (brandPaymentMethods[0] === 'coinbase' ? 'crypto' : brandPaymentMethods[0])
     : 'robokassa';
@@ -342,10 +342,15 @@ const SharePackagePage = () => {
   const handlePurchase = async () => {
     const isTelegram = searchParams.get('source') === 'telegram' || (typeof window !== 'undefined' && window.Telegram?.WebApp?.initData);
     
-    if (!currentUser && !isTelegram) {
-      toast.error(t('auth.loginRequired', 'Please log in to purchase this package'));
-      const qs = currentQuery();
-      router.push(`/login${qs ? `?${qs}` : ''}`);
+    if (!currentUser) {
+      const currentUrl = window.location.pathname + window.location.search;
+      if (isTelegram) {
+        router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(currentUrl)}`);
+      } else {
+        toast.error(t('auth.loginRequired', 'Please log in to purchase this package'));
+        const qs = currentQuery();
+        router.push(`/login${qs ? `?${qs}` : ''}`);
+      }
       return;
     }
     
@@ -439,23 +444,18 @@ const SharePackagePage = () => {
       speed: packageData.speed
     };
 
-    // For Telegram miniapp: skip /checkout, go directly to server-side redirect
-    if (isTelegram) {
-      const email = purchaseEmail || currentUser?.email;
-      if (!email) {
-        setShowEmailPrompt(true);
-        return;
-      }
-      const params = new URLSearchParams({
+    // For Telegram miniapp: go directly to server-side checkout redirect (no fetch needed)
+    if (isTelegram && currentUser?.email) {
+      const rdParams = new URLSearchParams({
         pkg: planSlug,
-        email: email,
+        email: currentUser.email,
         amount: Math.max(10, Math.round(priceRUBValue)).toString(),
         plan: packageData.name || planSlug,
       });
-      if (countryCode) params.set('cc', countryCode);
-      if (countryName) params.set('cn', countryName);
-      if (currentUser?.id) params.set('uid', currentUser.id);
-      window.location.href = `/api/checkout/redirect?${params.toString()}`;
+      if (countryCode) rdParams.set('cc', countryCode);
+      if (countryName) rdParams.set('cn', countryName);
+      if (currentUser.id) rdParams.set('uid', currentUser.id);
+      window.location.href = `/api/checkout/redirect?${rdParams.toString()}`;
       return;
     }
 
