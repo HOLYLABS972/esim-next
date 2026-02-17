@@ -111,7 +111,11 @@ export async function GET(request) {
         error = r.error;
       }
       for (const row of (r?.data || [])) {
-        merged.set(row.id, row);
+        // Prefer rows with join data (esim_packages) over plain rows
+        const existing = merged.get(row.id);
+        if (!existing || (row.esim_packages && !existing.esim_packages)) {
+          merged.set(row.id, row);
+        }
       }
     }
     

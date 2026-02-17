@@ -89,7 +89,7 @@ export async function GET(request) {
       const dataMB = packageData?.data_amount_mb || 0;
       const dataGB = dataMB / 1024;
       const dataFormatted = dataGB >= 1 ? `${dataGB.toFixed(dataGB % 1 === 0 ? 0 : 1)}GB` : `${dataMB}MB`;
-      const planName = packageData ? `${dataFormatted} - ${packageData.validity_days || 0} days` : 'Unknown Plan';
+      const planName = packageData ? `${dataFormatted} - ${packageData.validity_days || 0} days` : (order.plan_name || 'Unknown Plan');
       
       return {
         _id: order.id.toString(),
