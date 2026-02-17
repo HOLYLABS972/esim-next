@@ -106,7 +106,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="ru">
+    <html lang="ru" className="dark" data-theme="dark" style={{backgroundColor: '#111827'}}>
       <head>
         <meta charSet="utf-8" />
         <link rel="manifest" href="/manifest.json" />
@@ -156,9 +156,9 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen bg-gray-900 text-white">
         <Providers>
-          <Suspense fallback={<div className="bg-white dark:bg-gray-900 flex flex-col min-h-screen"><main className="flex-grow" /></div>}>
+          <Suspense fallback={<div className="bg-gray-900 flex flex-col min-h-screen"><main className="flex-grow" /></div>}>
             <BrandProvider>
               <LanguageWrapper>
                 <div className="bg-white dark:bg-gray-900 flex flex-col min-h-screen transition-colors">

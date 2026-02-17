@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Force dark background to prevent white flash on load */
+html, body {
+  background-color: #111827 !important;
+  color: #f9fafb !important;
+}
+
 /* Google Sign-in Button Styling */
 #google-signin-button {
   margin-bottom: 20px;
