@@ -105,14 +105,16 @@ export async function GET(request) {
         return false;
       }
       
-      // Only specific data tiers: 1GB, 2GB, 3GB, 5GB, 10GB, 20GB, 50GB, 100GB (or unlimited)
+      // Only packages with 1GB+ data (or unlimited)
       const dataMB = plan.data_amount_mb ?? (parseInt(plan.data_amount, 10) || 0);
       const isUnlimited = plan.is_unlimited === true || dataMB === 0;
       if (isUnlimited) return true;
-      if (!dataMB || dataMB < 1024) return false;
-      const ALLOWED_MB = [1024, 2048, 3072, 5120, 10240, 20480, 51200, 102400]; // 1GB, 2GB, 3GB, 5GB, 10GB, 20GB, 50GB, 100GB
-      const matchesTier = ALLOWED_MB.some((tier) => Math.abs(dataMB - tier) < 100);
-      if (!matchesTier) return false;
+      if (!dataMB || dataMB < 1024) return false; // Keep minimum 1GB requirement
+
+      // REMOVED: Strict tier matching - now allows any data amount >= 1GB
+      // const ALLOWED_MB = [1024, 2048, 3072, 5120, 10240, 20480, 51200, 102400];
+      // const matchesTier = ALLOWED_MB.some((tier) => Math.abs(dataMB - tier) < 100);
+      // if (!matchesTier) return false;
 
       return true;
     });
