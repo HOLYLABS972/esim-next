@@ -26,7 +26,7 @@ const EsimPaymentSuccessContent = () => {
           </svg>
         </div>
         <h2 className="text-3xl font-bold text-white mb-3">
-          Оплата прошла успешно ✅
+          Оплата прошла успешно
         </h2>
         <p className="text-gray-300 text-lg mb-2">
           Ваш eSIM активируется автоматически.
