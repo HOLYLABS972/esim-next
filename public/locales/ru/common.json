@@ -532,7 +532,18 @@
     "qrCodeImage": "✅ Изображение QR кода",
     "directAppleInstallation": "✅ Прямая ссылка установки Apple",
     "appleEsimInstallation": "Установка eSIM Apple",
-    "installEsim": "Установить eSIM"
+    "installEsim": "Установить eSIM",
+    "title": "Личный кабинет",
+    "viewUsage": "Использование",
+    "checkingAuth": "Проверка авторизации...",
+    "redirectingToLogin": "Перенаправление на вход...",
+    "qrCodeNotReady": "QR-код еще не готов",
+    "failedToLoadQR": "Не удалось загрузить QR-код",
+    "openAppleInstallation": "Установить через Apple",
+    "openAppleInstallationHint": "Откройте на iPhone для быстрой установки",
+    "appleUrlNotAvailable": "Ссылка Apple недоступна",
+    "noOrderId": "ID заказа не найден",
+    "unlimitedData": "Безлимитные данные"
   },
   "plansManagement": {
     "errorLoadingPlans": "Ошибка загрузки планов: {{error}}",
