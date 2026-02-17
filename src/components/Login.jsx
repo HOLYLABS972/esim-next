@@ -26,8 +26,8 @@ const Login = () => {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isGlobalBanka = hostname === 'globalbanka.roamjet.net';
   const showEmail = true;
-  const showGoogle = googleAuthEnabled;
-  const showYandex = isGlobalBanka && yandexAuthEnabled;
+  const showGoogle = false;
+  const showYandex = false;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -464,12 +464,6 @@ const Login = () => {
                   </p>
                 )}
 
-                <p className="text-center text-sm text-gray-600 dark:text-gray-400 pt-2">
-                  {t('auth.login.noAccount', "Don't have an account?")}{' '}
-                  <Link href="/signup" className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
-                    {t('auth.login.signUp', 'Sign up')}
-                  </Link>
-                </p>
             </div>
           ) : loginMethod === 'email' ? (
             <form className="space-y-6" onSubmit={handleEmailPasswordSubmit}>
@@ -548,11 +542,6 @@ const Login = () => {
                   {t('auth.login.back', 'Back')}
                 </button>
                 <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {t('auth.login.noAccount', "Don't have an account?")}{' '}
-                  <Link href="/signup" className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
-                    {t('auth.login.signUp', 'Sign up')}
-                  </Link>
-                </p>
               </div>
             </form>
           ) : null}
