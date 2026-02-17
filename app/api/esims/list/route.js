@@ -6,6 +6,8 @@ export const dynamic = 'force-dynamic';
 export async function GET(request) {
   try {
     const _dbg = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'NOT SET';
+    const _svcKey = (process.env.SUPABASE_SERVICE_JWT || process.env.SUPABASE_SERVICE_ROLE_KEY || 'NONE').substring(0, 20);
+    const _adminOk = !!supabaseAdmin;
     if (!supabaseAdmin) {
       console.error('❌ supabaseAdmin is null - SUPABASE_SERVICE_ROLE_KEY may be missing');
       throw new Error('Supabase not configured');
@@ -229,7 +231,7 @@ export async function GET(request) {
         orders: esimsWithInfo // Frontend expects data.orders array for filtering
       },
       count: esimsWithInfo.length,
-      _dbg
+      _dbg, _svcKey, _adminOk
     });
     
   } catch (error) {
