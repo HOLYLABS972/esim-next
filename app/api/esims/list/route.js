@@ -141,13 +141,20 @@ export async function GET(request) {
       // Get package ID (use package_id as slug, or numeric id)
       const packageId = packageData?.package_id || packageData?.id?.toString() || order.package_id?.toString();
       
-      // Build plan name: from package, or from order.plan_name / order row
-      const dataMB = packageData?.data_amount_mb || 0;
-      const dataGB = dataMB / 1024;
-      const dataFormatted = dataGB >= 1 ? `${dataGB.toFixed(dataGB % 1 === 0 ? 0 : 1)}GB` : `${dataMB}MB`;
-      const planName = packageData
-        ? `${dataFormatted} - ${packageData.validity_days || 0} days`
-        : (order.plan_name || 'Unknown Plan');
+      // Build plan name: prefer order.plan_name (set by bot/backend), then package data, then fallback
+      let planName = order.plan_name || null;
+      if (!planName && packageData && packageData.data_amount_mb) {
+        const dataMB = packageData.data_amount_mb;
+        const dataGB = dataMB / 1024;
+        const dataFormatted = dataGB >= 1 ? `${dataGB.toFixed(dataGB % 1 === 0 ? 0 : 1)}GB` : `${dataMB}MB`;
+        planName = `${dataFormatted} - ${packageData.validity_days || 0} days`;
+      }
+      if (!planName && packageData) {
+        planName = packageData.title_ru || packageData.title || packageData.package_id;
+      }
+      if (!planName) {
+        planName = order.package_slug || 'Unknown Plan';
+      }
       
       // Get country info: from joined data, or from order row (esim_orders has country_code, country_name)
       const countryCode = countryData?.airalo_country_code || order.country_code || null;
