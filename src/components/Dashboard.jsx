@@ -125,14 +125,9 @@ const Dashboard = () => {
       const timeoutId = setTimeout(() => controller.abort(), 15000);
 
       try {
-        const userId = currentUser?.uid || currentUser?.id || currentUser?._id || null;
-        
         const params = new URLSearchParams();
         params.set('email', userEmail);
-        params.set('status', 'active'); // web dashboard: show only active
-        if (userId) {
-          params.set('userId', String(userId));
-        }
+        params.set('status', 'active');
         
         const response = await fetch(
           `/api/esims/list?${params.toString()}`,

@@ -81,8 +81,6 @@ export async function GET(request) {
         `);
 
     const results = [];
-    // esim_orders.user_id is UUID type - only query by user_id when value is a valid UUID
-    const isValidUuid = (id) => typeof id === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id.trim());
 
     const pushResult = async (fn) => {
       try {
@@ -93,17 +91,9 @@ export async function GET(request) {
       }
     };
 
-    // 1) Query by explicit userId (only if valid UUID)
-    if (userIdParam && isValidUuid(userIdParam)) {
-      await pushResult(() => fetchOrders(baseSelect().eq('user_id', userIdParam)));
-    }
-    // 2) Query by users.id from email lookup
-    if (user?.id) {
-      await pushResult(() => fetchOrders(baseSelect().eq('user_id', user.id)));
-    }
-    // 3) Query by customer_email with join
+    // Query by customer_email
     await pushResult(() => fetchOrders(baseSelect().ilike('customer_email', normalizedEmail)));
-    // 4) Fallback: by customer_email with NO join (guarantees rows if any exist)
+    // Fallback: by customer_email with NO join (guarantees rows if any exist)
     const simpleSelect = () => supabaseAdmin.from('esim_orders').select('*');
     await pushResult(() => fetchOrders(simpleSelect().ilike('customer_email', normalizedEmail)));
 
