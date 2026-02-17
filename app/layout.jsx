@@ -164,7 +164,6 @@ export default function RootLayout({ children }) {
               <LanguageWrapper>
                 <div className="bg-white dark:bg-gray-900 flex flex-col min-h-screen transition-colors">
                   {/* <AppBanner /> */}
-                  <Navbar />
                   <main className="flex-grow">
                     {children}
                   </main>
