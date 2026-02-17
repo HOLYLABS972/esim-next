@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 function countryFlag(cc) {
@@ -16,15 +16,11 @@ function formatData(planName) {
 }
 
 function StatusDot({ status }) {
-  const colors = {
-    active: 'bg-green-500',
-    completed: 'bg-blue-500',
-    expired: 'bg-gray-500',
-  };
+  const colors = { active: 'bg-green-500', completed: 'bg-blue-500', expired: 'bg-gray-500' };
   return <span className={`w-2 h-2 rounded-full inline-block ${colors[status] || 'bg-gray-500'}`} />;
 }
 
-export default function MyEsimsPage() {
+function MyEsimsContent() {
   const searchParams = useSearchParams();
   const chatId = searchParams.get('chat_id');
   const [orders, setOrders] = useState([]);
@@ -85,7 +81,6 @@ export default function MyEsimsPage() {
   return (
     <div className="min-h-screen bg-[#0f1724] text-white px-4 py-6">
       <div className="max-w-md mx-auto space-y-4">
-        
         <h1 className="text-xl font-bold text-center">📱 Мои eSIM</h1>
 
         {orders.map(order => {
@@ -122,8 +117,6 @@ export default function MyEsimsPage() {
                   </div>
                 </div>
               </div>
-
-              {/* Mini usage bar */}
               {order.dataLimitMb > 0 && (
                 <div className="mt-3">
                   <div className="w-full bg-gray-700 rounded-full h-1.5">
@@ -148,26 +141,29 @@ export default function MyEsimsPage() {
             </div>
           </div>
           <div className="flex gap-2">
-            <a
-              href="https://apps.apple.com/us/app/globalbanka/id6754914283"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors text-sm font-medium"
-            >
+            <a href="https://apps.apple.com/us/app/globalbanka/id6754914283" target="_blank" rel="noopener noreferrer"
+              className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors text-sm font-medium">
               App Store
             </a>
-            <a
-              href="https://play.google.com/store/apps/details?id=com.theholylabs.bank"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors text-sm font-medium"
-            >
+            <a href="https://play.google.com/store/apps/details?id=com.theholylabs.bank" target="_blank" rel="noopener noreferrer"
+              className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-colors text-sm font-medium">
               Google Play
             </a>
           </div>
         </div>
-
       </div>
     </div>
+  );
+}
+
+export default function MyEsimsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-[#0f1724] flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    }>
+      <MyEsimsContent />
+    </Suspense>
   );
 }
