@@ -512,7 +512,13 @@ const SharePackagePage = () => {
             {t('sharePackage.packageNotFoundDesc', "The package you're looking for doesn't exist or has been removed")}
           </p>
           <button
-            onClick={() => router.push('/')}
+            onClick={() => {
+              if (typeof window !== 'undefined' && (new URLSearchParams(window.location.search).get('source') === 'telegram' || window.Telegram?.WebApp?.initData)) {
+                window.Telegram?.WebApp?.close();
+              } else {
+                router.push('/');
+              }
+            }}
             className="bg-blue-500 hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 text-white px-6 py-2 rounded-lg transition-colors"
           >
             {t('sharePackage.backToPlans', 'Back to Plans')}
