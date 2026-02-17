@@ -461,7 +461,8 @@ const PlanSelectionBottomSheet = ({
       isAuthenticated
     });
 
-    if (!isAuthenticated) {
+    const isTelegram = searchParams.get('source') === 'telegram';
+    if (!isAuthenticated && !isTelegram) {
       console.log('🔐 User not logged in, redirecting to login');
 
       // Store the intended destination to redirect back after login
