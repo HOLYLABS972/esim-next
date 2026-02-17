@@ -68,6 +68,8 @@ const SharePackagePage = () => {
   const { t, locale } = useI18n();
   const { defaultCurrency, paymentMethods: brandPaymentMethods } = useBrand();
   const displayCurrency = defaultCurrency || 'USD';
+  const [showEmailPrompt, setShowEmailPrompt] = useState(false);
+  const [purchaseEmail, setPurchaseEmail] = useState('');
   const configuredPayment = Array.isArray(brandPaymentMethods) && brandPaymentMethods.length > 0
     ? (brandPaymentMethods[0] === 'coinbase' ? 'crypto' : brandPaymentMethods[0])
     : 'robokassa';
@@ -338,16 +340,12 @@ const SharePackagePage = () => {
 
 
   const handlePurchase = async () => {
-    if (!currentUser) {
-      const isTelegram = searchParams.get('source') === 'telegram';
-      const currentUrl = window.location.pathname + window.location.search;
-      if (isTelegram) {
-        router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(currentUrl)}`);
-      } else {
-        toast.error(t('auth.loginRequired', 'Please log in to purchase this package'));
-        const qs = currentQuery();
-        router.push(`/login${qs ? `?${qs}` : ''}`);
-      }
+    const isTelegram = searchParams.get('source') === 'telegram' || (typeof window !== 'undefined' && window.Telegram?.WebApp?.initData);
+    
+    if (!currentUser && !isTelegram) {
+      toast.error(t('auth.loginRequired', 'Please log in to purchase this package'));
+      const qs = currentQuery();
+      router.push(`/login${qs ? `?${qs}` : ''}`);
       return;
     }
     
@@ -440,6 +438,26 @@ const SharePackagePage = () => {
       benefits: packageData.benefits || [],
       speed: packageData.speed
     };
+
+    // For Telegram miniapp: skip /checkout, go directly to server-side redirect
+    if (isTelegram) {
+      const email = purchaseEmail || currentUser?.email;
+      if (!email) {
+        setShowEmailPrompt(true);
+        return;
+      }
+      const params = new URLSearchParams({
+        pkg: planSlug,
+        email: email,
+        amount: Math.max(10, Math.round(priceRUBValue)).toString(),
+        plan: packageData.name || planSlug,
+      });
+      if (countryCode) params.set('cc', countryCode);
+      if (countryName) params.set('cn', countryName);
+      if (currentUser?.id) params.set('uid', currentUser.id);
+      window.location.href = `/api/checkout/redirect?${params.toString()}`;
+      return;
+    }
 
     localStorage.setItem('selectedPackage', JSON.stringify(checkoutData));
     router.push(`/checkout?payment=${validPayment}`);
@@ -807,14 +825,29 @@ const SharePackagePage = () => {
           {/* Package Actions */}
           <div className="p-6">
             <div className="max-w-2xl mx-auto">
+              {/* Email prompt for Telegram miniapp */}
+              {showEmailPrompt && (
+                <div className="mb-6 max-w-md mx-auto">
+                  <label className="block text-sm text-gray-400 mb-2">Введите email для получения eSIM</label>
+                  <input
+                    type="email"
+                    value={purchaseEmail}
+                    onChange={(e) => setPurchaseEmail(e.target.value)}
+                    placeholder="email@example.com"
+                    className="w-full px-4 py-3 rounded-xl bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:border-blue-400 focus:outline-none mb-3"
+                    autoFocus
+                  />
+                </div>
+              )}
+
               {/* Get Package Section */}
               <div className="text-center mb-8">
                 <h3 className={`text-2xl font-semibold text-gray-900 dark:text-white mb-4 ${isRTL ? 'text-right' : 'text-center'}`}>{t('sharePackage.getThisPackage', 'Get This Package')}</h3>
                 <button
                   onClick={handlePurchase}
-                  disabled={!packageData}
+                  disabled={!packageData || (showEmailPrompt && !purchaseEmail)}
                   className={`w-full max-w-md mx-auto flex items-center justify-center space-x-3 py-4 px-6 rounded-xl transition-colors font-medium text-lg shadow-lg ${
-                    !packageData
+                    !packageData || (showEmailPrompt && !purchaseEmail)
                       ? 'bg-gray-400 dark:bg-gray-600 cursor-not-allowed text-gray-500 dark:text-gray-300'
                       : 'bg-blue-500 hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 text-white'
                   }`}
@@ -823,7 +856,7 @@ const SharePackagePage = () => {
                   <span>
                     {!packageData
                       ? t('common.loading', 'Loading...')
-                      : t('sharePackage.purchaseNow', 'Purchase Now')}
+                      : showEmailPrompt ? 'Оплатить' : t('sharePackage.purchaseNow', 'Purchase Now')}
                   </span>
                 </button>
               </div>
