@@ -6,7 +6,6 @@ export const dynamic = 'force-dynamic';
 export async function GET(request) {
   try {
     if (!supabaseAdmin) {
-      console.error('❌ supabaseAdmin is null - SUPABASE_SERVICE_ROLE_KEY may be missing');
       throw new Error('Supabase not configured');
     }
 
@@ -15,25 +14,15 @@ export async function GET(request) {
     const statusFilter = searchParams.get('status');
 
     if (!userEmail) {
-      return NextResponse.json(
-        { error: 'Email is required', details: 'Please provide email parameter' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 });
     }
     
     const normalizedEmail = userEmail.toLowerCase().trim();
 
-    // Single query with join
+    // Simple flat query — no joins
     let query = supabaseAdmin
       .from('esim_orders')
-      .select(`
-        *,
-        esim_packages(
-          id, package_id, title, title_ru, data_amount_mb, validity_days,
-          price_usd, price_rub, package_type,
-          esim_countries(id, airalo_country_code, country_name, country_name_ru, flag_url)
-        )
-      `)
+      .select('*')
       .ilike('customer_email', normalizedEmail)
       .order('created_at', { ascending: false })
       .limit(100);
@@ -51,9 +40,22 @@ export async function GET(request) {
       throw error;
     }
 
+    // Fetch package data separately for orders that have package_id
+    const packageIds = [...new Set((orders || []).map(o => o.package_id).filter(Boolean))];
+    let packagesMap = {};
+    if (packageIds.length > 0) {
+      const { data: packages } = await supabaseAdmin
+        .from('esim_packages')
+        .select('id, package_id, title, title_ru, data_amount_mb, validity_days, price_usd, price_rub, package_type, esim_countries(id, airalo_country_code, country_name, country_name_ru, flag_url)')
+        .in('id', packageIds);
+      for (const pkg of (packages || [])) {
+        packagesMap[pkg.id] = pkg;
+      }
+    }
+
     const esimsWithInfo = (orders || []).map((order) => {
-      const packageData = order.esim_packages;
-      const countryData = packageData?.esim_countries;
+      const packageData = packagesMap[order.package_id] || null;
+      const countryData = packageData?.esim_countries || null;
       
       const packageId = packageData?.package_id || packageData?.id?.toString() || order.package_id?.toString();
       
@@ -73,7 +75,6 @@ export async function GET(request) {
       
       const countryCode = countryData?.airalo_country_code || order.country_code || null;
       const countryName = countryData?.country_name || countryData?.country_name_ru || order.country_name || null;
-      const flagUrl = countryData?.flag_url || null;
       
       return {
         id: order.id,
@@ -89,7 +90,7 @@ export async function GET(request) {
         countryCode,
         countryName,
         countryNameRu: countryData?.country_name_ru || null,
-        flagUrl,
+        flagUrl: countryData?.flag_url || null,
         qrCode: {
           qrCodeUrl: order.qr_code_url,
           directAppleInstallationUrl: order.direct_apple_installation_url || null,
