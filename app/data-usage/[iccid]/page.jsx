@@ -157,11 +157,6 @@ export default function DataUsagePage() {
         )}
 
         {/* ICCID */}
-        <div className="bg-[#1a2332] rounded-2xl p-4 border border-gray-700/50">
-          <div className="text-xs text-gray-400 mb-1">ICCID</div>
-          <div className="font-mono text-sm text-gray-300 break-all">{order.iccid}</div>
-        </div>
-
         {/* Install Button */}
         {order.installUrl && (
           <a
@@ -171,6 +166,11 @@ export default function DataUsagePage() {
             📲 Установить eSIM на iPhone
           </a>
         )}
+
+        <div className="bg-[#1a2332] rounded-2xl p-4 border border-gray-700/50">
+          <div className="text-xs text-gray-400 mb-1">ICCID</div>
+          <div className="font-mono text-sm text-gray-300 break-all">{order.iccid}</div>
+        </div>
 
         {/* QR Code */}
         {order.qrCodeUrl && (
