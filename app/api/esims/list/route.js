@@ -183,6 +183,7 @@ export async function GET(request) {
         // Country information (use Airalo's flag URL)
         countryCode: countryCode,
         countryName: countryName,
+        countryNameRu: countryData?.country_name_ru || null,
         flagUrl: flagUrl,
         
         // QR Code and eSIM data (what View button needs)

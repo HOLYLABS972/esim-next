@@ -213,7 +213,7 @@ const Dashboard = () => {
               updatedAt: order.updatedAt,
               // Map country information with translation and Airalo flag URL
               countryCode: countryCode,
-              countryName: translateCountryName(countryCode, countryName, locale),
+              countryName: (locale === 'ru' && order.countryNameRu) ? order.countryNameRu : translateCountryName(countryCode, countryName, locale),
               flagUrl: order.flagUrl || null, // Use Airalo's flag URL from database
               // Map QR code data
               qrCode: {
