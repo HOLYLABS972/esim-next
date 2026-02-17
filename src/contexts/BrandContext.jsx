@@ -11,7 +11,7 @@ const defaultBrand = {
   slug: 'globalbanka',
   name: 'GlobalBanka',
   logoUrl: null,
-  theme: { mode: 'light', primaryColor: '#2563eb', fontHeading: 'Inter', fontBody: 'Inter' },
+  theme: { mode: 'dark', primaryColor: '#2563eb', fontHeading: 'Inter', fontBody: 'Inter' },
   defaultLanguage: 'en',
   supportedLanguages: ['en', 'ru', 'es', 'fr', 'de', 'ar', 'he'],
   paymentMethods: ['robokassa'],
@@ -22,20 +22,12 @@ const defaultBrand = {
 
 const SUPPORTED_CURRENCIES = ['USD', 'RUB', 'ILS', 'EUR', 'AUD'];
 
-function normalizeThemeParam(theme) {
-  if (!theme || typeof theme !== 'string') return null;
-  const t = theme.toLowerCase().trim();
-  if (t === 'white' || t === 'light') return 'light';
-  if (t === 'dark') return 'dark';
-  return null;
-}
 
 function applyThemeToDocument(theme) {
   if (typeof document === 'undefined') return;
   const root = document.documentElement;
-  const mode = theme?.mode === 'dark' ? 'dark' : 'light';
-  root.classList.toggle('dark', mode === 'dark');
-  root.setAttribute('data-theme', mode);
+  root.classList.add('dark');
+  root.setAttribute('data-theme', 'dark');
   if (theme?.primaryColor) {
     root.style.setProperty('--color-primary', theme.primaryColor);
   } else {
@@ -44,17 +36,13 @@ function applyThemeToDocument(theme) {
 }
 
 function mergeUrlOverrides(brand, urlOverrides) {
-  if (!urlOverrides || (!urlOverrides.language && !urlOverrides.currency && !urlOverrides.theme)) {
+  if (!urlOverrides || (!urlOverrides.language && !urlOverrides.currency)) {
     return brand;
   }
   const next = { ...brand };
   if (urlOverrides.language) next.defaultLanguage = urlOverrides.language;
   if (urlOverrides.currency && SUPPORTED_CURRENCIES.includes(urlOverrides.currency.toUpperCase())) {
     next.defaultCurrency = urlOverrides.currency.toUpperCase();
-  }
-  if (urlOverrides.theme) {
-    const mode = normalizeThemeParam(urlOverrides.theme) || brand.theme?.mode || 'light';
-    next.theme = { ...(brand.theme || {}), mode };
   }
   return next;
 }
@@ -64,13 +52,12 @@ export function BrandProvider({ children }) {
   const [brand, setBrand] = useState(defaultBrand);
   const [loaded, setLoaded] = useState(false);
 
-  // Derive URL overrides from current search params so currency/language/theme always apply when in URL
+  // Derive URL overrides from current search params so currency/language always apply when in URL
   const urlOverrides = useMemo(() => {
     const language = searchParams.get('language') || null;
     const currency = searchParams.get('currency') || null;
-    const theme = searchParams.get('theme') || null;
-    if (!language && !currency && !theme) return null;
-    return { language: language || undefined, currency: currency || undefined, theme: theme || undefined };
+    if (!language && !currency) return null;
+    return { language: language || undefined, currency: currency || undefined };
   }, [searchParams]);
 
   const effectiveBrand = mergeUrlOverrides(brand, urlOverrides);

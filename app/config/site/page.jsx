@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { Palette, Loader2, Save, Sun, Moon, Image, Languages, DollarSign, Percent } from 'lucide-react';
+import { Palette, Loader2, Save, Image, Languages, DollarSign, Percent } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const LANGUAGES = [
@@ -32,7 +32,6 @@ export default function SitePage() {
   const [defaultLanguage, setDefaultLanguage] = useState('en');
   const [defaultCurrency, setDefaultCurrency] = useState('RUB');
   const [discountPercentage, setDiscountPercentage] = useState(0);
-  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     const load = async () => {
@@ -44,7 +43,6 @@ export default function SitePage() {
           setDefaultLanguage(siteData.site.default_language || 'en');
           setDefaultCurrency(siteData.site.default_currency || 'RUB');
           setDiscountPercentage(Number(siteData.site.discount_percentage) || 0);
-          setTheme(siteData.site.theme?.mode === 'dark' ? 'dark' : 'light');
         }
       } catch (_) {}
       setLoading(false);
@@ -64,15 +62,15 @@ export default function SitePage() {
           default_language: defaultLanguage,
           default_currency: defaultCurrency,
           discount_percentage: discountPercentage,
-          theme: { mode: theme, primaryColor: null, fontHeading: 'Inter', fontBody: 'Inter' },
+          theme: { mode: 'dark', primaryColor: null, fontHeading: 'Inter', fontBody: 'Inter' },
         }),
       });
       const data = await res.json();
         if (data.success) {
         toast.success('Site settings saved');
         if (typeof document !== 'undefined') {
-          document.documentElement.classList.toggle('dark', theme === 'dark');
-          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.classList.add('dark');
+          document.documentElement.setAttribute('data-theme', 'dark');
         }
         queryClient.invalidateQueries({ queryKey: ['countries-with-pricing'] });
         if (typeof window !== 'undefined') {
@@ -99,7 +97,7 @@ export default function SitePage() {
             <div>
               <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Site</h2>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Logo, default language, currency, theme, and login options per store.
+                Logo, default language, currency, and login options per store.
               </p>
             </div>
           </div>
@@ -176,36 +174,6 @@ export default function SitePage() {
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2"
               />
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Discount % applied to all plans site-wide (0–100).</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Theme</label>
-              <div className="flex gap-4">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="theme"
-                    value="light"
-                    checked={theme === 'light'}
-                    onChange={() => setTheme('light')}
-                    className="border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <Sun className="w-5 h-5 text-amber-500" />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Light</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="theme"
-                    value="dark"
-                    checked={theme === 'dark'}
-                    onChange={() => setTheme('dark')}
-                    className="border-gray-300 text-blue-600 focus:ring-blue-500"
-                  />
-                  <Moon className="w-5 h-5 text-slate-600" />
-                  <span className="text-sm text-gray-700 dark:text-gray-300">Dark</span>
-                </label>
-              </div>
             </div>
 
             <button
