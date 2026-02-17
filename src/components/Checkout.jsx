@@ -498,103 +498,21 @@ const Checkout = ({ plan, emailFromUrl, paymentMethod: paymentMethodProp }) => {
             currency: 'RUB',
           }));
 
-          try {
-            const createOrderResponse = await fetch('/api/orders/create-pending', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                orderId: uniqueOrderId,
-                packageId: planSlug,
-                customerEmail: getEmailForOrder(),
-                amount: finalAmountRUB,
-                currency: 'RUB',
-                description: plan.name,
-                userId: currentUser?.uid || currentUser?.id || currentUser?._id || null,
-                quantity: 1,
-                mode: 'production',
-                metadata: {
-                  type: 'esim_purchase',
-                  countryCode: countryCode || null,
-                  countryName: countryName || null,
-                  countryFlag: plan.countryFlag || getFlagEmoji(countryCode) || '🌍',
-                  planSlug: planSlug,
-                  plan_name: plan.name || planSlug,
-                  originalPlanId: plan.id,
-                }
-              })
-            });
-            if (createOrderResponse.ok) {
-              console.log('✅ Pending order created');
-            } else {
-              const errorData = await createOrderResponse.json().catch(() => ({}));
-              console.error('⚠️ Failed to create pending order:', errorData);
-            }
-          } catch (err) {
-            console.error('⚠️ Error creating pending order:', err);
-          }
-
-          // NOTE: /api/orders/create-pending already saves country_code, country_name, 
-          // plan_name, package_slug from metadata. No second API call needed.
-
-          // Redirect to Robokassa payment via Next.js API
-          // CRITICAL: Use the exact same amountRUB value that was saved to DB
-          console.log('🚀 Sending payment request to Robokassa:', {
-            order: uniqueOrderId,
-            total: finalAmountRUB, // Use the same rounded value as DB
-            totalType: typeof finalAmountRUB,
-            currency: 'RUB',
-            amountUSD: amountUSD ? amountUSD.toFixed(2) : 'N/A',
-            verification: `Same amount as saved to DB: ${finalAmountRUB} RUB`
+          // Use GET redirect instead of fetch() — works in Telegram WebApp WebView
+          // Server-side route creates order + redirects to Robokassa in one step
+          const checkoutParams = new URLSearchParams({
+            pkg: planSlug,
+            email: getEmailForOrder(),
+            amount: finalAmountRUB.toString(),
+            plan: plan.name || planSlug,
           });
+          if (countryCode) checkoutParams.set('cc', countryCode);
+          if (countryName) checkoutParams.set('cn', countryName);
+          const uid = currentUser?.uid || currentUser?.id || currentUser?._id || null;
+          if (uid) checkoutParams.set('uid', uid);
           
-          if (useStripe) {
-            const stripeRes = await fetch('/api/stripe/create-checkout-session', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                orderId: uniqueOrderId,
-                customerEmail: plan.email || plan.couponEmail || (currentUser?.email || null),
-                planName: plan.name,
-                amount: finalAmountRUB,
-                currency: 'rub',
-                domain: window.location.origin,
-              })
-            });
-            if (!stripeRes.ok) {
-              const errData = await stripeRes.json();
-              throw new Error(errData.error || 'Failed to create Stripe session');
-            }
-            const stripeData = await stripeRes.json();
-            if (stripeData.url) {
-              window.location.href = stripeData.url;
-            } else {
-              throw new Error('No Stripe URL received');
-            }
-          } else {
-            const response = await fetch('/api/robokassa/create-payment', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                order: uniqueOrderId,
-                email: plan.email || plan.couponEmail || (currentUser ? currentUser.email : null),
-                name: plan.name,
-                total: finalAmountRUB,
-                currency: 'RUB',
-                domain: window.location.origin,
-                description: plan.name
-              })
-            });
-            if (!response.ok) {
-              const errorData = await response.json();
-              throw new Error(errorData.error || 'Failed to create payment');
-            }
-            const result = await response.json();
-            if (result.paymentUrl) {
-              window.location.href = result.paymentUrl;
-            } else {
-              throw new Error('No payment URL received');
-            }
-          }
+          console.log('🚀 Redirecting to checkout:', `/api/checkout/redirect?${checkoutParams.toString()}`);
+          window.location.href = `/api/checkout/redirect?${checkoutParams.toString()}`;
           
         } catch (err) {
           console.error('❌ Payment redirect failed:', err);
