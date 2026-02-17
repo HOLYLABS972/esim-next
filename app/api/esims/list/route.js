@@ -45,7 +45,11 @@ export async function GET(request) {
         .limit(100);
       
       if (statusFilter) {
-        q = q.eq('status', statusFilter);
+        if (statusFilter === 'active') {
+          q = q.in('status', ['active', 'completed']);
+        } else {
+          q = q.eq('status', statusFilter);
+        }
       }
       
       const result = await q;
