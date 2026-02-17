@@ -1799,6 +1799,25 @@ export async function POST(request) {
         .limit(1)
         .maybeSingle();
       
+      // If not found by airalo_order_id, try by DB id (bot uses DB id as Robokassa InvId)
+      if (orderError || !order) {
+        console.log(`⚠️ [${requestId}] Order not found by airalo_order_id, trying by DB id...`);
+        const invIdNum = parseInt(orderIdStr, 10);
+        if (!isNaN(invIdNum) && invIdNum > 0 && invIdNum < 1000000) {
+          const { data: orderById, error: idError } = await supabaseAdmin
+            .from('esim_orders')
+            .select('*')
+            .eq('id', invIdNum)
+            .limit(1)
+            .maybeSingle();
+          if (!idError && orderById) {
+            order = orderById;
+            orderError = null;
+            console.log(`✅ [${requestId}] Found order by DB id: ${invIdNum}`);
+          }
+        }
+      }
+
       // If still not found, try a more flexible search
       if (orderError || !order) {
         console.log(`⚠️ [${requestId}] Order not found with exact match, trying flexible search...`);
