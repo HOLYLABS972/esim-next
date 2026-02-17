@@ -7,15 +7,31 @@ import { useRouter, useSearchParams } from 'next/navigation';
 const EsimPaymentSuccessContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const waitForEmail = searchParams.get('wait_for_email') === 'true';
+  const source = searchParams.get('source');
+  const [isTelegram, setIsTelegram] = React.useState(source === 'telegram');
 
-  // Auto-redirect to dashboard after 4 seconds
+  // Also detect Telegram WebApp environment
   React.useEffect(() => {
+    if (window.Telegram?.WebApp?.initData) {
+      setIsTelegram(true);
+    }
+  }, []);
+
+  // Auto-redirect to dashboard after 4 seconds (only if not in miniapp)
+  React.useEffect(() => {
+    if (isTelegram) return; // In miniapp — user closes manually
     const timer = setTimeout(() => {
       router.push('/ru/dashboard?currency=RUB&theme=dark');
     }, 4000);
     return () => clearTimeout(timer);
-  }, [router]);
+  }, [router, isTelegram]);
+
+  // Try to close Telegram miniapp
+  const handleClose = () => {
+    if (window.Telegram?.WebApp) {
+      window.Telegram.WebApp.close();
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
@@ -34,9 +50,18 @@ const EsimPaymentSuccessContent = () => {
         <p className="text-gray-400">
           Вы получите письмо с инструкциями по установке в ближайшее время.
         </p>
-        <p className="text-gray-500 text-sm mt-4">
-          Перенаправление в личный кабинет...
-        </p>
+        {isTelegram ? (
+          <button
+            onClick={handleClose}
+            className="mt-6 px-8 py-3 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-colors"
+          >
+            Закрыть
+          </button>
+        ) : (
+          <p className="text-gray-500 text-sm mt-4">
+            Перенаправление в личный кабинет...
+          </p>
+        )}
       </div>
     </div>
   );
