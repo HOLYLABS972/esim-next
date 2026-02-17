@@ -306,14 +306,7 @@ const RecentOrders = ({ orders, loading, onViewQRCode, onDeleteOrder }) => {
                                 </a>
                               )}
                               
-                              {/* QR Code button */}
-                              <button
-                                onClick={() => onViewQRCode(order)}
-                                className={`flex items-center px-3 py-2 bg-blue-400/20 text-blue-400 rounded-lg hover:bg-blue-400/30 transition-colors duration-200 ${isRTL ? 'space-x-reverse space-x-2' : 'space-x-2'}`}
-                              >
-                                <QrCode className="w-4 h-4" />
-                                <span className="text-sm hidden md:inline">{order.iccid ? t('dashboard.viewQR', 'QR') : t('dashboard.viewQR', 'Детали')}</span>
-                              </button>
+                              {/* QR Code button — hidden, use data-usage page instead */}
                             </div>
                           )}
                         </div>
