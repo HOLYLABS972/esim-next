@@ -148,19 +148,13 @@ export default function DataUsagePage() {
           </div>
         )}
 
-        {/* Days & Info */}
-        <div className="grid grid-cols-2 gap-3">
-          {daysLeft !== null && (
-            <div className="bg-[#1a2332] rounded-2xl p-4 border border-gray-700/50 text-center">
-              <div className="text-3xl font-bold text-blue-400">{daysLeft}</div>
-              <div className="text-xs text-gray-400 mt-1">дней осталось</div>
-            </div>
-          )}
+        {/* Days Remaining */}
+        {daysLeft !== null && (
           <div className="bg-[#1a2332] rounded-2xl p-4 border border-gray-700/50 text-center">
-            <div className="text-3xl font-bold text-green-400">{order.priceRub}₽</div>
-            <div className="text-xs text-gray-400 mt-1">оплачено</div>
+            <div className="text-3xl font-bold text-blue-400">{daysLeft}</div>
+            <div className="text-xs text-gray-400 mt-1">дней осталось</div>
           </div>
-        </div>
+        )}
 
         {/* ICCID */}
         <div className="bg-[#1a2332] rounded-2xl p-4 border border-gray-700/50">
@@ -229,14 +223,6 @@ export default function DataUsagePage() {
             </div>
           </div>
         )}
-
-        {/* Buy New */}
-        <Link
-          href="/"
-          className="block w-full py-3 bg-gray-700 hover:bg-gray-600 text-white text-center font-medium rounded-2xl transition-colors"
-        >
-          🛒 Купить новую eSIM
-        </Link>
 
         {/* App Install Banner */}
         <div className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 rounded-2xl p-5 border border-blue-500/30 space-y-3">
