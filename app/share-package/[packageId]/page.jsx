@@ -338,7 +338,10 @@ const SharePackagePage = () => {
 
 
   const handlePurchase = async () => {
-    if (!currentUser) {
+    const isTelegram = searchParams.get('source') === 'telegram';
+    const telegramChatId = searchParams.get('chat_id');
+    
+    if (!currentUser && !isTelegram) {
       toast.error(t('auth.loginRequired', 'Please log in to purchase this package'));
       const qs = currentQuery();
       router.push(`/login${qs ? `?${qs}` : ''}`);

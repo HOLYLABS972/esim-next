@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useI18n } from '../contexts/I18nContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Mail, LogOut } from 'lucide-react';
@@ -11,6 +11,8 @@ const Navbar = () => {
   const { currentUser, logout } = useAuth();
   const { t, locale } = useI18n();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isTelegram = searchParams.get('source') === 'telegram';
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = () => {
@@ -53,7 +55,7 @@ const Navbar = () => {
                   <LogOut className="w-5 h-5 text-red-400 group-hover:text-red-300" />
                 </button>
               </div>
-            ) : (
+            ) : !isTelegram ? (
               <Link
                 href="/login"
                 className="flex items-center gap-2 px-6 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg transition-colors font-medium"
@@ -61,7 +63,7 @@ const Navbar = () => {
                 <Mail className="w-4 h-4" />
                 {locale === 'ru' ? 'Войти' : 'Log in'}
               </Link>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
