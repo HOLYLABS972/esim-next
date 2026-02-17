@@ -162,6 +162,16 @@ export default function DataUsagePage() {
           <div className="font-mono text-sm text-gray-300 break-all">{order.iccid}</div>
         </div>
 
+        {/* Install Button */}
+        {order.installUrl && (
+          <a
+            href={order.installUrl}
+            className="block w-full py-4 bg-blue-500 hover:bg-blue-600 text-white text-center font-semibold rounded-2xl transition-colors text-lg"
+          >
+            📲 Установить eSIM на iPhone
+          </a>
+        )}
+
         {/* QR Code */}
         {order.qrCodeUrl && (
           <div className="bg-[#1a2332] rounded-2xl p-5 border border-gray-700/50 text-center space-y-3">
@@ -174,16 +184,6 @@ export default function DataUsagePage() {
               />
             </div>
           </div>
-        )}
-
-        {/* Install Button */}
-        {order.installUrl && (
-          <a
-            href={order.installUrl}
-            className="block w-full py-4 bg-blue-500 hover:bg-blue-600 text-white text-center font-semibold rounded-2xl transition-colors text-lg"
-          >
-            📲 Установить eSIM на iPhone
-          </a>
         )}
 
         {/* Manual Install Instructions */}
