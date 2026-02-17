@@ -22,14 +22,6 @@ const Login = () => {
   const { loginWithPassword, loginWithGoogle } = useAuth();
   const { t, locale } = useI18n();
 
-  // In Telegram WebApp, redirect to OTP page instead of showing OAuth options
-  useEffect(() => {
-    if (typeof window !== 'undefined' && (window.Telegram?.WebApp?.initData || new URLSearchParams(window.location.search).get('source') === 'telegram')) {
-      const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/';
-      router.replace(`/ru/telegram-auth?returnUrl=${encodeURIComponent(returnUrl)}`);
-    }
-  }, [router]);
-
   // Hardcoded by domain: globalbanka.roamjet.net = Yandex + Google + Email, others = Google + Email
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isGlobalBanka = hostname === 'globalbanka.roamjet.net';
@@ -39,6 +31,14 @@ const Login = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // In Telegram WebApp, redirect to OTP page instead of showing OAuth options
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window.Telegram?.WebApp?.initData || new URLSearchParams(window.location.search).get('source') === 'telegram')) {
+      const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/';
+      router.replace(`/ru/telegram-auth?returnUrl=${encodeURIComponent(returnUrl)}`);
+    }
+  }, [router]);
 
 
   // Fetch auth status on mount
