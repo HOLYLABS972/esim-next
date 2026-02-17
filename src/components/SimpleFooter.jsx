@@ -63,15 +63,6 @@ export default function SimpleFooter() {
                   <span className="ml-1">{t('navbar.logout', 'Logout')}</span>
                 </button>
               </div>
-            ) : searchParams.get('source') !== 'telegram' ? (
-              <Link
-                href={buildUrl(`${langPrefix}/login`, currentParams())}
-                className="flex items-center justify-center text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors px-2 py-1 rounded hover:bg-gray-200 dark:hover:bg-gray-800"
-                title={t('navbar.login', 'Login')}
-              >
-                <LogIn size={16} />
-                <span className="ml-1">{t('navbar.login', 'Login')}</span>
-              </Link>
             ) : null}
           </div>
         </div>
