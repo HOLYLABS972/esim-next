@@ -91,7 +91,7 @@ export async function POST(request) {
         .update({
           country_code: finalCountryCode,
           country_name: finalCountryName,
-          package_id: planId,
+          package_id: (!isNaN(parseInt(planId)) && parseInt(planId) < 1000000) ? parseInt(planId) : null,
           status: esimStatus,
           metadata: { processing_status: 'pending' },
           updated_at: new Date().toISOString()
@@ -116,7 +116,7 @@ export async function POST(request) {
     // Create new pending eSIM record with correct country
     const orderData = {
       airalo_order_id: orderIdStr,
-      package_id: planId,
+      package_id: (!isNaN(parseInt(planId)) && parseInt(planId) < 1000000) ? parseInt(planId) : null,
       price_rub: amount || 0,
       currency: currency || 'RUB',
       status: esimStatus,
@@ -128,8 +128,10 @@ export async function POST(request) {
       qr_code_url: null,
       activation_code: null,
       smdp_address: null,
+      plan_name: planName || planId,
       metadata: {
         plan_name: planName,
+        package_slug: planId,
         processing_status: 'pending',
         session_lost: !userId,
         processing_key: `${userId || `email_${customerEmail}`}_${orderId}_${Date.now()}`
