@@ -204,14 +204,30 @@ export default function DataUsagePage() {
           </div>
         )}
 
-        {/* Top-up Button */}
+        {/* Top-up Button — redirects to app download */}
         {order.status === 'active' && order.iccid && (
-          <Link
-            href={`/topup?iccid=${order.iccid}&country=${order.countryCode || ''}`}
-            className="block w-full py-4 bg-green-600 hover:bg-green-700 text-white text-center font-semibold rounded-2xl transition-colors text-lg"
-          >
-            🔋 Пополнить трафик
-          </Link>
+          <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-2xl p-4 text-center space-y-3">
+            <p className="text-white font-semibold text-lg">🔋 Нужно больше трафика?</p>
+            <p className="text-green-100 text-sm">Пополнение доступно в приложении Globalbanka</p>
+            <div className="flex gap-2">
+              <a
+                href="https://apps.apple.com/us/app/globalbanka/id6754914283"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors text-sm font-medium"
+              >
+                App Store
+              </a>
+              <a
+                href="https://play.google.com/store/apps/details?id=com.theholylabs.bank"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-white/20 text-white rounded-xl hover:bg-white/30 transition-colors text-sm font-medium"
+              >
+                Google Play
+              </a>
+            </div>
+          </div>
         )}
 
         {/* Buy New */}
