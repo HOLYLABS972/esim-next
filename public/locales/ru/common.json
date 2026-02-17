@@ -412,7 +412,7 @@
     "androidStep5": "Вы также можете набрать *#06# для проверки номера EID"
   },
   "dashboard": {
-    "title": "Панель управления",
+    "title": "Личный кабинет",
     "loadingDashboard": "Загрузка панели управления...",
     "welcomeBack": "Добро пожаловать, {{name}}!",
     "manageOrders": "Управляйте заказами eSIM и настройками аккаунта",
@@ -432,7 +432,16 @@
     "unknown": "Неизвестно",
     "unknownCountry": "Неизвестная страна",
     "viewQR": "Показать",
-    "status": "Статус",
+    "status": {
+      "active": "Активна",
+      "completed": "Активна",
+      "paid": "Оплачено",
+      "pending": "Ожидание",
+      "processing": "Обработка",
+      "cancelled": "Отменено",
+      "error": "Ошибка",
+      "unknown": "Неизвестно"
+    },
     "accountSettings": "Настройки аккаунта",
     "personalInformation": "Личная информация",
     "nameCannotBeEmpty": "Имя не может быть пустым",
@@ -533,7 +542,6 @@
     "directAppleInstallation": "✅ Прямая ссылка установки Apple",
     "appleEsimInstallation": "Установка eSIM Apple",
     "installEsim": "Установить eSIM",
-    "title": "Личный кабинет",
     "viewUsage": "Использование",
     "checkingAuth": "Проверка авторизации...",
     "redirectingToLogin": "Перенаправление на вход...",
