@@ -484,9 +484,16 @@ const PlanSelectionBottomSheet = ({
       const langMatch = pathname.match(/^\/(ar|de|es|fr|he|ru)\//);
       const langPrefix = langMatch ? `/${langMatch[1]}` : '';
 
-      console.log('🔍 DEBUG: Redirecting to:', `${langPrefix}/login?returnUrl=${encodeURIComponent(returnUrl)}`);
-      // Redirect to login with return URL
-      router.push(`${langPrefix}/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+      const isTelegram = searchParams.get('source') === 'telegram';
+      if (isTelegram) {
+        // Add source params to returnUrl
+        returnParams.set('source', 'telegram');
+        if (searchParams.get('chat_id')) returnParams.set('chat_id', searchParams.get('chat_id'));
+        const telegramReturnUrl = `/share-package/${encodeURIComponent(String(slug))}?${returnParams.toString()}`;
+        router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(telegramReturnUrl)}`);
+      } else {
+        router.push(`${langPrefix}/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+      }
       return;
     }
 

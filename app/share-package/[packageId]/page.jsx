@@ -339,9 +339,15 @@ const SharePackagePage = () => {
 
   const handlePurchase = async () => {
     if (!currentUser) {
-      toast.error(t('auth.loginRequired', 'Please log in to purchase this package'));
-      const qs = currentQuery();
-      router.push(`/login${qs ? `?${qs}` : ''}`);
+      const isTelegram = searchParams.get('source') === 'telegram';
+      const currentUrl = window.location.pathname + window.location.search;
+      if (isTelegram) {
+        router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(currentUrl)}`);
+      } else {
+        toast.error(t('auth.loginRequired', 'Please log in to purchase this package'));
+        const qs = currentQuery();
+        router.push(`/login${qs ? `?${qs}` : ''}`);
+      }
       return;
     }
     
