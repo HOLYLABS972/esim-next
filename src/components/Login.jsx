@@ -26,8 +26,8 @@ const Login = () => {
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isGlobalBanka = hostname === 'globalbanka.roamjet.net';
   const showEmail = true;
-  const showGoogle = false;
-  const showYandex = false;
+  const showGoogle = isGlobalBanka;
+  const showYandex = isGlobalBanka;
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
