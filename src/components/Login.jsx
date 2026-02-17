@@ -541,7 +541,6 @@ const Login = () => {
                 >
                   {t('auth.login.back', 'Back')}
                 </button>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
               </div>
             </form>
           ) : null}

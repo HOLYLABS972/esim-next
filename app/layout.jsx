@@ -3,7 +3,7 @@ import Providers from '../src/components/Providers'
 import LanguageWrapper from '../src/components/LanguageWrapper'
 import { BrandProvider } from '../src/contexts/BrandContext'
 import SimpleFooter from '../src/components/SimpleFooter'
-import Navbar from '../src/components/Navbar'
+// Navbar removed
 // import AppBanner from '../src/components/AppBanner'
 import './globals.css'
 import './rtl.css'
