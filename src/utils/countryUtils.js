@@ -427,6 +427,21 @@ export function translateCountryName(countryOrCode, countryNameOrLocale = '', lo
     if (n) return n;
   }
   if (!locale || locale === 'en') return countryName;
+
+  // Fallback to static translations when no country object is available
+  if (countryCode) {
+    if (locale === 'ru') {
+      const ru = getBasicCountryNameRu(countryCode);
+      if (ru) return ru;
+    } else if (locale === 'he') {
+      const he = getBasicCountryNameHe(countryCode);
+      if (he) return he;
+    } else if (locale === 'ar') {
+      const ar = getBasicCountryNameAr(countryCode);
+      if (ar) return ar;
+    }
+  }
+
   return countryName;
 }
 
