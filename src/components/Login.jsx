@@ -22,11 +22,11 @@ const Login = () => {
   const { loginWithPassword, loginWithGoogle } = useAuth();
   const { t, locale } = useI18n();
 
-  // Hardcoded by domain: globalbanka.roamjet.net = Yandex + Email, others = Google + Email
+  // Hardcoded by domain: globalbanka.roamjet.net = Yandex + Google + Email, others = Google + Email
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isGlobalBanka = hostname === 'globalbanka.roamjet.net';
   const showEmail = true;
-  const showGoogle = !isGlobalBanka && googleAuthEnabled;
+  const showGoogle = googleAuthEnabled;
   const showYandex = isGlobalBanka && yandexAuthEnabled;
   const router = useRouter();
   const pathname = usePathname();
