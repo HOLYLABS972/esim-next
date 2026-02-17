@@ -558,7 +558,7 @@ const SharePackagePage = () => {
           {/* Package Title */}
           <div className="bg-gray-100 dark:bg-gray-800/90 backdrop-blur-md p-4">
             <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-300 text-lg">{t('sharePackage.noPhoneNumber', "This eSIM doesn't come with a number")}</p>
+              {/* Removed: "This eSIM doesn't come with a number" notice */}
             </div>
           </div>
           
