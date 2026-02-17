@@ -38,7 +38,7 @@ export async function GET(request) {
       } else {
         // For country-specific queries, only return local plans for that country
         query = query.eq('country_code', codeUpper);
-        query = query.or(`package_type.eq.local,package_type.is.null`); // Only local plans
+        query = query.or(`package_type.eq.local,package_type.eq.country,package_type.is.null`); // Local/country plans
       }
     }
     
