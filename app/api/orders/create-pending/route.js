@@ -248,10 +248,14 @@ export async function POST(request) {
         price_rub: finalAmount,
         currency: orderData.currency || 'RUB',
         user_id: orderData.userId || null,
-        status: 'pending', // Always pending when created from payment flow
+        status: 'pending',
+        order_type: orderType,
+        plan_name: orderData.metadata?.plan_name || orderData.description || packageSlug || null,
+        store_id: 'globalbanka',
         metadata: {
-          package_slug: packageSlug, // Store slug (package_id) for Airalo API (REQUIRED for n8n)
-          source: 'airalo' // All packages are from Airalo
+          package_slug: packageSlug,
+          source: 'miniapp',
+          ...(orderData.metadata || {})
         },
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()

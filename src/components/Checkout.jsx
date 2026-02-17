@@ -516,6 +516,7 @@ const Checkout = ({ plan, emailFromUrl, paymentMethod: paymentMethodProp }) => {
                   countryName: countryName || null,
                   countryFlag: plan.countryFlag || getFlagEmoji(countryCode) || '🌍',
                   planSlug: planSlug,
+                  plan_name: plan.name || planSlug,
                   originalPlanId: plan.id,
                 }
               })
@@ -530,71 +531,8 @@ const Checkout = ({ plan, emailFromUrl, paymentMethod: paymentMethodProp }) => {
             console.error('⚠️ Error creating pending order:', err);
           }
 
-          // Create invisible/pending eSIM record with correct country
-          try {
-            console.log('📱 Creating invisible eSIM record with country info...');
-            console.log('🌍 Country data being sent to eSIM create-pending:', {
-              countryCode: countryCode,
-              countryName: countryName,
-              source: 'Checkout component',
-              hasCountryCode: !!countryCode,
-              hasCountryName: !!countryName
-            });
-            console.log('📋 Full eSIM data:', {
-              orderId: uniqueOrderId,
-              planId: planSlug,
-              planName: plan.name,
-              countryCode: countryCode,
-              countryName: countryName,
-              amount: finalAmountRUB,
-                currency: 'RUB',
-                userId: currentUser?.uid || currentUser?.id || currentUser?._id || null,
-              customerEmail: plan.email || plan.couponEmail || (currentUser ? currentUser.email : null)
-            });
-              
-            if (!countryCode) {
-              console.error('❌ CRITICAL: No countryCode available when creating eSIM!', {
-                planData: {
-                  country_code: plan.country_code,
-                  country_codes: plan.country_codes,
-                  country: plan.country,
-                  countryName: plan.countryName
-                },
-                detectedCountry: { countryCode, countryName }
-              });
-            }
-              
-              const createEsimResponse = await fetch('/api/esims/create-pending', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                  orderId: uniqueOrderId,
-                  planId: planSlug, // Use plan slug, not ObjectId
-                  planName: plan.name,
-                  countryCode: countryCode || null, // Don't use 'US' fallback - if no country, it's an error
-                  countryName: countryName || null,
-                  amount: finalAmountRUB, // Use the same rounded value
-                currency: 'RUB',
-                userId: currentUser?.uid || currentUser?.id || currentUser?._id || null,
-                customerEmail: plan.email || plan.couponEmail || (currentUser ? currentUser.email : null),
-                status: 'pending' // Hidden until payment success
-              })
-            });
-
-            if (createEsimResponse.ok) {
-              const result = await createEsimResponse.json();
-              console.log('✅ Invisible eSIM record created with correct country:', result);
-            } else {
-              const errorData = await createEsimResponse.json().catch(() => ({ error: 'Unknown error' }));
-              console.error('❌ Failed to create invisible eSIM record:', errorData);
-              // Don't block payment flow, but log the error clearly
-            }
-          } catch (err) {
-            console.error('❌ Error creating invisible eSIM record:', err);
-            // Don't block payment flow if eSIM creation fails
-          }
+          // NOTE: /api/orders/create-pending already saves country_code, country_name, 
+          // plan_name, package_slug from metadata. No second API call needed.
 
           // Redirect to Robokassa payment via Next.js API
           // CRITICAL: Use the exact same amountRUB value that was saved to DB
