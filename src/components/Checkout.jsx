@@ -53,6 +53,8 @@ const Checkout = ({ plan, emailFromUrl, paymentMethod: paymentMethodProp }) => {
 
   const getEmailForOrder = () => {
     if (emailFromUrl) return emailFromUrl;
+    if (plan?.email) return plan.email;
+    if (plan?.couponEmail) return plan.couponEmail;
     if (currentUser?.email) return currentUser.email;
     return null;
   };
