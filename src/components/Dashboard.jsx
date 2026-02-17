@@ -552,17 +552,17 @@ const Dashboard = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <DashboardHeader />
 
-        {/* Stats Cards */}
-        <StatsCards
-          orders={orders}
-        />
-
-        {/* Recent Orders */}
+        {/* Recent Orders (eSIMs first) */}
         <RecentOrders
           orders={displayedOrders}
           loading={loading}
           onViewQRCode={handleViewQRCode}
           onDeleteOrder={handleDeleteOrder}
+        />
+
+        {/* Browse Plans (after eSIMs) */}
+        <StatsCards
+          orders={orders}
         />
 
         {/* Account Settings */}
