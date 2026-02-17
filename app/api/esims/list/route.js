@@ -109,6 +109,11 @@ export async function GET(request) {
     const _q1err = results[0]?.error ?? null;
     const _q2count = results[1]?.data?.length ?? 'null';
     const _q2err = results[1]?.error ?? null;
+    // Raw direct query
+    const _raw3 = await supabaseAdmin.from('esim_orders').select('id,status').ilike('customer_email', normalizedEmail).order('created_at', { ascending: false }).limit(100);
+    const _q3count = _raw3.data?.length ?? 'null';
+    const _q3ids = (_raw3.data || []).map(r => `${r.id}:${r.status}`);
+    const _q3err = _raw3.error;
 
     // Merge results, dedupe by primary key
     const merged = new Map();
@@ -241,7 +246,7 @@ export async function GET(request) {
         orders: esimsWithInfo // Frontend expects data.orders array for filtering
       },
       count: esimsWithInfo.length,
-      _dbg, _svcKey, _adminOk, _rawTotal, _rawErr, _rawIds, _q1count, _q1err, _q2count, _q2err
+      _dbg, _svcKey, _adminOk, _rawTotal, _rawIds, _q1count, _q1err, _q2count, _q2err, _q3count, _q3ids, _q3err
     });
     
   } catch (error) {
