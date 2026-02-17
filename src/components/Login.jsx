@@ -22,6 +22,13 @@ const Login = () => {
   const { loginWithPassword, loginWithGoogle } = useAuth();
   const { t, locale } = useI18n();
 
+  // In Telegram WebApp, skip login entirely — redirect to country picker
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.Telegram?.WebApp?.initData) {
+      window.Telegram.WebApp.close();
+    }
+  }, []);
+
   // Hardcoded by domain: globalbanka.roamjet.net = Yandex + Google + Email, others = Google + Email
   const hostname = typeof window !== 'undefined' ? window.location.hostname : '';
   const isGlobalBanka = hostname === 'globalbanka.roamjet.net';
