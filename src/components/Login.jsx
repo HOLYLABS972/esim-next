@@ -32,9 +32,9 @@ const Login = () => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  // In Telegram WebApp, redirect to OTP page instead of showing OAuth options
+  // Redirect all users to OTP page
   useEffect(() => {
-    if (typeof window !== 'undefined' && (window.Telegram?.WebApp?.initData || new URLSearchParams(window.location.search).get('source') === 'telegram')) {
+    if (typeof window !== 'undefined') {
       const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/';
       router.replace(`/ru/telegram-auth?returnUrl=${encodeURIComponent(returnUrl)}`);
     }

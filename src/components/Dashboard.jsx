@@ -265,16 +265,11 @@ const Dashboard = () => {
     fetchData();
   }, [currentUser, locale, authLoading, fetchData]);
 
-  // Redirect to login/OTP if not authenticated
+  // Redirect to OTP if not authenticated
   useEffect(() => {
     if (!authLoading && !currentUser) {
-      const isTelegram = typeof window !== 'undefined' && (window.Telegram?.WebApp?.initData || new URLSearchParams(window.location.search).get('source') === 'telegram');
-      if (isTelegram) {
-        const returnUrl = window.location.pathname + window.location.search;
-        router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(returnUrl)}`);
-      } else {
-        router.push('/login');
-      }
+      const returnUrl = typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/ru/dashboard';
+      router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(returnUrl)}`);
     }
   }, [authLoading, currentUser, router]);
 

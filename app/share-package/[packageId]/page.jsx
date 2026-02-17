@@ -344,13 +344,7 @@ const SharePackagePage = () => {
     
     if (!currentUser) {
       const currentUrl = window.location.pathname + window.location.search;
-      if (isTelegram) {
-        router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(currentUrl)}`);
-      } else {
-        toast.error(t('auth.loginRequired', 'Please log in to purchase this package'));
-        const qs = currentQuery();
-        router.push(`/login${qs ? `?${qs}` : ''}`);
-      }
+      router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(currentUrl)}`);
       return;
     }
     
