@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '../../../../src/lib/supabase';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   try {
-    if (!supabaseAdmin) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
+    const serviceKey = process.env.SUPABASE_SERVICE_JWT || process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !serviceKey) {
       throw new Error('Supabase not configured');
     }
 
@@ -19,37 +21,54 @@ export async function GET(request) {
     
     const normalizedEmail = userEmail.toLowerCase().trim();
 
-    // Simple flat query — no joins
-    let query = supabaseAdmin
-      .from('esim_orders')
-      .select('*')
-      .ilike('customer_email', normalizedEmail)
-      .order('created_at', { ascending: false })
-      .limit(100);
-
+    // Build PostgREST query directly via fetch
+    const params = new URLSearchParams();
+    params.set('customer_email', `ilike.${normalizedEmail}`);
+    params.set('order', 'created_at.desc');
+    params.set('limit', '100');
+    params.set('select', '*');
+    
     if (statusFilter === 'active') {
-      query = query.in('status', ['active', 'completed']);
+      params.set('status', 'in.(active,completed)');
     } else if (statusFilter) {
-      query = query.eq('status', statusFilter);
+      params.set('status', `eq.${statusFilter}`);
     }
 
-    const { data: orders, error } = await query;
+    const ordersRes = await fetch(`${supabaseUrl}/rest/v1/esim_orders?${params.toString()}`, {
+      headers: {
+        'apikey': serviceKey,
+        'Authorization': `Bearer ${serviceKey}`,
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
 
-    if (error) {
-      console.error('❌ Supabase query error:', error);
-      throw error;
+    if (!ordersRes.ok) {
+      const errText = await ordersRes.text();
+      throw new Error(`Supabase query failed: ${ordersRes.status} ${errText}`);
     }
 
-    // Fetch package data separately for orders that have package_id
+    const orders = await ordersRes.json();
+
+    // Fetch package data separately
     const packageIds = [...new Set((orders || []).map(o => o.package_id).filter(Boolean))];
     let packagesMap = {};
     if (packageIds.length > 0) {
-      const { data: packages } = await supabaseAdmin
-        .from('esim_packages')
-        .select('id, package_id, title, title_ru, data_amount_mb, validity_days, price_usd, price_rub, package_type, esim_countries(id, airalo_country_code, country_name, country_name_ru, flag_url)')
-        .in('id', packageIds);
-      for (const pkg of (packages || [])) {
-        packagesMap[pkg.id] = pkg;
+      const pkgRes = await fetch(
+        `${supabaseUrl}/rest/v1/esim_packages?id=in.(${packageIds.join(',')})&select=id,package_id,title,title_ru,data_amount_mb,validity_days,price_usd,price_rub,package_type,esim_countries(id,airalo_country_code,country_name,country_name_ru,flag_url)`,
+        {
+          headers: {
+            'apikey': serviceKey,
+            'Authorization': `Bearer ${serviceKey}`,
+          },
+          cache: 'no-store',
+        }
+      );
+      if (pkgRes.ok) {
+        const packages = await pkgRes.json();
+        for (const pkg of packages) {
+          packagesMap[pkg.id] = pkg;
+        }
       }
     }
 
