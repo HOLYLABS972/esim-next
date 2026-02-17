@@ -16,9 +16,16 @@ export default function PayRedirect() {
         const res = await fetch(`/api/pay/${orderId}`);
         const data = await res.json();
         if (data.paymentUrl) {
-          // Client-side redirect — browser is on globalbanka.roamjet.net
-          // so Referer header will be correct for Robokassa
-          window.location.replace(data.paymentUrl);
+          // Check if inside Telegram Mini App
+          const tg = typeof window !== 'undefined' && window.Telegram?.WebApp;
+          if (tg) {
+            // Open payment in external browser from Mini App
+            tg.openLink(data.paymentUrl);
+            // Close Mini App after opening payment
+            setTimeout(() => tg.close(), 500);
+          } else {
+            window.location.replace(data.paymentUrl);
+          }
         } else {
           setError(data.error || 'Ошибка оплаты');
         }
