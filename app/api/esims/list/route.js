@@ -100,11 +100,15 @@ export async function GET(request) {
     const simpleSelect = () => supabaseAdmin.from('esim_orders').select('*');
     await pushResult(() => fetchOrders(simpleSelect().ilike('customer_email', normalizedEmail)));
 
-    // DEBUG: raw count
+    // DEBUG
     const _rawCount = await supabaseAdmin.from('esim_orders').select('id', { count: 'exact' }).ilike('customer_email', normalizedEmail);
     const _rawTotal = _rawCount.count;
     const _rawErr = _rawCount.error;
     const _rawIds = (_rawCount.data || []).map(r => r.id);
+    const _q1count = results[0]?.data?.length ?? 'null';
+    const _q1err = results[0]?.error ?? null;
+    const _q2count = results[1]?.data?.length ?? 'null';
+    const _q2err = results[1]?.error ?? null;
 
     // Merge results, dedupe by primary key
     const merged = new Map();
@@ -237,7 +241,7 @@ export async function GET(request) {
         orders: esimsWithInfo // Frontend expects data.orders array for filtering
       },
       count: esimsWithInfo.length,
-      _dbg, _svcKey, _adminOk, _rawTotal, _rawErr, _rawIds
+      _dbg, _svcKey, _adminOk, _rawTotal, _rawErr, _rawIds, _q1count, _q1err, _q2count, _q2err
     });
     
   } catch (error) {
