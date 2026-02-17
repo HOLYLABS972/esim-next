@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET(request) {
   try {
+    const _dbg = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL || 'NOT SET';
     if (!supabaseAdmin) {
       console.error('❌ supabaseAdmin is null - SUPABASE_SERVICE_ROLE_KEY may be missing');
       throw new Error('Supabase not configured');
@@ -227,7 +228,8 @@ export async function GET(request) {
       data: {
         orders: esimsWithInfo // Frontend expects data.orders array for filtering
       },
-      count: esimsWithInfo.length
+      count: esimsWithInfo.length,
+      _dbg
     });
     
   } catch (error) {
