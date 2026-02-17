@@ -15,7 +15,7 @@ export async function middleware(request) {
   const fullHost = request.headers.get('host') || '';
   const hostname = fullHost.split(':')[0].trim().toLowerCase().replace(/^www\./, '');
 
-  const skipParams = pathname.startsWith('/config') || pathname.startsWith('/api') || pathname.startsWith('/auth') || pathname.startsWith('/my-esims') || pathname.startsWith('/data-usage') || pathname.startsWith('/usage') || pathname.includes('/telegram-auth') || pathname.startsWith('/login') || pathname.startsWith('/dashboard');
+  const skipParams = pathname.startsWith('/config') || pathname.startsWith('/api') || pathname.startsWith('/auth');
 
   // Path language: /ru, /he, etc. – used to skip adding ?language= when path already indicates it
   const pathLanguage = pathname.startsWith('/he') ? 'he' :
