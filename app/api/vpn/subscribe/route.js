@@ -96,12 +96,9 @@ export async function POST(request) {
     const config = await getRobokassaConfig();
     let { robokassa_merchant_login, robokassa_pass_one, robokassa_mode } = config;
 
-    // Always use env credentials (holylabs merchant) — DB has wrong merchant name
-    robokassa_merchant_login = process.env.ROBOKASSA_LOGIN || robokassa_merchant_login;
-    if (robokassa_mode === 'test') {
-      robokassa_pass_one = process.env.ROBOKASSA_TEST_PASSWORD1 || robokassa_pass_one;
-    } else {
-      robokassa_pass_one = process.env.ROBOKASSA_PASSWORD1 || robokassa_pass_one;
+    // Use DB credentials (roamjet merchant). In test mode, use NEXT_PUBLIC env override if set
+    if (robokassa_mode === 'test' && process.env.NEXT_PUBLIC_ROBOKASSA_TEST_PASS_ONE) {
+      robokassa_pass_one = process.env.NEXT_PUBLIC_ROBOKASSA_TEST_PASS_ONE;
     }
 
     if (!robokassa_merchant_login || !robokassa_pass_one) {
