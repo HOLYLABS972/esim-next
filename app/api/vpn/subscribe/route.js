@@ -121,7 +121,7 @@ export async function POST(request) {
       Shp_plan: plan,
       Shp_rcuid: rc_app_user_id || '',
       Shp_type: 'vpn',
-      SuccessURL: `${origin}/vpn/success?inv=${invId}`,
+      SuccessURL: `${origin}/vpn/success?inv=${invId}&plan=${plan}`,
       FailURL: `${origin}/vpn?error=cancelled`,
     });
 
