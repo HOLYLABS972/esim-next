@@ -13,8 +13,16 @@ export default function VpnPaywall() {
   const ref = searchParams.get('ref') || '';
   const emailParam = searchParams.get('email') || '';
   const rcAppUserId = searchParams.get('rc_app_user_id') || '';
+  const rcPackage = searchParams.get('rc_package') || '';
+  const rcSource = searchParams.get('rc_source') || '';
+  const rcEnv = searchParams.get('rc_env') || '';
 
-  const [selectedPlan, setSelectedPlan] = useState('monthly');
+  // Auto-detect plan from rc_package param
+  const autoplan = rcPackage.includes('annual') || rcPackage.includes('yearly') ? 'yearly' : 
+                   rcPackage.includes('monthly') ? 'monthly' : '';
+  const fromApp = !!rcAppUserId;
+
+  const [selectedPlan, setSelectedPlan] = useState(autoplan || 'monthly');
   const [email, setEmail] = useState(emailParam);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -33,7 +41,15 @@ export default function VpnPaywall() {
       const res = await fetch('/api/vpn/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), plan: selectedPlan, ref, rc_app_user_id: rcAppUserId }),
+        body: JSON.stringify({ 
+          email: email.trim().toLowerCase(), 
+          plan: selectedPlan, 
+          ref, 
+          rc_app_user_id: rcAppUserId,
+          rc_package: rcPackage,
+          rc_source: rcSource,
+          rc_env: rcEnv,
+        }),
       });
 
       const data = await res.json();
@@ -76,37 +92,52 @@ export default function VpnPaywall() {
         </div>
       )}
 
-      {/* Plans */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 400, padding: '0 20px' }}>
-        {Object.entries(PLANS).map(([key, p]) => (
-          <div
-            key={key}
-            onClick={() => setSelectedPlan(key)}
-            style={{
-              border: `2px solid ${selectedPlan === key ? '#ff6b35' : '#222'}`,
-              borderRadius: 16,
-              padding: 24,
-              cursor: 'pointer',
-              position: 'relative',
-              background: selectedPlan === key ? '#1a1008' : 'transparent',
-              transition: 'all 0.2s',
-            }}
-          >
-            {p.badge && (
-              <div style={{
-                position: 'absolute', top: -10, right: 16,
-                background: '#ff6b35', color: '#fff',
-                fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 8,
-              }}>{p.badge}</div>
-            )}
-            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 4 }}>{p.label}</div>
+      {/* Plans — hidden when auto-selected from app */}
+      {fromApp && autoplan ? (
+        <div style={{ padding: '0 20px', maxWidth: 400, width: '100%' }}>
+          <div style={{
+            border: '2px solid #ff6b35', borderRadius: 16, padding: 24,
+            background: '#1a1008',
+          }}>
+            <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 4 }}>{plan.label}</div>
             <div style={{ fontSize: 32, fontWeight: 700, color: '#ff6b35' }}>
-              {p.price} <span style={{ fontSize: 14, color: '#666', fontWeight: 400 }}>{p.sub}</span>
+              {plan.price} <span style={{ fontSize: 14, color: '#666', fontWeight: 400 }}>{plan.sub}</span>
             </div>
-            {p.note && <div style={{ fontSize: 13, color: '#666', marginTop: 4 }}>{p.note}</div>}
+            {plan.note && <div style={{ fontSize: 13, color: '#666', marginTop: 4 }}>{plan.note}</div>}
           </div>
-        ))}
-      </div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: 400, padding: '0 20px' }}>
+          {Object.entries(PLANS).map(([key, p]) => (
+            <div
+              key={key}
+              onClick={() => setSelectedPlan(key)}
+              style={{
+                border: `2px solid ${selectedPlan === key ? '#ff6b35' : '#222'}`,
+                borderRadius: 16,
+                padding: 24,
+                cursor: 'pointer',
+                position: 'relative',
+                background: selectedPlan === key ? '#1a1008' : 'transparent',
+                transition: 'all 0.2s',
+              }}
+            >
+              {p.badge && (
+                <div style={{
+                  position: 'absolute', top: -10, right: 16,
+                  background: '#ff6b35', color: '#fff',
+                  fontSize: 11, fontWeight: 700, padding: '3px 10px', borderRadius: 8,
+                }}>{p.badge}</div>
+              )}
+              <div style={{ fontSize: 18, fontWeight: 600, marginBottom: 4 }}>{p.label}</div>
+              <div style={{ fontSize: 32, fontWeight: 700, color: '#ff6b35' }}>
+                {p.price} <span style={{ fontSize: 14, color: '#666', fontWeight: 400 }}>{p.sub}</span>
+              </div>
+              {p.note && <div style={{ fontSize: 13, color: '#666', marginTop: 4 }}>{p.note}</div>}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* Features */}
       <div style={{ maxWidth: 400, width: '100%', padding: '32px 20px' }}>

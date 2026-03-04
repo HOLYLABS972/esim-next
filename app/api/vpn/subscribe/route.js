@@ -42,7 +42,7 @@ async function getRobokassaConfig() {
 
 export async function POST(request) {
   try {
-    const { email, plan, ref, rc_app_user_id } = await request.json();
+    const { email, plan, ref, rc_app_user_id, rc_package, rc_source, rc_env } = await request.json();
 
     if (!email || !plan || !PLANS[plan]) {
       return NextResponse.json({ error: 'Missing email or invalid plan' }, { status: 400 });
@@ -59,6 +59,9 @@ export async function POST(request) {
       status: 'pending',
       ref: ref || null,
       rc_app_user_id: rc_app_user_id || null,
+      rc_package: rc_package || null,
+      rc_source: rc_source || null,
+      rc_env: rc_env || null,
       created_at: new Date().toISOString(),
     };
 
