@@ -100,9 +100,8 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Robokassa not configured' }, { status: 503 });
     }
 
-    // Signature: MD5(MerchantLogin:OutSum:InvId:Password1:Shp_xxx=x...) — sorted alphabetically
-    const shpString = `Shp_email=${email}:Shp_plan=${plan}:Shp_rcuid=${rc_app_user_id || ''}:Shp_type=vpn`;
-    const sigString = `${robokassa_merchant_login}:${planData.amount}:${invId}:${robokassa_pass_one}:${shpString}`;
+    // Signature: MD5(MerchantLogin:OutSum:InvId:Password1) — same as eSIM route
+    const sigString = `${robokassa_merchant_login}:${planData.amount}:${invId}:${robokassa_pass_one}`;
     const signature = crypto.createHash('md5').update(sigString).digest('hex');
 
     const requestUrl = new URL(request.url);
@@ -117,10 +116,6 @@ export async function POST(request) {
       Culture: 'ru',
       Encoding: 'utf-8',
       Email: email,
-      Shp_email: email,
-      Shp_plan: plan,
-      Shp_rcuid: rc_app_user_id || '',
-      Shp_type: 'vpn',
       SuccessURL: `${origin}/vpn/success?inv=${invId}&plan=${plan}`,
       FailURL: `${origin}/vpn?error=cancelled`,
     });
