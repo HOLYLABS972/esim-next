@@ -1,6 +1,35 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+
 export default function VpnSuccess() {
+  const searchParams = useSearchParams();
+  const inv = searchParams.get('inv') || '';
+  const [promoCode, setPromoCode] = useState(null);
+  const [plan, setPlan] = useState(null);
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (inv) {
+      fetch(`/api/vpn/promo?inv=${inv}`)
+        .then(r => r.json())
+        .then(data => {
+          setPromoCode(data.promo_code);
+          setPlan(data.plan);
+        })
+        .catch(() => {});
+    }
+  }, [inv]);
+
+  function copyCode() {
+    if (promoCode) {
+      navigator.clipboard.writeText(promoCode);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  }
+
   return (
     <div style={{
       minHeight: '100vh',
@@ -14,20 +43,63 @@ export default function VpnSuccess() {
     }}>
       <div style={{ maxWidth: 400, padding: 40 }}>
         <div style={{ fontSize: 64, marginBottom: 16 }}>🦊✅</div>
-        <h1 style={{ fontSize: 24, marginBottom: 12 }}>Подписка активирована!</h1>
-        <p style={{ color: '#999', lineHeight: 1.5, marginBottom: 24 }}>
-          Ваш VPN доступ готов.
-        </p>
-        <div style={{
-          textAlign: 'left', margin: '24px 0', color: '#ccc',
-          fontSize: 14, lineHeight: 2, background: '#111',
-          padding: 20, borderRadius: 12,
-        }}>
-          1. Скачайте приложение FoxyWall<br />
-          2. Войдите с email, указанным при оплате<br />
-          3. Нажмите «Восстановить покупки»<br />
-          4. Готово! Подключайтесь 🚀
-        </div>
+        <h1 style={{ fontSize: 24, marginBottom: 12 }}>Оплата прошла!</h1>
+
+        {promoCode ? (
+          <>
+            <p style={{ color: '#999', lineHeight: 1.5, marginBottom: 20 }}>
+              Ваш промокод на {plan === 'yearly' ? 'год' : 'месяц'} FoxyWall VPN:
+            </p>
+            <div
+              onClick={copyCode}
+              style={{
+                background: '#1a1008',
+                border: '2px solid #ff6b35',
+                borderRadius: 12,
+                padding: '16px 24px',
+                fontSize: 28,
+                fontWeight: 700,
+                letterSpacing: 2,
+                color: '#ff6b35',
+                cursor: 'pointer',
+                marginBottom: 8,
+                userSelect: 'all',
+              }}
+            >
+              {promoCode}
+            </div>
+            <div style={{ fontSize: 12, color: '#666', marginBottom: 24 }}>
+              {copied ? '✅ Скопировано!' : 'Нажмите чтобы скопировать'}
+            </div>
+
+            <div style={{
+              textAlign: 'left', color: '#ccc',
+              fontSize: 14, lineHeight: 2, background: '#111',
+              padding: 20, borderRadius: 12, marginBottom: 24,
+            }}>
+              1. Скачайте приложение FoxyWall<br />
+              2. Откройте настройки → «Промокод»<br />
+              3. Введите код выше<br />
+              4. Готово! Подключайтесь 🚀
+            </div>
+          </>
+        ) : (
+          <>
+            <p style={{ color: '#999', lineHeight: 1.5, marginBottom: 24 }}>
+              Ваш VPN доступ активирован автоматически.
+            </p>
+            <div style={{
+              textAlign: 'left', color: '#ccc',
+              fontSize: 14, lineHeight: 2, background: '#111',
+              padding: 20, borderRadius: 12, marginBottom: 24,
+            }}>
+              1. Откройте приложение FoxyWall<br />
+              2. Подписка уже активна ✅<br />
+              3. Подключайтесь 🚀
+            </div>
+          </>
+        )}
+
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a
             href="https://apps.apple.com/app/id6757646633"

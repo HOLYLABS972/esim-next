@@ -50,7 +50,13 @@ export async function POST(request) {
 
     const planData = PLANS[plan];
 
-    // 1. Save subscription to cloud Supabase
+    // Generate promo code for web users (no rc_app_user_id)
+    const isWebUser = !rc_app_user_id;
+    const promoCode = isWebUser 
+      ? 'FOXY' + crypto.randomBytes(4).toString('hex').toUpperCase()
+      : null;
+
+    // 1. Save subscription to Supabase
     const subData = {
       email: email.toLowerCase().trim(),
       plan,
@@ -62,6 +68,7 @@ export async function POST(request) {
       rc_package: rc_package || null,
       rc_source: rc_source || null,
       rc_env: rc_env || null,
+      promo_code: promoCode,
       created_at: new Date().toISOString(),
     };
 
@@ -114,7 +121,7 @@ export async function POST(request) {
       Shp_plan: plan,
       Shp_rcuid: rc_app_user_id || '',
       Shp_type: 'vpn',
-      SuccessURL: `${origin}/vpn/success`,
+      SuccessURL: `${origin}/vpn/success?inv=${invId}`,
       FailURL: `${origin}/vpn?error=cancelled`,
     });
 
