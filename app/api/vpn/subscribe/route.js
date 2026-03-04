@@ -96,15 +96,12 @@ export async function POST(request) {
     const config = await getRobokassaConfig();
     let { robokassa_merchant_login, robokassa_pass_one, robokassa_mode } = config;
 
-    // In test mode, use test passwords from env (same as eSIM route)
+    // Always use env credentials (holylabs merchant) — DB has wrong merchant name
+    robokassa_merchant_login = process.env.ROBOKASSA_LOGIN || robokassa_merchant_login;
     if (robokassa_mode === 'test') {
-      if (process.env.ROBOKASSA_TEST_PASSWORD1) {
-        robokassa_pass_one = process.env.ROBOKASSA_TEST_PASSWORD1;
-      }
-      if (process.env.ROBOKASSA_LOGIN) {
-        robokassa_merchant_login = process.env.ROBOKASSA_LOGIN;
-      }
-      console.log('🧪 VPN: Using test credentials');
+      robokassa_pass_one = process.env.ROBOKASSA_TEST_PASSWORD1 || robokassa_pass_one;
+    } else {
+      robokassa_pass_one = process.env.ROBOKASSA_PASSWORD1 || robokassa_pass_one;
     }
 
     if (!robokassa_merchant_login || !robokassa_pass_one) {
