@@ -96,10 +96,7 @@ export async function POST(request) {
     const config = await getRobokassaConfig();
     let { robokassa_merchant_login, robokassa_pass_one, robokassa_mode } = config;
 
-    // Use DB credentials (roamjet merchant). In test mode, use NEXT_PUBLIC env override if set
-    if (robokassa_mode === 'test' && process.env.NEXT_PUBLIC_ROBOKASSA_TEST_PASS_ONE) {
-      robokassa_pass_one = process.env.NEXT_PUBLIC_ROBOKASSA_TEST_PASS_ONE;
-    }
+    // All credentials from DB only
 
     if (!robokassa_merchant_login || !robokassa_pass_one) {
       return NextResponse.json({ error: 'Robokassa not configured' }, { status: 503 });
