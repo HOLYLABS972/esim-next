@@ -12,6 +12,7 @@ export default function VpnPaywall() {
   const searchParams = useSearchParams();
   const ref = searchParams.get('ref') || '';
   const emailParam = searchParams.get('email') || '';
+  const rcAppUserId = searchParams.get('rc_app_user_id') || '';
 
   const [selectedPlan, setSelectedPlan] = useState('monthly');
   const [email, setEmail] = useState(emailParam);
@@ -32,7 +33,7 @@ export default function VpnPaywall() {
       const res = await fetch('/api/vpn/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), plan: selectedPlan, ref }),
+        body: JSON.stringify({ email: email.trim().toLowerCase(), plan: selectedPlan, ref, rc_app_user_id: rcAppUserId }),
       });
 
       const data = await res.json();

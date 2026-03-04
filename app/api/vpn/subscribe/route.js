@@ -42,7 +42,7 @@ async function getRobokassaConfig() {
 
 export async function POST(request) {
   try {
-    const { email, plan, ref } = await request.json();
+    const { email, plan, ref, rc_app_user_id } = await request.json();
 
     if (!email || !plan || !PLANS[plan]) {
       return NextResponse.json({ error: 'Missing email or invalid plan' }, { status: 400 });
@@ -58,6 +58,7 @@ export async function POST(request) {
       duration_days: planData.days,
       status: 'pending',
       ref: ref || null,
+      rc_app_user_id: rc_app_user_id || null,
       created_at: new Date().toISOString(),
     };
 
@@ -89,9 +90,8 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Robokassa not configured' }, { status: 503 });
     }
 
-    // Signature: MD5(MerchantLogin:OutSum:InvId:Password1:Shp_email=x:Shp_plan=x:Shp_type=vpn)
-    // Shp_ params sorted alphabetically
-    const shpString = `Shp_email=${email}:Shp_plan=${plan}:Shp_type=vpn`;
+    // Signature: MD5(MerchantLogin:OutSum:InvId:Password1:Shp_xxx=x...) — sorted alphabetically
+    const shpString = `Shp_email=${email}:Shp_plan=${plan}:Shp_rcuid=${rc_app_user_id || ''}:Shp_type=vpn`;
     const sigString = `${robokassa_merchant_login}:${planData.amount}:${invId}:${robokassa_pass_one}:${shpString}`;
     const signature = crypto.createHash('md5').update(sigString).digest('hex');
 
@@ -109,6 +109,7 @@ export async function POST(request) {
       Email: email,
       Shp_email: email,
       Shp_plan: plan,
+      Shp_rcuid: rc_app_user_id || '',
       Shp_type: 'vpn',
       SuccessURL: `${origin}/vpn/success`,
       FailURL: `${origin}/vpn?error=cancelled`,
