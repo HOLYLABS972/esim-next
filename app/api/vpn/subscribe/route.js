@@ -17,7 +17,7 @@ async function getRobokassaConfig() {
   
   if (selfHostedKey) {
     try {
-      const res = await fetch(`${selfHostedUrl}/rest/v1/admin_config?select=robokassa_merchant_login,robokassa_pass_one,robokassa_mode&limit=1`, {
+      const res = await fetch(`${selfHostedUrl}/rest/v1/admin_config?select=robokassa_merchant_login,robokassa_pass_one,robokassa_test_pass_one,robokassa_mode&limit=1`, {
         headers: {
           'apikey': selfHostedKey,
           'Authorization': `Bearer ${selfHostedKey}`,
@@ -96,7 +96,10 @@ export async function POST(request) {
     const config = await getRobokassaConfig();
     let { robokassa_merchant_login, robokassa_pass_one, robokassa_mode } = config;
 
-    // All credentials from DB only
+    // In test mode, use test password from DB
+    if (robokassa_mode === 'test' && config.robokassa_test_pass_one) {
+      robokassa_pass_one = config.robokassa_test_pass_one;
+    }
 
     if (!robokassa_merchant_login || !robokassa_pass_one) {
       return NextResponse.json({ error: 'Robokassa not configured' }, { status: 503 });
