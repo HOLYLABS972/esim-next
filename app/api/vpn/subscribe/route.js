@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
 
-// Cloud Supabase for vpn_subscriptions
-const SUPABASE_URL = 'https://uhpuqiptxcjluwsetoev.supabase.co';
-const SUPABASE_KEY = process.env.CLOUD_SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+// Self-hosted Supabase on VPS (same as eSIM orders)
+const SUPABASE_URL = process.env.SUPABASE_URL || 'https://supabase.holylabs.net';
+const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 const PLANS = {
   monthly: { amount: 399, days: 30, label: 'FoxyWall VPN — Месяц' },
