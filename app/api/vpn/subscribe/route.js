@@ -94,7 +94,18 @@ export async function POST(request) {
 
     // 2. Generate Robokassa payment URL
     const config = await getRobokassaConfig();
-    const { robokassa_merchant_login, robokassa_pass_one, robokassa_mode } = config;
+    let { robokassa_merchant_login, robokassa_pass_one, robokassa_mode } = config;
+
+    // In test mode, use test passwords from env (same as eSIM route)
+    if (robokassa_mode === 'test') {
+      if (process.env.ROBOKASSA_TEST_PASSWORD1) {
+        robokassa_pass_one = process.env.ROBOKASSA_TEST_PASSWORD1;
+      }
+      if (process.env.ROBOKASSA_LOGIN) {
+        robokassa_merchant_login = process.env.ROBOKASSA_LOGIN;
+      }
+      console.log('🧪 VPN: Using test credentials');
+    }
 
     if (!robokassa_merchant_login || !robokassa_pass_one) {
       return NextResponse.json({ error: 'Robokassa not configured' }, { status: 503 });
