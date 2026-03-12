@@ -4,6 +4,7 @@ import React, { Suspense } from 'react';
 import EsimPlans from '../src/components/EsimPlans';
 import FAQ from '../src/components/FAQ';
 import DeviceCompatibility from '../src/components/DeviceCompatibility';
+import VpnBanner from '../src/components/VpnBanner';
 import { useI18n } from '../src/contexts/I18nContext';
 
 // Force dynamic rendering
@@ -23,6 +24,10 @@ export default function HomePage() {
         }>
           <EsimPlans />
         </Suspense>
+      </div>
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <VpnBanner />
       </div>
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
