@@ -14,10 +14,19 @@ export default function ConfigLayoutClient({ children }) {
   const pathname = usePathname();
   const router = useRouter();
 
-  // Fetch user role from Supabase users table
+  // Admin emails — these users always get admin access
+  const ADMIN_EMAILS = ['polskoydm@gmail.com', 'dima@holylabs.net', 'dima.polskoy@icloud.com', 'polskoydm@outlook.com', 'dima@theholylabs.com'];
+
+  // Fetch user role from Supabase users table, with admin email fallback
   const fetchUserRole = async (userId) => {
     if (!supabase || !userId) return null;
     try {
+      // Check admin email list first
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser?.email && ADMIN_EMAILS.includes(authUser.email.toLowerCase())) {
+        return 'admin';
+      }
+      // Fallback to users table
       const { data, error } = await supabase
         .from('users')
         .select('role')
