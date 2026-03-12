@@ -145,8 +145,8 @@ export default function RootLayout({ children }) {
               "logo": `${process.env.NEXT_PUBLIC_BASE_URL || "http://esim.globalbankaccounts.ru"}/images/logo_icon/logo.png`,
               "description": "Global eSIM plans for travelers, backpackers, and digital nomads. Instant activation in 200+ countries.",
               "sameAs": [
-                "https://twitter.com/roamjet",
-                "https://facebook.com/roamjet"
+                "https://x.com/roamjet",
+                "https://www.facebook.com/profile.php?id=61587473507744"
               ],
               "contactPoint": {
                 "@type": "ContactPoint",
