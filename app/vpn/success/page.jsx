@@ -1,10 +1,34 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 export default function VpnSuccess() {
   const searchParams = useSearchParams();
-  const plan = searchParams.get('plan') || '';
+  const inv = searchParams.get('inv') || '';
+  const [promo, setPromo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!inv) { setLoading(false); return; }
+    // Poll for promo code (callback may take a moment)
+    let attempts = 0;
+    const poll = async () => {
+      try {
+        const res = await fetch(`/api/vpn/promo?inv=${inv}`);
+        const data = await res.json();
+        if (data.redeem_url) {
+          setPromo(data);
+          setLoading(false);
+          return;
+        }
+      } catch {}
+      attempts++;
+      if (attempts < 10) setTimeout(poll, 2000);
+      else setLoading(false);
+    };
+    poll();
+  }, [inv]);
 
   return (
     <div style={{
@@ -24,32 +48,33 @@ export default function VpnSuccess() {
           Активируйте подписку в App Store:
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 24 }}>
-          {(!plan || plan === 'monthly') && (
-            <a
-              href="https://apps.apple.com/redeem?ctx=offercodes&id=6757646633&code=FOXY30"
-              style={{
-                display: 'block', background: '#1a1008', border: '2px solid #ff6b35',
-                borderRadius: 12, padding: '16px 24px', color: '#ff6b35',
-                textDecoration: 'none', fontSize: 18, fontWeight: 700, textAlign: 'center',
-              }}
-            >
-              🦊 Активировать — Месяц
-            </a>
-          )}
-          {(!plan || plan === 'yearly') && (
-            <a
-              href="https://apps.apple.com/redeem?ctx=offercodes&id=6757646633&code=FOXYFREE"
-              style={{
-                display: 'block', background: '#1a1008', border: '2px solid #ff6b35',
-                borderRadius: 12, padding: '16px 24px', color: '#ff6b35',
-                textDecoration: 'none', fontSize: 18, fontWeight: 700, textAlign: 'center',
-              }}
-            >
-              🦊 Активировать — Год
-            </a>
-          )}
-        </div>
+        {loading ? (
+          <div style={{ color: '#ff6b35', fontSize: 16, padding: 24 }}>
+            ⏳ Получаем ваш код...
+          </div>
+        ) : promo?.redeem_url ? (
+          <a
+            href={promo.redeem_url}
+            style={{
+              display: 'block', background: '#1a1008', border: '2px solid #ff6b35',
+              borderRadius: 12, padding: '16px 24px', color: '#ff6b35',
+              textDecoration: 'none', fontSize: 18, fontWeight: 700, textAlign: 'center',
+              marginBottom: 16,
+            }}
+          >
+            🦊 Активировать подписку
+          </a>
+        ) : (
+          <div style={{ color: '#999', padding: 16, fontSize: 14 }}>
+            Код будет отправлен на вашу почту. Если не получили — напишите в поддержку.
+          </div>
+        )}
+
+        {promo?.promo_code && (
+          <div style={{ color: '#666', fontSize: 13, marginBottom: 24 }}>
+            Код: <span style={{ color: '#fff', fontFamily: 'monospace' }}>{promo.promo_code}</span>
+          </div>
+        )}
 
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <a href="https://apps.apple.com/app/id6757646633"

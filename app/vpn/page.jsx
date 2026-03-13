@@ -5,7 +5,6 @@ import { useSearchParams } from 'next/navigation';
 
 const PLANS = {
   monthly: { amount: 399, label: 'Месяц', price: '₽399', sub: '/мес' },
-  yearly: { amount: 2990, label: 'Год', price: '₽2 990', sub: '/год', badge: '−38%', note: '≈ ₽249/мес' },
 };
 
 export default function VpnPaywall() {
@@ -17,9 +16,7 @@ export default function VpnPaywall() {
   const rcSource = searchParams.get('rc_source') || '';
   const rcEnv = searchParams.get('rc_env') || '';
 
-  // Auto-detect plan from rc_package param
-  const autoplan = rcPackage.includes('annual') || rcPackage.includes('yearly') ? 'yearly' : 
-                   rcPackage.includes('monthly') ? 'monthly' : '';
+  const autoplan = 'monthly';
   const fromApp = !!rcAppUserId;
 
   const [selectedPlan, setSelectedPlan] = useState(autoplan || 'monthly');

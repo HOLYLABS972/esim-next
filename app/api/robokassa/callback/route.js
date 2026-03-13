@@ -87,6 +87,23 @@ async function findOrder(invId) {
 }
 
 /**
+ * Find VPN subscription by InvId
+ */
+async function findVpnSubscription(invId) {
+  const idNum = parseInt(invId, 10);
+  if (isNaN(idNum) || idNum <= 0) return null;
+
+  const { data } = await supabaseAdmin
+    .from('vpn_subscriptions')
+    .select('*')
+    .eq('id', idNum)
+    .limit(1)
+    .maybeSingle();
+
+  return data;
+}
+
+/**
  * POST handler — ResultURL (server-to-server callback from Robokassa)
  * Marks order as paid. Actual eSIM fulfillment is handled by email processor.
  */
@@ -125,7 +142,46 @@ export async function POST(request) {
 
     console.log(`✅ Signature verified for InvId: ${InvId}`);
 
-    // Find and update order
+    // Check if this is a VPN subscription payment
+    const vpnSub = await findVpnSubscription(InvId);
+    if (vpnSub) {
+      console.log(`🦊 VPN subscription found: id=${vpnSub.id}, status=${vpnSub.status}`);
+      if (vpnSub.status !== 'active') {
+        // Assign a promo code from the pool
+        const { data: codeRow } = await supabaseAdmin
+          .from('vpn_promo_codes')
+          .select('id, code, redeem_url')
+          .is('assigned_to', null)
+          .limit(1)
+          .single();
+
+        let promoCode = null;
+        let redeemUrl = null;
+        if (codeRow) {
+          promoCode = codeRow.code;
+          redeemUrl = codeRow.redeem_url;
+          await supabaseAdmin
+            .from('vpn_promo_codes')
+            .update({ assigned_to: vpnSub.email, assigned_at: new Date().toISOString(), subscription_id: vpnSub.id })
+            .eq('id', codeRow.id);
+        }
+
+        await supabaseAdmin
+          .from('vpn_subscriptions')
+          .update({
+            status: 'active',
+            promo_code: promoCode,
+            redeem_url: redeemUrl,
+            activated_at: new Date().toISOString(),
+          })
+          .eq('id', vpnSub.id);
+
+        console.log(`✅ VPN sub ${vpnSub.id} activated, code: ${promoCode}`);
+      }
+      return new NextResponse(`OK${InvId}`, { status: 200 });
+    }
+
+    // Find and update eSIM order
     const order = await findOrder(InvId);
     if (order) {
       console.log(`✅ Order found: id=${order.id}, status=${order.status}`);

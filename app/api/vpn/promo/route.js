@@ -12,7 +12,7 @@ export async function GET(request) {
   }
 
   const res = await fetch(
-    `${SUPABASE_URL}/rest/v1/vpn_subscriptions?id=eq.${inv}&select=promo_code,plan,status`,
+    `${SUPABASE_URL}/rest/v1/vpn_subscriptions?id=eq.${inv}&select=promo_code,redeem_url,plan,status`,
     {
       headers: {
         'apikey': SUPABASE_KEY,
@@ -24,9 +24,14 @@ export async function GET(request) {
   const data = await res.json();
   const sub = Array.isArray(data) ? data[0] : null;
 
-  if (!sub || !sub.promo_code) {
-    return NextResponse.json({ promo_code: null, plan: sub?.plan || null });
+  if (!sub) {
+    return NextResponse.json({ promo_code: null, plan: null });
   }
 
-  return NextResponse.json({ promo_code: sub.promo_code, plan: sub.plan });
+  return NextResponse.json({ 
+    promo_code: sub.promo_code || null, 
+    redeem_url: sub.redeem_url || null,
+    plan: sub.plan,
+    status: sub.status,
+  });
 }

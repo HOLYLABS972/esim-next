@@ -7,7 +7,6 @@ const SUPABASE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
 
 const PLANS = {
   monthly: { amount: 399, days: 30, label: 'FoxyWall VPN — Месяц' },
-  yearly:  { amount: 2990, days: 365, label: 'FoxyWall VPN — Год' },
 };
 
 async function getRobokassaConfig() {
@@ -50,11 +49,8 @@ export async function POST(request) {
 
     const planData = PLANS[plan];
 
-    // Generate promo code for web users (no rc_app_user_id)
-    const isWebUser = !rc_app_user_id;
-    const promoCode = isWebUser 
-      ? 'FOXY' + crypto.randomBytes(4).toString('hex').toUpperCase()
-      : null;
+    // Promo code will be assigned from pool after payment succeeds
+    const promoCode = null;
 
     // 1. Save subscription to Supabase
     const subData = {
