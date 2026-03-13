@@ -5,7 +5,7 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useI18n } from '../contexts/I18nContext';
 import { useBrand } from '../contexts/BrandContext';
 
-const SUPPORT_EMAIL = 'support@roamjet.net';
+const SUPPORT_TELEGRAM = 'https://t.me/holylabsltd';
 
 // Replace known brand names in text with current brand name
 function applyBrandName(text, brandName) {
@@ -21,7 +21,7 @@ const FAQ = () => {
   const { t, translations } = useI18n();
   const { brand } = useBrand();
   const brandName = brand?.name || 'RoamJet';
-  const supportEmail = SUPPORT_EMAIL;
+  const supportTelegram = SUPPORT_TELEGRAM;
 
   const faqPage = translations?.faqPage;
   const title = faqPage?.title ?? t('contact.faqTitle', 'Frequently Asked Questions');
@@ -98,11 +98,13 @@ const FAQ = () => {
           {contactSupportText}
         </p>
         <a
-          href={`mailto:${supportEmail}`}
+          href={supportTelegram}
+          target="_blank"
+          rel="noopener noreferrer"
           onClick={(e) => e.stopPropagation()}
           className="inline-block px-6 py-3 bg-blue-500 hover:bg-blue-600 dark:bg-blue-400 dark:hover:bg-blue-500 text-white font-medium rounded-lg transition-colors"
         >
-          {contactSupport}
+          ✈️ {contactSupport}
         </a>
       </div>
     </div>

@@ -80,7 +80,7 @@ export default function PrivacyPolicyRu() {
                 Мы храним эту информацию и используем ее для работы сервиса, выставления счетов и внутренних целей. <strong>Такая информация НЕ передается третьим лицам</strong>, за исключением целей обработки платежей через безопасные платежные шлюзы.
               </p>
               <p>
-                Если у вас есть какие-либо вопросы относительно хранимой нами информации или по любому вопросу конфиденциальности, не стесняйтесь обращаться к нашей команде по электронной почте: <a href="mailto:support@roamjet.net" className="text-blue-600 hover:underline">support@roamjet.net</a>
+                Если у вас есть какие-либо вопросы относительно хранимой нами информации или по любому вопросу конфиденциальности, не стесняйтесь обращаться к нашей команде по электронной почте: <a href="https://t.me/holylabsltd" className="text-blue-600 hover:underline">@holylabsltd (Telegram)</a>
               </p>
             </div>
           </section>
@@ -99,7 +99,7 @@ export default function PrivacyPolicyRu() {
                 <li><strong>Право на ограничение обработки:</strong> Вы имеете право запросить ограничение обработки ваших личных данных при определенных условиях.</li>
               </ul>
               <p>
-                Чтобы воспользоваться любым из этих прав, свяжитесь с нами по адресу <a href="mailto:support@roamjet.net" className="text-blue-600 hover:underline">support@roamjet.net</a>. Мы ответим на ваш запрос в течение 30 дней.
+                Чтобы воспользоваться любым из этих прав, свяжитесь с нами по адресу <a href="https://t.me/holylabsltd" className="text-blue-600 hover:underline">@holylabsltd (Telegram)</a>. Мы ответим на ваш запрос в течение 30 дней.
               </p>
             </div>
           </section>
@@ -112,7 +112,7 @@ export default function PrivacyPolicyRu() {
                 Если у вас есть какие-либо вопросы об этой Политике конфиденциальности или наших практиках, свяжитесь с нами:
               </p>
               <p>
-                Электронная почта: <a href="mailto:support@roamjet.net" className="text-blue-600 hover:underline">support@roamjet.net</a>
+                Электронная почта: <a href="https://t.me/holylabsltd" className="text-blue-600 hover:underline">@holylabsltd (Telegram)</a>
               </p>
             </div>
           </section>

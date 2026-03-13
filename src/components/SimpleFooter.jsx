@@ -113,7 +113,7 @@ export default function SimpleFooter() {
             <ul className="space-y-2">
               <li><Link href={buildUrl(`${langPrefix}/privacy-policy`)} className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href={buildUrl(`${langPrefix}/terms-of-service`)} className="hover:text-white transition-colors">Terms of Service</Link></li>
-              <li><Link href={buildUrl(`${langPrefix}/contact`)} className="hover:text-white transition-colors">Contact Us</Link></li>
+              <li><a href="https://t.me/holylabsltd" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Telegram Support</a></li>
             </ul>
           </div>
         </div>
