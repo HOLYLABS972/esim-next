@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 export default function SimpleFooter() {
@@ -16,8 +15,6 @@ export default function SimpleFooter() {
         <a href="https://www.foxywall.xyz" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300 transition-colors">🦊 FoxyWall VPN</a>
         <span>·</span>
         <a href="https://t.me/holylabsltd" target="_blank" rel="noopener noreferrer" className="hover:text-gray-300 transition-colors">Поддержка</a>
-        <span>·</span>
-        <Link href="/ru/privacy-policy" className="hover:text-gray-300 transition-colors">Конфиденциальность</Link>
       </div>
       <p className="text-xs text-gray-600 mt-2">© 2026 Глобалбанка eSIM</p>
     </div>
