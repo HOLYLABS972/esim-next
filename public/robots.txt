@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Sitemaps
+Sitemap: https://www.roamjet.net/sitemap.xml
+
+# Disallow private areas
+Disallow: /api/
+Disallow: /dashboard/
+Disallow: /_next/
+Disallow: /verify-email/
+
+# Allow important pages
+Allow: /login
+Allow: /register
+Allow: /esim-plans
+Allow: /contact
+Allow: /blog
+Allow: /privacy-policy
+Allow: /terms-of-service
+
+# Crawl delay
+Crawl-delay: 1
