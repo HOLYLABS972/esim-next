@@ -1117,7 +1117,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
 
             {/* Countries — dashboard card */}
             <div>
-              <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
+              <div className="p-4 sm:p-6">
                 {searchTerm ? (
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
                     {'Поиск:'} <span className="text-blue-600 dark:text-blue-400">{searchTerm}</span>
