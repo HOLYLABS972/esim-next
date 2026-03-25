@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import crypto from 'crypto';
 import { supabaseAdmin } from '../../../../src/lib/supabase';
+import { fulfillOrder } from '../../../../src/lib/fulfillment';
 
 export const dynamic = 'force-dynamic';
 
@@ -204,6 +205,11 @@ export async function POST(request) {
           .eq('id', order.id);
 
         console.log(`✅ Order ${order.id} marked as paid`);
+        
+        // Trigger eSIM fulfillment (async, don't block response)
+        fulfillOrder(order.id).catch(err => {
+          console.error(`❌ Fulfillment error for order ${order.id}:`, err.message);
+        });
       }
     } else {
       console.warn(`⚠️ Order not found for InvId: ${InvId}`);
