@@ -3,7 +3,7 @@ import Providers from '../src/components/Providers'
 import LanguageWrapper from '../src/components/LanguageWrapper'
 import { BrandProvider } from '../src/contexts/BrandContext'
 import SimpleFooter from '../src/components/SimpleFooter'
-// Navbar removed
+import Navbar from '../src/components/Navbar'
 // import AppBanner from '../src/components/AppBanner'
 import './globals.css'
 import './rtl.css'
@@ -163,7 +163,7 @@ export default function RootLayout({ children }) {
             <BrandProvider>
               <LanguageWrapper>
                 <div className="bg-white dark:bg-gray-900 flex flex-col min-h-screen transition-colors">
-                  {/* <AppBanner /> */}
+                  <Navbar />
                   <main className="flex-grow">
                     {children}
                   </main>
