@@ -90,7 +90,7 @@ export async function GET(request) {
       MerchantLogin: merchant,
       OutSum: finalAmount.toString(),
       InvId: orderId.toString(),
-      Description: (countryName ? countryName + ' - ' : '') + (planName || 'eSIM Package'),
+      Description: [countryName, planName, packageSlug].filter(Boolean).join(' | ') || 'eSIM Package',
       SignatureValue: signature,
       Culture: 'ru',
       IsTest: '1',

@@ -109,7 +109,7 @@ export async function GET(request) {
       MerchantLogin: robokassa_merchant_login,
       OutSum: finalAmount.toString(),
       InvId: orderId.toString(),
-      Description: (countryName ? countryName + ' - ' : '') + (planName || 'eSIM Package'),
+      Description: [countryName, planName, packageSlug].filter(Boolean).join(' | ') || 'eSIM Package',
       SignatureValue: signature,
       Culture: 'ru',
     });
