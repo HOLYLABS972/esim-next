@@ -70,6 +70,10 @@ const Checkout = ({ plan, emailFromUrl, paymentMethod: paymentMethodProp }) => {
         if (countryName) params.set('cn', countryName);
         const uid = currentUser?.uid || currentUser?.id || currentUser?._id || null;
         if (uid) params.set('uid', uid);
+        // Forward test mode from URL or sessionStorage
+        const urlTest = new URLSearchParams(window.location.search).get('test');
+        const ssTest = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('globalbanka_test_mode');
+        if (urlTest === '1' || ssTest === '1') params.set('test', '1');
 
         console.log('🚀 Redirecting to checkout:', `/api/checkout/redirect?${params.toString()}`);
         window.location.href = `/api/checkout/redirect?${params.toString()}`;

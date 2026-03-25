@@ -21,7 +21,7 @@ const EsimPaymentSuccessContent = () => {
   React.useEffect(() => {
     if (isTelegram) return; // In miniapp — user closes manually
     const timer = setTimeout(() => {
-      router.push('/ru/dashboard?currency=RUB&theme=dark');
+      router.push('/ru/dashboard');
     }, 4000);
     return () => clearTimeout(timer);
   }, [router, isTelegram]);

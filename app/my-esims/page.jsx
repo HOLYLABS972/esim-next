@@ -91,7 +91,7 @@ function MyEsimsContent() {
           return (
             <a
               key={order.id}
-              href={order.iccid ? `/data-usage/${order.iccid}?theme=dark` : '#'}
+              href={order.iccid ? `/data-usage/${order.iccid}` : '#'}
               className="block bg-[#1a2332] rounded-2xl p-4 border border-gray-700/50 hover:border-blue-500/50 transition-colors"
             >
               <div className="flex items-center justify-between">

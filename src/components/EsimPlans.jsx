@@ -479,23 +479,41 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
     }
   }, [filterType]);
 
+  // Build share-package URL for a plan + country (used for both navigation and auth returnUrl)
+  const buildShareUrl = (plan, countryCode, flag) => {
+    const slug = plan?.slug ?? plan?.package_id ?? plan?.id ?? plan?._id;
+    if (!slug) return null;
+    const params = new URLSearchParams();
+    if (countryCode) params.set('country', countryCode);
+    if (flag) params.set('flag', flag);
+    const lang = searchParams.get('language') || locale;
+    const currency = searchParams.get('currency') || displayCurrency;
+    if (lang) params.set('language', lang);
+    if (currency) params.set('currency', currency);
+    const qs = params.toString();
+    return `/share-package/${encodeURIComponent(String(slug))}${qs ? `?${qs}` : ''}`;
+  };
+
   const handleCountrySelect = async (country) => {
-    // Auth gate: require login before selecting a country
-    if (!currentUser) {
-      router.push("/telegram-auth?returnUrl=" + encodeURIComponent(window.location.pathname + window.location.search));
-      return;
-    }
-    // Global or Regional entry — navigate to global 1GB plan in unified regional+global view
+    // Global or Regional entry
     const isGlobalOrRegional = country._isGlobal || country.code === 'RG' || country.type === 'global' || country.type === 'regional';
-    if (isGlobalOrRegional && storeGlobalPlans.length > 0) {
-      openPlansList(storeGlobalPlans, { countryCode: 'RG', flag: '🌍' });
-      return;
-    }
-    // If global/regional but plans not loaded yet, go directly to discover 1GB
+
     if (isGlobalOrRegional) {
-      navigateToSharePackage({ slug: 'discover-1gb-7days-px', package_id: 'discover-1gb-7days-px' }, 'RG', '🌍');
+      const plan1GB = getCheapest1GBPlan(storeGlobalPlans) || { slug: 'discover-1gb-7days-px', package_id: 'discover-1gb-7days-px' };
+      const shareUrl = buildShareUrl(plan1GB, 'RG', '🌍');
+      if (!currentUser) {
+        router.push("/telegram-auth?returnUrl=" + encodeURIComponent(shareUrl || '/'));
+        return;
+      }
+      if (storeGlobalPlans.length > 0) {
+        openPlansList(storeGlobalPlans, { countryCode: 'RG', flag: '🌍' });
+      } else {
+        navigateToSharePackage(plan1GB, 'RG', '🌍');
+      }
       return;
     }
+
+    // Country-specific: fetch plans to get the slug, then auth-gate or navigate
     setLoadingPlans(true);
     try {
       const res = await fetch(`/api/public/plans?country=${country.code}`);
@@ -503,19 +521,20 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
       const data = await res.json();
       const plans = data?.success ? (data.data.plans || []) : [];
       const plan1GB = getCheapest1GBPlan(plans);
-      if (plan1GB) {
-        const flag = country.flag?.startsWith('http') ? '' : (country.flagEmoji || getFlagEmoji(country.code));
-        navigateToSharePackage(plan1GB, country.code, flag);
-      } else {
-        // No packages available for this country - show message
+      if (!plan1GB) {
         toast.error(`${'No packages available for'} ${country.name || country.code}`, {
           duration: 3000,
-          style: {
-            background: '#FEE2E2',
-            color: '#991B1B',
-          },
+          style: { background: '#FEE2E2', color: '#991B1B' },
         });
+        return;
       }
+      const flag = country.flag?.startsWith('http') ? '' : (country.flagEmoji || getFlagEmoji(country.code));
+      if (!currentUser) {
+        const shareUrl = buildShareUrl(plan1GB, country.code, flag);
+        router.push("/telegram-auth?returnUrl=" + encodeURIComponent(shareUrl || '/'));
+        return;
+      }
+      navigateToSharePackage(plan1GB, country.code, flag);
     } catch (e) {
       console.error('Error loading plans for country:', e);
     } finally {
@@ -924,11 +943,16 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   const storeRegionsCount = storeRegionalCards.length;
 
   const storePopularCountries = (() => {
-    const list = [...countries];
-    list.sort((a, b) => (b.plansCount || 0) - (a.plansCount || 0));
-    const top = list.slice(0, 5);
+    const preferredCodes = ['TR', 'AE', 'EG', 'ES', 'TH'];
+    const top = [];
 
-    // Prepend Global as the first popular option (total = 6)
+    // Pick preferred countries in order, if they exist in the data
+    for (const code of preferredCodes) {
+      const found = countries.find(c => (c.code || c.id || '').toUpperCase() === code);
+      if (found) top.push(found);
+    }
+
+    // Prepend Global as the first popular option
     if (storeGlobalPlans.length > 0) {
       const globalLabel = countriesData?.labels?.global?.[locale] ?? 'Global';
       top.unshift({
