@@ -26,7 +26,7 @@ const DeviceCompatibility = () => {
 
   const devices = {
     apple: [
-      'iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15 Plus', 'iPhone 15',
+      'iPhone 16 Pro Max', 'iPhone 16 Pro', 'iPhone 16 Plus', 'iPhone 16', 'iPhone 16e', 'iPhone 15 Pro Max', 'iPhone 15 Pro', 'iPhone 15 Plus', 'iPhone 15',
       'iPhone 14 Pro Max', 'iPhone 14 Pro', 'iPhone 14 Plus', 'iPhone 14',
       'iPhone 13 Pro Max', 'iPhone 13 Pro', 'iPhone 13', 'iPhone 13 mini',
       'iPhone 12 Pro Max', 'iPhone 12 Pro', 'iPhone 12', 'iPhone 12 mini',
@@ -35,17 +35,17 @@ const DeviceCompatibility = () => {
       'iPhone XS Max', 'iPhone XS', 'iPhone XR'
     ],
     samsung: [
-      'Galaxy S24 Ultra', 'Galaxy S24+', 'Galaxy S24',
+      'Galaxy S25 Ultra', 'Galaxy S25+', 'Galaxy S25', 'Galaxy S24 Ultra', 'Galaxy S24+', 'Galaxy S24',
       'Galaxy S23 Ultra', 'Galaxy S23+', 'Galaxy S23', 'Galaxy S23 FE',
       'Galaxy S22 Ultra', 'Galaxy S22+', 'Galaxy S22',
       'Galaxy S21 Ultra 5G', 'Galaxy S21+ 5G', 'Galaxy S21 5G', 'Galaxy S21 FE 5G',
       'Galaxy S20 Ultra', 'Galaxy S20+', 'Galaxy S20', 'Galaxy S20 FE',
-      'Galaxy Z Fold 5', 'Galaxy Z Fold 4', 'Galaxy Z Fold 3', 'Galaxy Z Fold 2',
-      'Galaxy Z Flip 5', 'Galaxy Z Flip 4', 'Galaxy Z Flip 3', 'Galaxy Z Flip',
+      'Galaxy Z Fold 6', 'Galaxy Z Fold 5', 'Galaxy Z Fold 4', 'Galaxy Z Fold 3', 'Galaxy Z Fold 2',
+      'Galaxy Z Flip 6', 'Galaxy Z Flip 5', 'Galaxy Z Flip 4', 'Galaxy Z Flip 3', 'Galaxy Z Flip',
       'Galaxy Note 20 Ultra', 'Galaxy Note 20'
     ],
     google: [
-      'Pixel 8 Pro', 'Pixel 8',
+      'Pixel 9 Pro XL', 'Pixel 9 Pro', 'Pixel 9', 'Pixel 8 Pro', 'Pixel 8', 'Pixel 8a',
       'Pixel 7 Pro', 'Pixel 7', 'Pixel 7a',
       'Pixel 6 Pro', 'Pixel 6', 'Pixel 6a',
       'Pixel 5', 'Pixel 5a',
@@ -118,7 +118,7 @@ const DeviceCompatibility = () => {
   );
 
   return (
-    <div className="container mx-auto px-4 py-12">
+    <div id="device-compatibility" className="container mx-auto px-4 py-12">
       <div className="text-center mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
           {t('deviceCompatibility.title', 'eSIM-compatible phones')}
@@ -154,7 +154,7 @@ const DeviceCompatibility = () => {
           {filteredDevices.length > 0 ? (
             <div className="bg-gray-100 dark:bg-gray-800/90 backdrop-blur-md rounded-lg border border-gray-200 dark:border-gray-700/50 p-6">
               <h3 className="text-gray-900 dark:text-white font-semibold mb-4">
-                {t('deviceCompatibility.devicesFound', 'Devices found: {{count}}', { count: filteredDevices.length })}
+                {`Найдено устройств: ${filteredDevices.length}`}
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {filteredDevices.map((device, index) => (

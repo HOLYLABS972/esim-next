@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
-import { Menu, X, LogOut, LayoutDashboard, HelpCircle, Shield, FileText } from 'lucide-react';
+import { Menu, X, LogOut, LogIn, LayoutDashboard, MessageCircle, Smartphone, FileText } from 'lucide-react';
 
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
@@ -18,7 +18,6 @@ const Navbar = () => {
     router.push('/');
   };
 
-  // Close drawer on outside click
   useEffect(() => {
     if (!drawerOpen) return;
     const handler = (e) => {
@@ -32,16 +31,13 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-gray-900/90 backdrop-blur-md  sticky top-0 z-50">
+      <nav className="bg-gray-900/90 backdrop-blur-md sticky top-0 z-50">
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
-            {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
-              <img src="/images/logo.png" alt="Глобалбанка" className="w-8 h-8 rounded-lg" onError={(e) => { e.target.style.display = 'none'; }} />
-              <span className="text-white font-bold text-lg">Связь за границей</span>
+              <img src="/images/logo_icon/logo.jpg" alt="GBA" className="w-8 h-8 rounded-lg" onError={(e) => { e.target.style.display = 'none'; }} />
+              <span className="text-white font-bold text-lg">{"Связь за границей"}</span>
             </Link>
-
-            {/* Hamburger */}
             <button
               onClick={() => setDrawerOpen(!drawerOpen)}
               className="p-2 text-gray-400 hover:text-white transition-colors"
@@ -52,12 +48,10 @@ const Navbar = () => {
         </div>
       </nav>
 
-      {/* Overlay */}
       {drawerOpen && (
         <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setDrawerOpen(false)} />
       )}
 
-      {/* Drawer */}
       <div
         ref={drawerRef}
         className={`fixed top-0 right-0 h-full w-72 bg-gray-900 border-l border-gray-700/50 z-50 transform transition-transform duration-300 ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
@@ -65,21 +59,23 @@ const Navbar = () => {
         <div className="p-6 pt-16 space-y-2">
           {currentUser ? (
             <>
-              <div className="px-3 py-2 mb-4 text-sm text-gray-400 truncate  pb-4">
+              <div className="px-3 py-2 mb-4 text-sm text-gray-400 truncate pb-4">
                 {currentUser.email}
               </div>
               <DrawerLink icon={<LayoutDashboard className="w-5 h-5" />} label="Мои eSIM" onClick={() => { setDrawerOpen(false); router.push('/dashboard'); }} />
-              <DrawerLink icon={<HelpCircle className="w-5 h-5" />} label="FAQ" onClick={() => { setDrawerOpen(false); router.push('/faq'); }} />
-              <DrawerLink icon={<Shield className="w-5 h-5" />} label="Условия" onClick={() => { setDrawerOpen(false); router.push('/terms-of-service'); }} />
-              <DrawerLink icon={<FileText className="w-5 h-5" />} label="Конфиденциальность" onClick={() => { setDrawerOpen(false); router.push('/privacy-policy'); }} />
+              <DrawerLink icon={<MessageCircle className="w-5 h-5" />} label="Поддержка" onClick={() => { setDrawerOpen(false); window.open('https://t.me/holylabsltd', '_blank'); }} />
+              <DrawerLink icon={<Smartphone className="w-5 h-5" />} label="Совместимость" onClick={() => { setDrawerOpen(false); document.getElementById('device-compatibility')?.scrollIntoView({ behavior: 'smooth' }); }} />
+              <DrawerLink icon={<FileText className="w-5 h-5" />} label="Конфиденциальность" onClick={() => { setDrawerOpen(false); window.open('https://globalbankaccounts.ru/politika-konfidencialnosti/', '_blank'); }} />
               <div className="pt-4 border-t border-gray-700/50 mt-4">
                 <DrawerLink icon={<LogOut className="w-5 h-5 text-red-400" />} label="Выйти" onClick={handleLogout} className="text-red-400 hover:bg-red-900/20" />
               </div>
             </>
           ) : (
             <>
-              <DrawerLink icon={<HelpCircle className="w-5 h-5" />} label="FAQ" onClick={() => { setDrawerOpen(false); router.push('/faq'); }} />
-              <DrawerLink icon={<Shield className="w-5 h-5" />} label="Условия" onClick={() => { setDrawerOpen(false); router.push('/terms-of-service'); }} />
+              <DrawerLink icon={<LogIn className="w-5 h-5" />} label="Войти" onClick={() => { setDrawerOpen(false); router.push('/telegram-auth?returnUrl=' + encodeURIComponent(window.location.pathname)); }} className="text-blue-400 hover:bg-blue-900/20" />
+              <DrawerLink icon={<MessageCircle className="w-5 h-5" />} label="Поддержка" onClick={() => { setDrawerOpen(false); window.open('https://t.me/holylabsltd', '_blank'); }} />
+              <DrawerLink icon={<Smartphone className="w-5 h-5" />} label="Совместимость" onClick={() => { setDrawerOpen(false); document.getElementById('device-compatibility')?.scrollIntoView({ behavior: 'smooth' }); }} />
+              <DrawerLink icon={<FileText className="w-5 h-5" />} label="Конфиденциальность" onClick={() => { setDrawerOpen(false); window.open('https://globalbankaccounts.ru/politika-konfidencialnosti/', '_blank'); }} />
             </>
           )}
         </div>

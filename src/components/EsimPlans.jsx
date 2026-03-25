@@ -820,7 +820,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   const navigateToSharePackage = (plan, countryCode, flag = '') => {
     const slug = plan?.slug ?? plan?.package_id ?? plan?.id ?? plan?._id;
     if (!slug) return;
-    const langMatch = pathname.match(/^\/(ar|de|es|fr|he|ru)\//);
+    const langMatch = null;
     const langPrefix = langMatch ? `/${langMatch[1]}` : '';
     const params = new URLSearchParams();
     if (countryCode) params.set('country', countryCode);
@@ -971,7 +971,6 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
                   </p>
                 </div>
                 <div className="relative">
-                  <Search className={`absolute top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500 ${isRTL ? 'right-4' : 'left-4'}`} />
                   <input
                     value={searchTerm}
                     onChange={(e) => {
@@ -979,9 +978,16 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
                       setSearchTerm(next);
                       syncSearchToUrl(next);
                     }}
-                    placeholder={t('search.destinationPlaceholder', 'Search country or region...')}
-                    className={`w-full bg-gray-50 dark:bg-gray-800/60 rounded-xl py-3 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:ring-blue-400/30 dark:focus:ring-blue-500/30 ${isRTL ? 'pr-12 pl-4' : 'pl-12 pr-4'}`}
+                    placeholder="Поиск страны"
+                    className={`w-full bg-gray-800/90 backdrop-blur-md border-2 border-gray-700 rounded-full py-4 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-400/20 transition-all duration-300 ${isRTL ? 'pr-14 pl-4' : 'pl-4 pr-14'}`}
                   />
+                  <button
+                    type="button"
+                    className={`absolute top-1/2 -translate-y-1/2 bg-blue-400/20 backdrop-blur-md hover:bg-blue-400/30 border-2 border-blue-400/50 hover:border-blue-400 p-3 rounded-full transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-400/50 ${isRTL ? 'left-2' : 'right-2'}`}
+                    aria-label="Поиск"
+                  >
+                    <Search className="w-5 h-5 text-blue-400" />
+                  </button>
                 </div>
               </div>
             </div>
