@@ -1,12 +1,16 @@
 'use client';
 
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 const TravelArticles = () => {
+  const router = useRouter();
+
   const articles = [
     {
       image: 'https://images.pexels.com/photos/2087391/pexels-photo-2087391.jpeg?auto=compress&cs=tinysrgb&w=600',
       country: 'Турция',
+      countryCode: 'TR',
       flag: '🇹🇷',
       title: 'Интернет в Турции: как оставаться на связи',
       excerpt: 'Анталия, Стамбул, Каппадокия — Турция входит в топ-3 направлений для россиян. Местные SIM-карты требуют регистрации паспорта, а роуминг стоит от 500₽/день. С eSIM — от 273₽ за весь отпуск.',
@@ -16,6 +20,7 @@ const TravelArticles = () => {
     {
       image: 'https://images.pexels.com/photos/3225531/pexels-photo-3225531.jpeg?auto=compress&cs=tinysrgb&w=600',
       country: 'Таиланд',
+      countryCode: 'TH',
       flag: '🇹🇭',
       title: 'eSIM для Таиланда: интернет без очередей',
       excerpt: 'Бангкок, Пхукет, Самуи — не тратьте время на поиск SIM-карты в аэропорту. Установите eSIM ещё в самолёте и выходите на связь сразу после посадки. Покрытие по всей стране.',
@@ -25,6 +30,7 @@ const TravelArticles = () => {
     {
       image: 'https://images.pexels.com/photos/1388030/pexels-photo-1388030.jpeg?auto=compress&cs=tinysrgb&w=600',
       country: 'ОАЭ',
+      countryCode: 'AE',
       flag: '🇦🇪',
       title: 'Дубай и Абу-Даби: мобильный интернет для туристов',
       excerpt: 'В ОАЭ заблокированы многие VoIP-сервисы, но мобильный интернет работает отлично. С eSIM вы получите быстрый 4G/5G интернет для навигации, соцсетей и мессенджеров.',
@@ -32,6 +38,36 @@ const TravelArticles = () => {
       data: '1-20 ГБ'
     }
   ];
+
+  const handleBuy = async (article) => {
+    try {
+      const res = await fetch(`/api/public/plans?limit=100&country=${article.countryCode}`);
+      const data = res.ok ? await res.json() : null;
+      const plans = data?.success ? (data.data?.plans || []) : [];
+      
+      // Find cheapest 1GB plan
+      const plan1GB = plans
+        .filter(p => {
+          const mb = p.data_amount_mb || p.amount || 0;
+          const label = (p.data || p.data_amount || '').toString().toLowerCase();
+          return mb === 1024 || mb === 1000 || label.includes('1 gb') || label === '1gb';
+        })
+        .sort((a, b) => (a.price_usd || a.price || 999) - (b.price_usd || b.price || 999))[0];
+      
+      const plan = plan1GB || plans.sort((a, b) => (a.price_usd || a.price || 999) - (b.price_usd || b.price || 999))[0];
+      
+      if (plan) {
+        const slug = plan.slug || plan.package_id || plan.id;
+        router.push(`/share-package/${encodeURIComponent(slug)}?country=${article.countryCode}`);
+      } else {
+        // Fallback: scroll to search and fill country name
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } catch (e) {
+      console.error('Error fetching plans:', e);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
 
   return (
     <div id="travel-guides" className="container mx-auto px-4 py-12">
@@ -71,18 +107,7 @@ const TravelArticles = () => {
                   <span className="text-gray-500 text-sm">• {article.data}</span>
                 </div>
                 <button
-                  onClick={() => {
-                    const input = document.querySelector('input[placeholder*="Поиск"]') || document.querySelector('input[type="text"]');
-                    if (input) {
-                      input.value = article.country;
-                      input.dispatchEvent(new Event('input', { bubbles: true }));
-                      input.dispatchEvent(new Event('change', { bubbles: true }));
-                      const nativeSet = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
-                      nativeSet.call(input, article.country);
-                      input.dispatchEvent(new Event('input', { bubbles: true }));
-                    }
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
+                  onClick={() => handleBuy(article)}
                   className="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors"
                 >
                   Купить →

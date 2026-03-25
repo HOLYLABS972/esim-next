@@ -5,20 +5,28 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const chatId = searchParams.get('chat_id');
+    const email = searchParams.get('email');
 
-    if (!chatId) {
-      return NextResponse.json({ error: 'chat_id required' }, { status: 400 });
+    if (!chatId && !email) {
+      return NextResponse.json({ error: 'chat_id or email required' }, { status: 400 });
     }
 
     if (!supabaseAdmin) {
       return NextResponse.json({ error: 'DB not configured' }, { status: 503 });
     }
 
-    const { data: orders, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('esim_orders')
-      .select('id, iccid, country_name, country_code, plan_name, price_rub, status, qr_code_url, direct_apple_installation_url, data_limit_mb, data_usage_mb, expiry_date, created_at, metadata')
-      .filter('metadata->>chat_id', 'eq', chatId)
-      .in('status', ['active', 'completed'])
+      .select('id, iccid, country_name, country_code, plan_name, price_rub, status, qr_code_url, direct_apple_installation_url, data_limit_mb, data_usage_mb, expiry_date, created_at, metadata');
+
+    if (chatId) {
+      query = query.filter('metadata->>chat_id', 'eq', chatId);
+    } else if (email) {
+      query = query.eq('customer_email', email.toLowerCase().trim());
+    }
+
+    const { data: orders, error } = await query
+      .not('status', 'eq', 'pending')
       .order('created_at', { ascending: false })
       .limit(20);
 

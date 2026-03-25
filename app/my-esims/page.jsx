@@ -1,7 +1,8 @@
 'use client';
 
 import React, { Suspense, useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { useAuth } from '../../src/contexts/AuthContext';
 
 function countryFlag(cc) {
   if (!cc || cc.length !== 2) return '🌍';
@@ -22,19 +23,48 @@ function StatusDot({ status }) {
 
 function MyEsimsContent() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const { currentUser, loading: authLoading } = useAuth();
   const chatId = searchParams.get('chat_id');
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!chatId) {
-      setError('Параметр chat_id не указан');
+    if (authLoading) return;
+
+    // If we have chat_id, use it (Telegram bot flow)
+    if (chatId) {
+      fetch(`/api/esim/my-orders?chat_id=${encodeURIComponent(chatId)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            setOrders(data.orders);
+          } else {
+            setError(data.error || 'Ошибка загрузки');
+          }
+        })
+        .catch(e => setError(e.message))
+        .finally(() => setLoading(false));
+      return;
+    }
+
+    // No chat_id — check if user is logged in
+    if (!currentUser) {
+      // Redirect to login with return URL
+      router.push('/telegram-auth?returnUrl=' + encodeURIComponent('/my-esims'));
+      return;
+    }
+
+    // User is logged in — fetch orders by email
+    const email = currentUser.email;
+    if (!email) {
+      setError('Email не найден');
       setLoading(false);
       return;
     }
 
-    fetch(`/api/esim/my-orders?chat_id=${encodeURIComponent(chatId)}`)
+    fetch(`/api/esim/my-orders?email=${encodeURIComponent(email)}`)
       .then(res => res.json())
       .then(data => {
         if (data.success) {
@@ -45,9 +75,9 @@ function MyEsimsContent() {
       })
       .catch(e => setError(e.message))
       .finally(() => setLoading(false));
-  }, [chatId]);
+  }, [chatId, currentUser, authLoading, router]);
 
-  if (loading) {
+  if (authLoading || (loading && !error)) {
     return (
       <div className="min-h-screen bg-[#0f1724] flex items-center justify-center">
         <div className="w-10 h-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
@@ -136,12 +166,12 @@ function MyEsimsContent() {
           <div className="flex items-center gap-3">
             <div className="text-4xl">📱</div>
             <div>
-              <h3 className="text-white font-semibold">Приложение Globalbanka</h3>
+              <h3 className="text-white font-semibold">Приложение Глобалбанка</h3>
               <p className="text-gray-400 text-sm">Пополнение и управление eSIM</p>
             </div>
           </div>
           <div className="flex gap-2">
-            <a href="https://apps.apple.com/us/app/globalbanka/id6754914283" target="_blank" rel="noopener noreferrer"
+            <a href="https://apps.apple.com/us/app/global-travel-data/id6751737433" target="_blank" rel="noopener noreferrer"
               className="flex-1 inline-flex items-center justify-center px-4 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors text-sm font-medium">
               App Store
             </a>

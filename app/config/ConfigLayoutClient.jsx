@@ -164,7 +164,7 @@ export default function ConfigLayoutClient({ children }) {
   // Unauthenticated: redirect to main login page with return URL so user comes back to config after login
   if (!user) {
     if (typeof window !== 'undefined') {
-      window.location.replace(`/login?returnUrl=${encodeURIComponent(pathname)}`);
+      window.location.replace(`/telegram-auth?returnUrl=${encodeURIComponent(pathname)}`);
     }
     return (
       <div className="min-h-screen bg-white dark:bg-gray-900 flex items-center justify-center transition-colors">

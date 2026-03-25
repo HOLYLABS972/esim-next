@@ -8,7 +8,7 @@ const Login = () => {
 
   useEffect(() => {
     const returnUrl = new URLSearchParams(window.location.search).get('returnUrl') || '/';
-    router.replace(`/ru/telegram-auth?returnUrl=${encodeURIComponent(returnUrl)}`);
+    router.replace(`/telegram-auth?returnUrl=${encodeURIComponent(returnUrl)}`);
   }, [router]);
 
   return (

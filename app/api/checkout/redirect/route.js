@@ -114,10 +114,13 @@ export async function GET(request) {
       Culture: 'ru',
     });
     
+    // ResultURL = server-to-server callback (fulfillment)
+    // SuccessURL = user redirect after payment
     // Test mode rejects Encoding, SuccessURL, FailURL (error 29)
     if (!isTest) {
       params.append('Encoding', 'utf-8');
-      params.append('SuccessURL', `${domain}/api/robokassa/callback`);
+      params.append('ResultURL', `${domain}/api/robokassa/callback`);
+      params.append('SuccessURL', `${domain}/payment-success?order=${orderId}`);
       params.append('FailURL', `${domain}/payment-failed?reason=payment_cancelled`);
     }
     

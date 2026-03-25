@@ -135,7 +135,15 @@ export default function TelegramAuthPage() {
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-white">🌍 Глобалбанка</h1>
           <p className="text-gray-400 mt-2">Введите email для входа</p>
-          
+        </div>
+
+        <div className="mb-6 text-center space-y-2">
+          <p className="text-blue-300 text-sm font-medium">
+            📧 На этот email будет доставлена eSIM после оплаты в течение нескольких минут
+          </p>
+          <p className="text-gray-500 text-xs">
+            Если письмо не пришло — проверьте папку «Спам»
+          </p>
         </div>
 
         <div className="bg-gray-800 rounded-2xl p-6 border border-gray-700">
@@ -216,14 +224,7 @@ export default function TelegramAuthPage() {
           )}
         </div>
 
-        <div className="mt-6 text-center space-y-2">
-          <p className="text-gray-400 text-xs">
-            📧 На этот email будет доставлена eSIM после оплаты
-          </p>
-          <p className="text-gray-500 text-xs">
-            Если письмо не пришло — проверьте папку «Спам»
-          </p>
-        </div>
+        {/* hint moved above form */}
       </div>
     </div>
   );
