@@ -95,6 +95,7 @@ export async function GET(request) {
       Culture: 'ru',
       IsTest: '1',
     });
+    params.append('ResultURL', 'https://globalbanka.roamjet.net/api/robokassa/callback');
     if (email) params.append('Email', email);
     
     const paymentUrl = `https://auth.robokassa.ru/Merchant/Index.aspx?${params.toString()}`;
