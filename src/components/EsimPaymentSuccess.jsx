@@ -34,7 +34,7 @@ const EsimPaymentSuccessContent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
+    <div className="bg-gray-900 flex items-center justify-center p-4 pt-20">
       <div className="max-w-md w-full text-center">
         <div className="w-24 h-24 mx-auto mb-6 bg-green-800/50 rounded-full flex items-center justify-center">
           <svg className="w-14 h-14 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
