@@ -36,7 +36,7 @@ const Navbar = () => {
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2 group">
               <img src="/images/logo_icon/logo.jpg" alt="GBA" className="w-8 h-8 rounded-lg" onError={(e) => { e.target.style.display = 'none'; }} />
-              <span className="text-white font-bold text-lg">{"Связь за границей"}</span>
+              <span className="text-white font-bold text-lg">{"Глобалбанка eSIMs"}</span>
             </Link>
             <button
               onClick={() => setDrawerOpen(!drawerOpen)}

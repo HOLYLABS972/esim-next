@@ -127,7 +127,7 @@ export default function TelegramAuthPage() {
     <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white">🌍 Связь за границей</h1>
+          <h1 className="text-2xl font-bold text-white">🌍 Глобалбанка eSIMs</h1>
           <p className="text-gray-400 mt-2">Войдите для покупки eSIM</p>
           <p className="text-gray-500 text-xs mt-1">На указанный email будет отправлен QR-код для активации eSIM после оплаты. Если письмо не пришло — проверьте папку «Спам».</p>
         </div>
