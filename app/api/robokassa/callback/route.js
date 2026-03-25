@@ -10,7 +10,7 @@ async function getRobokassaConfig() {
 
   const { data: config, error } = await supabaseAdmin
     .from('admin_config')
-    .select('robokassa_merchant_login, robokassa_pass_one, robokassa_pass_two, robokassa_mode')
+    .select('robokassa_merchant_login, robokassa_pass_one, robokassa_pass_two, robokassa_test_pass_one, robokassa_test_pass_two, robokassa_mode')
     .limit(1)
     .single();
 
@@ -20,6 +20,8 @@ async function getRobokassaConfig() {
     merchantLogin: config.robokassa_merchant_login || '',
     passOne: config.robokassa_pass_one || '',
     passTwo: config.robokassa_pass_two || '',
+    testPassOne: config.robokassa_test_pass_one || '',
+    testPassTwo: config.robokassa_test_pass_two || '',
     mode: config.robokassa_mode || 'test'
   };
 }
@@ -38,17 +40,22 @@ async function verifySignature(params, usePassOne = false) {
   if (!OutSum || !InvId || !SignatureValue) return false;
 
   const config = await getRobokassaConfig();
-  const password = usePassOne ? config.passOne : config.passTwo;
-
-  const sig1 = md5(`${OutSum}:${InvId}:${password}`).toLowerCase();
   const received = String(SignatureValue).toLowerCase();
 
-  if (sig1 === received) return true;
+  // Try live password first, then test password
+  const livePass = usePassOne ? config.passOne : config.passTwo;
+  const testPass = usePassOne ? config.testPassOne : config.testPassTwo;
+  const passwords = [livePass, testPass].filter(Boolean);
 
-  // SuccessURL alternate format: MerchantLogin:OutSum:InvId:Password1
-  if (usePassOne) {
-    const sig2 = md5(`${config.merchantLogin}:${OutSum}:${InvId}:${password}`).toLowerCase();
-    return sig2 === received;
+  for (const password of passwords) {
+    const sig = md5(`${OutSum}:${InvId}:${password}`).toLowerCase();
+    if (sig === received) return true;
+
+    // SuccessURL alternate format: MerchantLogin:OutSum:InvId:Password
+    if (usePassOne) {
+      const sig2 = md5(`${config.merchantLogin}:${OutSum}:${InvId}:${password}`).toLowerCase();
+      if (sig2 === received) return true;
+    }
   }
 
   return false;

@@ -112,10 +112,14 @@ export async function GET(request) {
       Description: planName || 'eSIM Package',
       SignatureValue: signature,
       Culture: 'ru',
-      Encoding: 'utf-8',
-      SuccessURL: `${domain}/api/robokassa/callback`,
-      FailURL: `${domain}/payment-failed?reason=payment_cancelled`,
     });
+    
+    // Test mode rejects Encoding, SuccessURL, FailURL (error 29)
+    if (!isTest) {
+      params.append('Encoding', 'utf-8');
+      params.append('SuccessURL', `${domain}/api/robokassa/callback`);
+      params.append('FailURL', `${domain}/payment-failed?reason=payment_cancelled`);
+    }
     
     if (isTest) params.append('IsTest', '1');
     if (email) params.append('Email', email);
