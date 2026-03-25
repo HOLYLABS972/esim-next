@@ -266,10 +266,16 @@ export async function GET(request) {
       .not('expo_push_token', 'is', null)
       .eq('push_notifications_enabled', true);
 
+    // Get total registered users
+    const { count: totalUsers } = await supabaseAdmin
+      .from('users')
+      .select('id', { count: 'exact', head: true });
+
     return NextResponse.json({
       success: true,
       stats,
       usersWithPushTokens: userCount || 0,
+      totalUsers: totalUsers || 0,
       recentNotifications: notifications || []
     });
   } catch (error) {

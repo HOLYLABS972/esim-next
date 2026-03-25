@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Bell, Send, Loader2, Users, User, TrendingUp, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { Bell, Send, Loader2, Users, User, TrendingUp, CheckCircle, XCircle, Clock, Smartphone } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export default function NotificationsPage() {
@@ -134,16 +134,33 @@ export default function NotificationsPage() {
 
       {/* Statistics Cards */}
       {!loadingStats && stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Active Users</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Total Users</p>
                 <p className="text-2xl font-bold text-gray-900 dark:text-white mt-1">
-                  {stats.usersWithPushTokens || 0}
+                  {stats.totalUsers || 0}
                 </p>
               </div>
-              <Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+              <Users className="w-8 h-8 text-gray-500 dark:text-gray-400" />
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Registered Devices</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-1">
+                  {stats.usersWithPushTokens || 0}
+                </p>
+                {stats.totalUsers > 0 && (
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                    {Math.round((stats.usersWithPushTokens / stats.totalUsers) * 100)}% of users
+                  </p>
+                )}
+              </div>
+              <Smartphone className="w-8 h-8 text-blue-600 dark:text-blue-400" />
             </div>
           </div>
 
