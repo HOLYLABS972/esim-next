@@ -490,10 +490,6 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
     const currency = searchParams.get('currency') || displayCurrency;
     if (lang) params.set('language', lang);
     if (currency) params.set('currency', currency);
-    // Forward test mode
-    const urlTest = typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('test');
-    const ssTest = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('globalbanka_test_mode');
-    if (urlTest === '1' || ssTest === '1') params.set('test', '1');
     const qs = params.toString();
     return `/share-package/${encodeURIComponent(String(slug))}${qs ? `?${qs}` : ''}`;
   };
