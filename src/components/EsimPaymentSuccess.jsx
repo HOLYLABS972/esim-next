@@ -45,10 +45,10 @@ const EsimPaymentSuccessContent = () => {
           Оплата прошла успешно
         </h2>
         <p className="text-gray-300 text-lg mb-2">
-          Ваш eSIM активируется автоматически.
+          eSIM отправлен на вашу почту.
         </p>
         <p className="text-gray-400">
-          Вы получите письмо с инструкциями по установке в ближайшее время.
+          Проверьте папку «Спам» если не видите письмо.
         </p>
         {isTelegram ? (
           <button
