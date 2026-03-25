@@ -15,14 +15,27 @@ export default function TelegramAuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { currentUser } = useAuth();
-  const returnUrl = searchParams.get('returnUrl') || '/';
+  const [returnUrl, setReturnUrl] = useState('/');
 
-  // If already logged in, redirect back
+  // Read returnUrl from window.location on mount (useSearchParams can be empty on first render)
   useEffect(() => {
-    if (currentUser) {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const ru = params.get('returnUrl');
+      if (ru) setReturnUrl(ru);
+    }
+  }, []);
+
+  // If already logged in, redirect back (wait for returnUrl to resolve from window.location)
+  const [returnUrlReady, setReturnUrlReady] = useState(false);
+  useEffect(() => {
+    if (typeof window !== 'undefined') setReturnUrlReady(true);
+  }, [returnUrl]);
+  useEffect(() => {
+    if (currentUser && returnUrlReady) {
       window.location.href = returnUrl;
     }
-  }, [currentUser, returnUrl]);
+  }, [currentUser, returnUrl, returnUrlReady]);
 
   // Countdown timer
   useEffect(() => {
