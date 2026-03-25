@@ -29,9 +29,9 @@ export default function HomePage() {
         <DeviceCompatibility />
       </div>
 
-      <EsimTutorial />
-
       <TravelArticles />
+
+      <EsimTutorial />
     </div>
   );
 }
