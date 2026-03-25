@@ -69,7 +69,7 @@ const SharePackagePage = () => {
   const { defaultCurrency, paymentMethods: brandPaymentMethods } = useBrand();
   const displayCurrency = defaultCurrency || 'USD';
   const [showEmailPrompt] = useState(false);
-  const [purchaseEmail] = useState('');
+  const [purchaseEmail] = useState("");
   const configuredPayment = Array.isArray(brandPaymentMethods) && brandPaymentMethods.length > 0
     ? (brandPaymentMethods[0] === 'coinbase' ? 'crypto' : brandPaymentMethods[0])
     : 'robokassa';
@@ -344,7 +344,7 @@ const SharePackagePage = () => {
     
     if (!currentUser) {
       const currentUrl = window.location.pathname + window.location.search;
-      router.push(`/ru/telegram-auth?returnUrl=${encodeURIComponent(currentUrl)}`);
+      router.push("/telegram-auth?returnUrl=" + encodeURIComponent(currentUrl));
       return;
     }
     

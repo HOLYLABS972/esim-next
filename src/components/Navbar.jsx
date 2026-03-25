@@ -1,66 +1,103 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { useI18n } from '../contexts/I18nContext';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '../contexts/AuthContext';
-import { Mail, LogOut } from 'lucide-react';
+import { Menu, X, LogOut, LayoutDashboard, HelpCircle, Shield, FileText } from 'lucide-react';
 
 const Navbar = () => {
   const { currentUser, logout } = useAuth();
-  const { t, locale } = useI18n();
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const isTelegram = searchParams.get('source') === 'telegram';
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawerRef = useRef(null);
 
   const handleLogout = () => {
-    setIsDropdownOpen(false);
+    setDrawerOpen(false);
     logout();
-    router.push('/login');
+    router.push('/');
   };
 
-  return (
-    <nav className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-b border-gray-200 dark:border-gray-700/50 sticky top-0 z-50">
-      <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-8 h-8 bg-blue-400 rounded-lg flex items-center justify-center group-hover:bg-blue-500 transition-colors">
-              <span className="text-white font-bold text-lg">E</span>
-            </div>
-            <span className="text-gray-900 dark:text-white font-bold text-xl">SIM</span>
-          </Link>
+  // Close drawer on outside click
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const handler = (e) => {
+      if (drawerRef.current && !drawerRef.current.contains(e.target)) {
+        setDrawerOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [drawerOpen]);
 
-          {/* Right side - User info and Logout */}
-          <div className="flex items-center gap-4">
-            {currentUser ? (
-              <div className="flex items-center gap-3 relative">
-                {/* Email */}
-                <button
-                  onClick={() => router.push('/dashboard')}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-gray-800/50 hover:bg-gray-200 dark:hover:bg-gray-800/70 rounded-lg border border-gray-200 dark:border-gray-700/50 hover:border-gray-300 dark:hover:border-gray-700/70 transition-colors cursor-pointer"
-                >
-                  <Mail className="w-4 h-4 text-gray-500 dark:text-gray-400" />
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">{currentUser.email}</span>
-                </button>
-                
-                {/* Logout button */}
-                <button
-                  onClick={handleLogout}
-                  className="p-2 bg-red-600/20 hover:bg-red-600/30 border border-red-600/30 hover:border-red-600/50 rounded-lg transition-colors group"
-                  title={locale === 'ru' ? 'Выйти' : 'Log out'}
-                >
-                  <LogOut className="w-5 h-5 text-red-400 group-hover:text-red-300" />
-                </button>
-              </div>
-            ) : null}
+  return (
+    <>
+      <nav className="bg-gray-900/90 backdrop-blur-md  sticky top-0 z-50">
+        <div className="container mx-auto px-4 py-3">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href="/" className="flex items-center gap-2 group">
+              <img src="/images/logo.png" alt="Глобалбанка" className="w-8 h-8 rounded-lg" onError={(e) => { e.target.style.display = 'none'; }} />
+              <span className="text-white font-bold text-lg">Связь за границей</span>
+            </Link>
+
+            {/* Hamburger */}
+            <button
+              onClick={() => setDrawerOpen(!drawerOpen)}
+              className="p-2 text-gray-400 hover:text-white transition-colors"
+            >
+              {drawerOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
+      </nav>
+
+      {/* Overlay */}
+      {drawerOpen && (
+        <div className="fixed inset-0 bg-black/50 z-40" onClick={() => setDrawerOpen(false)} />
+      )}
+
+      {/* Drawer */}
+      <div
+        ref={drawerRef}
+        className={`fixed top-0 right-0 h-full w-72 bg-gray-900 border-l border-gray-700/50 z-50 transform transition-transform duration-300 ${drawerOpen ? 'translate-x-0' : 'translate-x-full'}`}
+      >
+        <div className="p-6 pt-16 space-y-2">
+          {currentUser ? (
+            <>
+              <div className="px-3 py-2 mb-4 text-sm text-gray-400 truncate  pb-4">
+                {currentUser.email}
+              </div>
+              <DrawerLink icon={<LayoutDashboard className="w-5 h-5" />} label="Мои eSIM" onClick={() => { setDrawerOpen(false); router.push('/dashboard'); }} />
+              <DrawerLink icon={<HelpCircle className="w-5 h-5" />} label="FAQ" onClick={() => { setDrawerOpen(false); router.push('/faq'); }} />
+              <DrawerLink icon={<Shield className="w-5 h-5" />} label="Условия" onClick={() => { setDrawerOpen(false); router.push('/terms-of-service'); }} />
+              <DrawerLink icon={<FileText className="w-5 h-5" />} label="Конфиденциальность" onClick={() => { setDrawerOpen(false); router.push('/privacy-policy'); }} />
+              <div className="pt-4 border-t border-gray-700/50 mt-4">
+                <DrawerLink icon={<LogOut className="w-5 h-5 text-red-400" />} label="Выйти" onClick={handleLogout} className="text-red-400 hover:bg-red-900/20" />
+              </div>
+            </>
+          ) : (
+            <>
+              <DrawerLink icon={<HelpCircle className="w-5 h-5" />} label="FAQ" onClick={() => { setDrawerOpen(false); router.push('/faq'); }} />
+              <DrawerLink icon={<Shield className="w-5 h-5" />} label="Условия" onClick={() => { setDrawerOpen(false); router.push('/terms-of-service'); }} />
+            </>
+          )}
+        </div>
       </div>
-    </nav>
+    </>
   );
 };
+
+function DrawerLink({ icon, label, onClick, className = '' }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-3 px-3 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors ${className}`}
+    >
+      {icon}
+      <span>{label}</span>
+    </button>
+  );
+}
 
 export default Navbar;

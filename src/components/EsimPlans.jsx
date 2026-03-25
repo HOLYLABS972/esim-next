@@ -480,6 +480,11 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
   }, [filterType]);
 
   const handleCountrySelect = async (country) => {
+    // Auth gate: require login before selecting a country
+    if (!currentUser) {
+      router.push("/telegram-auth?returnUrl=" + encodeURIComponent(window.location.pathname + window.location.search));
+      return;
+    }
     // Global or Regional entry — navigate to global 1GB plan in unified regional+global view
     const isGlobalOrRegional = country._isGlobal || country.code === 'RG' || country.type === 'global' || country.type === 'regional';
     if (isGlobalOrRegional && storeGlobalPlans.length > 0) {

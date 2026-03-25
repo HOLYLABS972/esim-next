@@ -124,7 +124,7 @@ export async function GET(request) {
     console.log(`🚀 Order #${orderId} → Robokassa redirect (${isTest ? 'TEST' : 'LIVE'})`);
     
     // 5. Redirect to Robokassa
-    return NextResponse.redirect(paymentUrl);
+    return new Response(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Перенаправление...</title></head><body><p>Перенаправление на оплату...</p><script>if(window.top!==window.self){window.top.location.href="${paymentUrl}"}else{window.location.href="${paymentUrl}"}</script></body></html>`, { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } });
     
   } catch (error) {
     console.error('❌ Checkout redirect error:', error);
