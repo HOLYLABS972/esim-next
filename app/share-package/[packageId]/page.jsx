@@ -449,11 +449,12 @@ const SharePackagePage = () => {
       if (countryCode) rdParams.set('cc', countryCode);
       if (countryName) rdParams.set('cn', countryName);
       if (currentUser.id) rdParams.set('uid', currentUser.id);
-      // Forward test mode from URL or sessionStorage
+      // Use dedicated test checkout endpoint when test mode is active
       const urlTest = new URLSearchParams(window.location.search).get('test');
       const ssTest = typeof sessionStorage !== 'undefined' && sessionStorage.getItem('globalbanka_test_mode');
-      if (urlTest === '1' || ssTest === '1') rdParams.set('test', '1');
-      window.location.href = `/api/checkout/redirect?${rdParams.toString()}`;
+      const isTestMode = urlTest === '1' || ssTest === '1';
+      const checkoutPath = isTestMode ? '/api/checkout/test' : '/api/checkout/redirect';
+      window.location.href = `${checkoutPath}?${rdParams.toString()}`;
       return;
     }
 
