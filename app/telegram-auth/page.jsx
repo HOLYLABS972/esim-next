@@ -15,27 +15,20 @@ export default function TelegramAuthPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { currentUser } = useAuth();
-  const [returnUrl, setReturnUrl] = useState('/');
+  
+  // Get returnUrl directly from window.location (no state, no race conditions)
+  function getReturnUrl() {
+    if (typeof window === 'undefined') return '/';
+    const params = new URLSearchParams(window.location.search);
+    return params.get('returnUrl') || '/';
+  }
 
-  // Read returnUrl from window.location on mount (useSearchParams can be empty on first render)
+  // If already logged in, redirect back
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const ru = params.get('returnUrl');
-      if (ru) setReturnUrl(ru);
+    if (currentUser) {
+      window.location.href = getReturnUrl();
     }
-  }, []);
-
-  // If already logged in, redirect back (wait for returnUrl to resolve from window.location)
-  const [returnUrlReady, setReturnUrlReady] = useState(false);
-  useEffect(() => {
-    if (typeof window !== 'undefined') setReturnUrlReady(true);
-  }, [returnUrl]);
-  useEffect(() => {
-    if (currentUser && returnUrlReady) {
-      window.location.href = returnUrl;
-    }
-  }, [currentUser, returnUrl, returnUrlReady]);
+  }, [currentUser]);
 
   // Countdown timer
   useEffect(() => {
@@ -105,9 +98,9 @@ export default function TelegramAuthPage() {
       setStep('done');
       toast.success('Вы вошли!');
       
-      // Redirect back (use window.location for reliable query param handling)
+      // Redirect back
       setTimeout(() => {
-        window.location.href = returnUrl;
+        window.location.href = getReturnUrl();
       }, 500);
     } catch (err) {
       toast.error(err.message);
