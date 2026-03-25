@@ -9,7 +9,7 @@ const DeviceCompatibility = () => {
   const { t } = useI18n();
 
   const brands = {
-    all: { name: t('deviceCompatibility.allBrands', 'All brands'), emoji: '🌐' },
+    all: { name: 'Все бренды', emoji: '🌐' },
     apple: { name: 'Apple iPhone', emoji: '🍎' },
     samsung: { name: 'Samsung Galaxy', emoji: '📱' },
     google: { name: 'Google Pixel', emoji: '🔵' },
@@ -121,10 +121,10 @@ const DeviceCompatibility = () => {
     <div id="device-compatibility" className="container mx-auto px-4 py-12">
       <div className="text-center mb-12">
         <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4">
-          {t('deviceCompatibility.title', 'eSIM-compatible phones')}
+          {'Совместимые с eSIM телефоны'}
         </h2>
         <p className="text-gray-600 dark:text-gray-400 text-lg">
-          {t('deviceCompatibility.description', 'Find your phone model and check if it supports eSIM technology')}
+          {'Найдите модель вашего телефона и проверьте, поддерживает ли он технологию eSIM'}
         </p>
       </div>
 
@@ -134,7 +134,7 @@ const DeviceCompatibility = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t('deviceCompatibility.searchPlaceholder', 'Find phone model')}
+            placeholder={'Найдите модель телефона'}
             className="w-full pl-4 pr-14 py-4 bg-gray-100 dark:bg-gray-800/90 backdrop-blur-md border-2 border-gray-200 dark:border-gray-700 rounded-full focus:outline-none focus:border-blue-500 dark:focus:border-blue-400 focus:ring-2 focus:ring-blue-500/20 dark:focus:ring-blue-400/20 transition-all duration-300 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
           />
           <button
@@ -170,7 +170,7 @@ const DeviceCompatibility = () => {
             </div>
           ) : (
             <div className="bg-gray-100 dark:bg-gray-800/90 backdrop-blur-md rounded-lg border border-gray-200 dark:border-gray-700/50 p-6 text-center">
-              <p className="text-gray-600 dark:text-gray-400">{t('deviceCompatibility.noDeviceFound', 'Device not found. Try a different search.')}</p>
+              <p className="text-gray-600 dark:text-gray-400">{'Устройство не найдено. Попробуйте другой запрос.'}</p>
             </div>
           )}
         </div>
@@ -180,27 +180,27 @@ const DeviceCompatibility = () => {
         <div className="bg-gray-100 dark:bg-gray-800/90 backdrop-blur-md rounded-lg border border-gray-200 dark:border-gray-700/50 p-6">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-2xl">🍎</span>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{t('deviceCompatibility.forIphone', 'For iPhone')}</h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{'Для iPhone'}</h3>
           </div>
           <ol className="space-y-2 text-gray-600 dark:text-gray-300 text-sm">
-            <li>1. {t('deviceCompatibility.iphoneStep1', 'Open Settings')}</li>
-            <li>2. {t('deviceCompatibility.iphoneStep2', 'Tap Cellular or Mobile Data')}</li>
-            <li>3. {t('deviceCompatibility.iphoneStep3', 'If you see "Add cellular plan" or "Add eSIM", your device supports eSIM')}</li>
-            <li>4. {t('deviceCompatibility.iphoneStep4', 'You can also dial *#06# – if you see an EID number, eSIM is supported')}</li>
+            <li>1. {'Откройте Настройки'}</li>
+            <li>2. {'Нажмите на Сотовая связь или Мобильные данные'}</li>
+            <li>3. {'Если вы видите "Добавить тарифный план" или "Добавить eSIM", ваше устройство поддерживает eSIM'}</li>
+            <li>4. {'Вы также можете набрать *#06# - если вы видите номер EID, eSIM поддерживается'}</li>
           </ol>
         </div>
 
         <div className="bg-gray-100 dark:bg-gray-800/90 backdrop-blur-md rounded-lg border border-gray-200 dark:border-gray-700/50 p-6">
           <div className="flex items-center gap-2 mb-4">
             <span className="text-2xl">🤖</span>
-            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{t('deviceCompatibility.forAndroid', 'For Android')}</h3>
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{'Для Android'}</h3>
           </div>
           <ol className="space-y-2 text-gray-600 dark:text-gray-300 text-sm">
-            <li>1. {t('deviceCompatibility.androidStep1', 'Open Settings')}</li>
-            <li>2. {t('deviceCompatibility.androidStep2', 'Go to Network & Internet or Connections')}</li>
-            <li>3. {t('deviceCompatibility.androidStep3', 'Tap Mobile network or SIM manager')}</li>
-            <li>4. {t('deviceCompatibility.androidStep4', 'If you see "Add operator" or "Add mobile plan", your device supports eSIM')}</li>
-            <li>5. {t('deviceCompatibility.androidStep5', 'You can also dial *#06# to check for EID number')}</li>
+            <li>1. {'Откройте Настройки'}</li>
+            <li>2. {'Перейдите в Сеть и Интернет или Подключения'}</li>
+            <li>3. {'Нажмите на Мобильная сеть или Диспетчер SIM-карт'}</li>
+            <li>4. {'Если вы видите "Добавить оператора" или "Добавить мобильный план", ваше устройство поддерживает eSIM'}</li>
+            <li>5. {'Вы также можете набрать *#06# для проверки номера EID'}</li>
           </ol>
         </div>
       </div>

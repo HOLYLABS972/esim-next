@@ -269,7 +269,7 @@ const PlansManagement = () => {
                 <tr>
                   <td colSpan={6} className="px-6 py-12 text-center text-gray-300">
                     <Loader2 className="w-6 h-6 animate-spin mx-auto" />
-                    <p className="mt-2">{t('plans.loadingPlans', 'Загрузка планов...')}</p>
+                    <p className="mt-2">{'Загрузка планов...'}</p>
                   </td>
                 </tr>
               ) : currentPlans.length === 0 ? (

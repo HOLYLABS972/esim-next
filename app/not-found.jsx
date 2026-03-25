@@ -58,7 +58,7 @@ export default function NotFound() {
           <div className="space-y-3">
             
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-semibold text-gray-900 dark:text-white">
-              {t('notFound.title', 'Oops! Page Not Found')}
+              {'Упс! Страница не найдена'}
             </h1>
           </div>
 
@@ -73,7 +73,7 @@ export default function NotFound() {
                 className="flex items-center justify-center space-x-2 px-4 py-2 bg-blue-400/20 text-blue-400 border-2 border-blue-400 rounded-full font-semibold hover:bg-blue-400/30 transition-all duration-200 shadow-md hover:shadow-lg w-full sm:w-auto"
               >
                 <ArrowLeft className="w-4 h-4" />
-                <span>{t('notFound.goBack', 'Go Back')}</span>
+                <span>{'Назад'}</span>
               </button>
 
              
@@ -84,7 +84,7 @@ export default function NotFound() {
           {/* Footer Message */}
           <div className="pt-8">
             <p className="text-sm text-gray-600 dark:text-gray-300">
-              {t('notFound.needHelp', 'Need help?')} <Link href={getLocalizedUrl('/contact')} className="text-blue-600 dark:text-blue-400 hover:underline font-medium">{t('notFound.contactSupport', 'Contact our support team')}</Link>
+              {'Нужна помощь?'} <Link href={getLocalizedUrl('/contact')} className="text-blue-600 dark:text-blue-400 hover:underline font-medium">{'Свяжитесь с нашей службой поддержки'}</Link>
             </p>
           </div>
         </div>

@@ -508,7 +508,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
         navigateToSharePackage(plan1GB, country.code, flag);
       } else {
         // No packages available for this country - show message
-        toast.error(`${t('errors.noPackagesAvailable', 'No packages available for')} ${country.name || country.code}`, {
+        toast.error(`${'No packages available for'} ${country.name || country.code}`, {
           duration: 3000,
           style: {
             background: '#FEE2E2',
@@ -966,8 +966,8 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
               <div className="p-4 sm:p-6">
                 <div className="flex items-center justify-between gap-4 mb-4">
                   <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    {storeCountriesCount} {t('plans.countries', 'countries')}
-                    {storeRegionsCount > 0 && <> · {storeRegionsCount} {t('plans.regions', 'regions')}</>}
+                    {storeCountriesCount} {'Страны'}
+                    {storeRegionsCount > 0 && <> · {storeRegionsCount} {'регионов'}</>}
                   </p>
                 </div>
                 <div className="relative">
@@ -996,7 +996,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
             {false && (storeRegionalCards.length > 0 || storeGlobalPlans.length > 0) && (
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-                {t('plans.globalAndRegional', 'Global & regional plans')}
+                {'Global & regional plans'}
               </h2>
               <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-thin">
                 {/* Global card */}
@@ -1030,12 +1030,12 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
                       {countriesData?.labels?.global?.[locale] ?? ''}
                     </div>
                     <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      5 {t('plans.tariffs', 'plans')}
+                      5 {'тарифов'}
                     </div>
                     <div className="mt-2 text-lg font-semibold text-blue-600 dark:text-blue-400">
                       {storeGlobalMinPrice
-                        ? <>{t('plan.from', 'от')} {renderPriceWithDiscount({ minPrice: storeGlobalMinPrice, minPriceOriginal: storeGlobalMinPriceOriginal, minPriceRub: storeGlobalMinPriceRub, minPriceRubOriginal: storeGlobalMinPriceRubOriginal, minPriceIls: storeGlobalMinPriceIls, minPriceIlsOriginal: storeGlobalMinPriceIlsOriginal })}</>
-                        : t('plans.noPlansAvailable', 'Планы недоступны')}
+                        ? <>{'От'} {renderPriceWithDiscount({ minPrice: storeGlobalMinPrice, minPriceOriginal: storeGlobalMinPriceOriginal, minPriceRub: storeGlobalMinPriceRub, minPriceRubOriginal: storeGlobalMinPriceRubOriginal, minPriceIls: storeGlobalMinPriceIls, minPriceIlsOriginal: storeGlobalMinPriceIlsOriginal })}</>
+                        : 'Планы недоступны'}
                     </div>
                   </div>
                 </button>
@@ -1098,12 +1098,12 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
                             : (countriesData?.labels?.regions?.[region.regionKey]?.[locale] || region.regionKey)}
                         </div>
                         <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                          5 {t('plans.tariffs', 'plans')}
+                          5 {'тарифов'}
                         </div>
                         <div className="mt-2 text-lg font-semibold text-blue-600 dark:text-blue-400">
                           {region.minPrice
-                            ? <>{t('plan.from', 'от')} {renderPriceWithDiscount(region)}</>
-                            : t('plans.noPlansAvailable', 'Планы недоступны')}
+                            ? <>{'От'} {renderPriceWithDiscount(region)}</>
+                            : 'Планы недоступны'}
                         </div>
                       </div>
                     </button>
@@ -1120,11 +1120,11 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
               <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-gray-700">
                 {searchTerm ? (
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {t('search.searchingFor', 'Search:')} <span className="text-blue-600 dark:text-blue-400">{searchTerm}</span>
+                    {'Поиск:'} <span className="text-blue-600 dark:text-blue-400">{searchTerm}</span>
                   </h2>
                 ) : (
                   <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                    {t('search.popularDestinations', 'Popular destinations')}
+                    {'Популярные:'}
                   </h2>
                 )}
               </div>
@@ -1164,13 +1164,13 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
                             {translateCountryName(country, locale) || country.name}
                           </div>
                           <span className="shrink-0 text-xs font-medium px-2.5 py-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
-                            {country.plansCount || 0} {t('plans.tariffs', 'plans')}
+                            {country.plansCount || 0} {'тарифов'}
                           </span>
                         </div>
                         <div className="mt-1 text-base font-semibold text-blue-600 dark:text-blue-400">
                           {country.minPrice && country.minPrice < 999
-                            ? <>{t('plan.from', 'From')} {renderPriceWithDiscount(country)}</>
-                            : t('plans.noPlansAvailable', 'No plans available')}
+                            ? <>{'От'} {renderPriceWithDiscount(country)}</>
+                            : 'Планы недоступны'}
                         </div>
                       </div>
                     </button>
@@ -1180,7 +1180,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
 
               <div className="px-4 sm:px-6 py-3 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  {t('plans.allCountries', 'All countries')}
+                  {'Все страны'}
                 </h3>
                 {!searchTerm && (
                   <button
@@ -1188,7 +1188,7 @@ const EsimPlansContent = ({ filterType = 'countries' }) => {
                     onClick={() => setShowAllCountries(v => !v)}
                     className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
                   >
-                    {showAllCountries ? t('plans.showLess', 'Show less') : t('plans.showAll', 'Show all')}
+                    {showAllCountries ? 'Показать меньше' : 'Показать все'}
                   </button>
                 )}
               </div>
@@ -1243,8 +1243,8 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                         </div>
                         <div className="mt-1 text-base font-semibold text-blue-600 dark:text-blue-400">
                           {country.minPrice && country.minPrice < 999
-                            ? <>{t('plan.from', 'From')} {renderPriceWithDiscount(country)}</>
-                            : t('plans.noPlansAvailable', 'No plans available')}
+                            ? <>{'От'} {renderPriceWithDiscount(country)}</>
+                            : 'Планы недоступны'}
                         </div>
                       </div>
                     </button>
@@ -1283,7 +1283,7 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
               {countriesLoading && countries.length === 0 ? (
                 <div className="flex justify-center items-center min-h-64">
                   <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-tufts-blue"></div>
-                  <p className="ml-4 text-gray-600">{t('plans.loadingPlans', 'Загрузка планов...')}</p>
+                  <p className="ml-4 text-gray-600">{'Загрузка планов...'}</p>
                 </div>
               ) : (
                 <>
@@ -1329,19 +1329,19 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                                     </div>
                                     <div className="text-left">
                                       <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-                                        {t('plan.globalPlans', 'Global plans')}
+                                        {'Глобальные планы'}
                                       </h3>
                                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        {t('plan.worksIn', 'Works in 100+ countries')}
+                                        {'Работает в 100+ странах'}
                                       </p>
                                     </div>
                                   </div>
                                   <div className="text-right">
                                     <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                                      {t('plan.from', 'From')} {formatPriceFromItem({ price: minPrice, price_rub: minPriceRub, price_ils: minPriceIls }, displayCurrency).formatted}
+                                      {'От'} {formatPriceFromItem({ price: minPrice, price_rub: minPriceRub, price_ils: minPriceIls }, displayCurrency).formatted}
                                     </div>
                                     <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                                      {sortedPlans.length} {t('plan.options', 'options')}
+                                      {sortedPlans.length} {'options'}
                                     </div>
                                   </div>
                                 </button>
@@ -1395,13 +1395,13 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                                           {regionName}
                                         </h3>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                                          {t('plan.from', 'от')} {formatPriceFromItem({ price: minPrice, price_rub: minPriceRub, price_ils: minPriceIls }, displayCurrency).formatted}
+                                          {'От'} {formatPriceFromItem({ price: minPrice, price_rub: minPriceRub, price_ils: minPriceIls }, displayCurrency).formatted}
                                         </p>
                                       </div>
                                     </div>
                                     <div className="text-right">
                                       <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                                        {plans.length} {t('plan.options', 'вариантов')}
+                                        {plans.length} {'вариантов'}
                                       </div>
                                     </div>
                                   </button>
@@ -1517,10 +1517,10 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                                         </div>
                                         <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
                                           {filterType === 'global' ?
-                                            t('home.globalPlans', 'Глобальные планы') :
+                                            'Глобальные планы' :
                                             filterType === 'regional' ?
                                               `${plan.translatedRegion || translateRegionName(plan.extractedRegion || plan.region || plan.region_slug, locale, regionLabels)}` :
-                                              `${(plan.countries || plan.country_codes || []).slice(0, 2).join(', ') || t('home.countryPlans', 'Планы по странам')}`
+                                              `${(plan.countries || plan.country_codes || []).slice(0, 2).join(', ') || 'Планы по странам'}`
                                           }
                                         </div>
                                       </div>
@@ -1533,7 +1533,7 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                         ) : (
                           <div className="px-6 py-8 text-center">
                             <p className="text-gray-500 dark:text-gray-400">
-                              {t('plans.noPlansFound', 'Планы не найдены для этой категории')}
+                              {'Планы не найдены для этой категории'}
                             </p>
                           </div>
                         )
@@ -1581,7 +1581,7 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                                   {renderPriceWithDiscount(country)}
                                 </div>
                               ) : (
-                                <div className="text-lg font-medium text-gray-500">{t('plans.noPlansAvailable', 'Планы недоступны')}</div>
+                                <div className="text-lg font-medium text-gray-500">{'Планы недоступны'}</div>
                               )}
                             </div>
                           </button>
@@ -1628,19 +1628,19 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                                     </div>
                                     <div className="text-left">
                                       <h3 className="text-sm font-semibold text-gray-900 dark:text-white">
-                                        {t('plan.globalPlans', 'Global plans')}
+                                        {'Глобальные планы'}
                                       </h3>
                                       <p className="text-xs text-gray-500 dark:text-gray-400">
-                                        {t('plan.worksIn', 'Works in 100+ countries')}
+                                        {'Работает в 100+ странах'}
                                       </p>
                                     </div>
                                   </div>
                                   <div className="text-right">
                                     <div className="text-sm font-semibold text-gray-900 dark:text-white">
-                                      {t('plan.from', 'From')} {formatPriceFromItem({ price: minPrice, price_rub: minPriceRub, price_ils: minPriceIls }, displayCurrency).formatted}
+                                      {'От'} {formatPriceFromItem({ price: minPrice, price_rub: minPriceRub, price_ils: minPriceIls }, displayCurrency).formatted}
                                     </div>
                                     <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                                      {sortedPlans.length} {t('plan.options', 'options')}
+                                      {sortedPlans.length} {'options'}
                                     </div>
                                   </div>
                                 </button>
@@ -1694,13 +1694,13 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                                           {regionName}
                                         </h3>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                                          {t('plan.from', 'от')} {formatPriceFromItem({ price: minPrice, price_rub: minPriceRub, price_ils: minPriceIls }, displayCurrency).formatted}
+                                          {'От'} {formatPriceFromItem({ price: minPrice, price_rub: minPriceRub, price_ils: minPriceIls }, displayCurrency).formatted}
                                         </p>
                                       </div>
                                     </div>
                                     <div className="text-right">
                                       <div className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                                        {plans.length} {t('plan.options', 'вариантов')}
+                                        {plans.length} {'вариантов'}
                                       </div>
                                     </div>
                                   </button>
@@ -1761,7 +1761,7 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                         ) : (
                           <div className="px-3 py-4 text-center">
                             <p className="text-gray-400 text-sm">
-                              {t('plans.noPlansFound', 'Планы не найдены для этой категории')}
+                              {'Планы не найдены для этой категории'}
                             </p>
                           </div>
                         )
@@ -1810,7 +1810,7 @@ className="rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-50 dar
                                   {renderPriceWithDiscount(country)}
                                 </div>
                               ) : (
-                                <div className="text-sm font-medium text-gray-500">{t('plans.noPlansAvailable', 'Планы недоступны')}</div>
+                                <div className="text-sm font-medium text-gray-500">{'Планы недоступны'}</div>
                               )}
                             </div>
                           </button>

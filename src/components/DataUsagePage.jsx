@@ -114,7 +114,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">{t('dashboard.dataUsage.loading', 'Loading data usage...')}</p>
+          <p className="text-gray-600">{'Loading data usage...'}</p>
         </div>
       </div>
     );
@@ -129,18 +129,18 @@ const DataUsagePage = ({ iccid, orderId }) => {
             className="flex items-center text-gray-600 hover:text-gray-900 mb-6 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
-            {t('dashboard.dataUsage.back', 'Back')}
+            {'Back'}
           </button>
           
           <div className="bg-white rounded-2xl shadow-xl p-8 text-center">
             <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('dashboard.dataUsage.errorLoadingData', 'Error Loading Data')}</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{'Error Loading Data'}</h2>
             <p className="text-gray-600 mb-6">{error}</p>
             <button
               onClick={() => fetchDataUsage()}
               className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
             >
-              {t('dashboard.dataUsage.tryAgain', 'Try Again')}
+              {'Try Again'}
             </button>
           </div>
         </div>
@@ -160,7 +160,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
             className="flex items-center text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-5 h-5 mr-2" />
-            {t('dashboard.dataUsage.back', 'Back')}
+            {'Back'}
           </button>
         </div>
 
@@ -168,7 +168,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Status Banner */}
           <div className="bg-gradient-to-r from-blue-600 to-blue-700 p-6 text-white">
-            <h1 className="text-2xl font-bold mb-2">{t('dashboard.dataUsage.title', 'Data Usage')}</h1>
+            <h1 className="text-2xl font-bold mb-2">{'Data Usage'}</h1>
             <p className="text-white/90 text-sm break-all">ICCID: {iccid}</p>
           </div>
 
@@ -183,7 +183,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
                     : dataInfo.packageName?.name || dataInfo.packageName?.title || dataInfo.packageName?.slug || 'eSIM Package'}
                 </h2>
                 <p className="text-sm text-gray-600 mt-1">
-                  {t('dashboard.dataUsage.operator', 'Operator')}: Roamjet
+                  {'Operator'}: Roamjet
                 </p>
               </div>
             )}
@@ -192,10 +192,10 @@ const DataUsagePage = ({ iccid, orderId }) => {
             <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
               <div className="flex items-center">
                 <Signal className="w-5 h-5 text-gray-600 mr-3" />
-                <span className="text-gray-700 font-medium">{t('dashboard.dataUsage.status', 'Status')}</span>
+                <span className="text-gray-700 font-medium">{'Status'}</span>
               </div>
               <span className={`px-4 py-1 rounded-full text-sm font-medium border ${getStatusColor(dataInfo?.status)}`}>
-                {dataInfo?.status ? t(`dashboard.status.${dataInfo.status.toLowerCase()}`, dataInfo.status) : t('dashboard.unknown', 'Unknown')}
+                {dataInfo?.status ? t(`dashboard.status.${dataInfo.status.toLowerCase()}`, dataInfo.status) : 'Неизвестно'}
               </span>
             </div>
 
@@ -204,7 +204,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
                   <Database className="w-5 h-5 text-gray-600 mr-2" />
-                  <span className="text-gray-700 font-medium">{t('dashboard.dataUsage.dataUsage', 'Data Usage')}</span>
+                  <span className="text-gray-700 font-medium">{'Data Usage'}</span>
                 </div>
                 <span className="text-2xl font-bold text-gray-900">
                   {usagePercentage}%
@@ -220,8 +220,8 @@ const DataUsagePage = ({ iccid, orderId }) => {
               </div>
               
               <div className="flex justify-between text-sm text-gray-600">
-                <span>{t('dashboard.dataUsage.used', 'Used')}: {dataInfo?.dataUsed || 'N/A'}</span>
-                <span>{t('dashboard.dataUsage.total', 'Total')}: {dataInfo?.dataTotal || 'N/A'}</span>
+                <span>{'Used'}: {dataInfo?.dataUsed || 'N/A'}</span>
+                <span>{'Total'}: {dataInfo?.dataTotal || 'N/A'}</span>
               </div>
             </div>
 
@@ -231,7 +231,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
                 <div className="flex items-center">
                   <Activity className="w-5 h-5 text-green-600 mr-3" />
                   <span className="text-gray-700 font-medium">
-                    {dataInfo?.isUnlimited ? t('dashboard.dataUsage.unlimitedData', 'Unlimited Data') : t('dashboard.dataUsage.dataAvailable', 'Data Available')}
+                    {dataInfo?.isUnlimited ? 'Unlimited Data' : 'Data Available'}
                   </span>
                 </div>
                 <span className="text-xl font-bold text-green-700">
@@ -247,7 +247,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
                   <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-center mb-2">
                       <Calendar className="w-4 h-4 text-blue-600 mr-2" />
-                      <span className="text-sm text-gray-600">{t('dashboard.dataUsage.daysUsed', 'Days Used')}</span>
+                      <span className="text-sm text-gray-600">{'Days Used'}</span>
                     </div>
                     <p className="text-2xl font-bold text-blue-700">{dataInfo.daysUsed}</p>
                   </div>
@@ -257,7 +257,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
                   <div className="p-4 bg-purple-50 rounded-lg border border-purple-200">
                     <div className="flex items-center mb-2">
                       <Calendar className="w-4 h-4 text-purple-600 mr-2" />
-                      <span className="text-sm text-gray-600">{dataInfo.daysUsed > 0 ? t('dashboard.dataUsage.daysRemaining', 'Days Remaining') : t('dashboard.dataUsage.validityDays', 'Validity (Days)')}</span>
+                      <span className="text-sm text-gray-600">{dataInfo.daysUsed > 0 ? 'Days Remaining' : 'Validity (Days)'}</span>
                     </div>
                     <p className="text-2xl font-bold text-purple-700">{dataInfo.daysRemaining}</p>
                   </div>
@@ -271,7 +271,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <Calendar className="w-5 h-5 text-orange-600 mr-3" />
-                    <span className="text-gray-700 font-medium">{t('dashboard.dataUsage.expiresOn', 'Expires On')}</span>
+                    <span className="text-gray-700 font-medium">{'Expires On'}</span>
                   </div>
                   <span className="text-gray-900 font-semibold">
                     {new Date(dataInfo.expiresAt).toLocaleDateString(locale === 'ru' ? 'ru-RU' : 'en-US', {
@@ -287,7 +287,7 @@ const DataUsagePage = ({ iccid, orderId }) => {
             {/* Last Updated */}
             {dataInfo?.lastUpdated && (
               <p className="text-xs text-gray-500 text-center">
-                {t('dashboard.dataUsage.lastUpdated', 'Last updated')}: {new Date(dataInfo.lastUpdated).toLocaleString(locale === 'ru' ? 'ru-RU' : 'en-US')}
+                {'Last updated'}: {new Date(dataInfo.lastUpdated).toLocaleString(locale === 'ru' ? 'ru-RU' : 'en-US')}
               </p>
             )}
           </div>

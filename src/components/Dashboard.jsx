@@ -186,7 +186,7 @@ const Dashboard = () => {
             
             // Get plan name first (prioritize actual planName over planId)
             const planId = order.planId || order.packageId || order.orderSlug || '';
-            const planName = order.orderResult?.planName || order.planName || planId || t('dashboard.unknownPlan', 'Неизвестный план');
+            const planName = order.orderResult?.planName || order.planName || planId || 'Неизвестный план';
             
             // Prioritize paymentStatus when it's 'paid' - show 'paid' instead of 'processing'
             let displayStatus = order.status || 'unknown';
@@ -281,8 +281,8 @@ const Dashboard = () => {
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 transition-colors">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4"></div>
-          <p className="text-gray-900 dark:text-white">{t('dashboard.loadingDashboard', 'Loading dashboard...')}</p>
-          <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">{t('dashboard.checkingAuth', 'Checking authentication...')}</p>
+          <p className="text-gray-900 dark:text-white">{'Загрузка панели управления...'}</p>
+          <p className="text-gray-600 dark:text-gray-400 text-sm mt-2">{'Проверка авторизации...'}</p>
         </div>
       </div>
     );
@@ -295,7 +295,7 @@ const Dashboard = () => {
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-900 transition-colors">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 dark:border-blue-400 mx-auto mb-4"></div>
-          <p className="text-gray-900 dark:text-white">{t('dashboard.redirectingToLogin', 'Redirecting to login...')}</p>
+          <p className="text-gray-900 dark:text-white">{'Перенаправление на вход...'}</p>
         </div>
       </div>
     );
@@ -314,7 +314,7 @@ const Dashboard = () => {
   const handleViewQRCode = async (order) => {
     const orderId = order.orderId || order.id;
     if (!orderId) {
-      toast.error(t('dashboard.noOrderId', 'ID заказа не найден'));
+      toast.error('ID заказа не найден');
       return;
     }
 
@@ -341,14 +341,14 @@ const Dashboard = () => {
 
         if (data.success === false) {
           console.warn('⚠️ QR code not available:', data.error);
-          toast.error(t('dashboard.qrCodeNotReady', 'QR код ещё не готов. Попробуйте позже.'));
+          toast.error('QR-код еще не готов');
           return;
         }
 
         appleUrl = data?.directAppleInstallationUrl || null;
       } catch (error) {
         console.error('❌ Error fetching QR code:', error);
-        toast.error(t('dashboard.failedToLoadQR', 'Не удалось загрузить QR код'));
+        toast.error('Не удалось загрузить QR-код');
         return;
       }
     }
@@ -359,7 +359,7 @@ const Dashboard = () => {
       window.location.href = appleUrl;
     } else {
       console.warn('⚠️ No Apple installation URL available');
-      toast.error(t('dashboard.appleUrlNotAvailable', 'Ссылка установки пока недоступна'));
+      toast.error('Ссылка Apple недоступна');
     }
   };
 
@@ -428,7 +428,7 @@ const Dashboard = () => {
       
       if (!iccid) {
         console.log('❌ No ICCID found in order');
-        alert(t('dashboard.noIccidFound', 'ICCID не найден в этом заказе. Невозможно проверить детали eSIM.'));
+        alert('ICCID не найден в этом заказе. Невозможно проверить детали eSIM.');
         return;
       }
       
@@ -475,7 +475,7 @@ const Dashboard = () => {
       
       if (!iccid) {
         console.log('❌ No ICCID found in order');
-        alert(t('dashboard.noIccidFoundUsage', 'ICCID не найден в этом заказе. Невозможно проверить использование eSIM.'));
+        alert('ICCID не найден в этом заказе. Невозможно проверить использование eSIM.');
         return;
       }
       
@@ -590,13 +590,13 @@ const Dashboard = () => {
       <BottomSheet
         isOpen={!!appleInstallUrl}
         onClose={() => setAppleInstallUrl(null)}
-        title={t('dashboard.installEsim', 'Установка eSIM')}
+        title={'Установить eSIM'}
         maxHeight="85vh"
       >
         <div className="w-full h-[70vh] min-h-[400px] bg-white dark:bg-gray-900 rounded-b-2xl">
           <iframe
             src={appleInstallUrl || ''}
-            title={t('dashboard.installEsim', 'Установка eSIM')}
+            title={'Установить eSIM'}
             className="w-full h-full border-0 rounded-b-2xl"
             sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
           />

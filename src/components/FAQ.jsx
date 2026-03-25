@@ -37,8 +37,8 @@ const FAQ = () => {
   const supportTelegram = SUPPORT_TELEGRAM;
 
   const faqPage = translations?.faqPage;
-  const title = faqPage?.title ?? t('contact.faqTitle', 'Frequently Asked Questions');
-  const description = faqPage?.description ?? t('contact.faqDescription', 'Find quick answers to common questions about our eSIM services');
+  const title = faqPage?.title ?? 'Часто задаваемые вопросы';
+  const description = faqPage?.description ?? 'Найдите быстрые ответы на общие вопросы о наших услугах eSIM';
   const categories = faqPage?.categories ?? [];
   const stillQuestions = faqPage?.stillQuestions ?? 'Still have questions?';
   const contactSupportText = faqPage?.contactSupportText ?? "Can't find the answer? Our support team is here to help.";
