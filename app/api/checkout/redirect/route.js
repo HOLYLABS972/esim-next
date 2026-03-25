@@ -79,7 +79,7 @@ export async function GET(request) {
     // 3. Load Robokassa config
     const { data: config, error: configError } = await supabaseAdmin
       .from('admin_config')
-      .select('robokassa_merchant_login, robokassa_pass_one, robokassa_mode')
+      .select('robokassa_merchant_login, robokassa_pass_one, robokassa_test_pass_one, robokassa_mode')
       .limit(1)
       .single();
     
@@ -91,10 +91,11 @@ export async function GET(request) {
       );
     }
     
-    const { robokassa_merchant_login, robokassa_pass_one, robokassa_mode } = config;
-    const isTest = robokassa_mode === 'test';
+    const { robokassa_merchant_login, robokassa_pass_one, robokassa_test_pass_one, robokassa_mode } = config;
+    const testParam = searchParams.get('test');
+    const isTest = robokassa_mode === 'test' || testParam === '1';
     const passOne = isTest
-      ? (process.env.NEXT_PUBLIC_ROBOKASSA_TEST_PASS_ONE || robokassa_pass_one)
+      ? (robokassa_test_pass_one || process.env.NEXT_PUBLIC_ROBOKASSA_TEST_PASS_ONE || robokassa_pass_one)
       : robokassa_pass_one;
     
     // 4. Generate Robokassa URL

@@ -20,9 +20,9 @@ export default function TelegramAuthPage() {
   // If already logged in, redirect back
   useEffect(() => {
     if (currentUser) {
-      router.replace(returnUrl);
+      window.location.href = returnUrl;
     }
-  }, [currentUser, returnUrl, router]);
+  }, [currentUser, returnUrl]);
 
   // Countdown timer
   useEffect(() => {
@@ -92,9 +92,9 @@ export default function TelegramAuthPage() {
       setStep('done');
       toast.success('Вы вошли!');
       
-      // Redirect back
+      // Redirect back (use window.location for reliable query param handling)
       setTimeout(() => {
-        router.replace(returnUrl);
+        window.location.href = returnUrl;
       }, 500);
     } catch (err) {
       toast.error(err.message);
@@ -127,7 +127,7 @@ export default function TelegramAuthPage() {
     <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white">🌍 Связь за границей</h1>
+          <h1 className="text-2xl font-bold text-white">🌍 Глобалбанка</h1>
           <p className="text-gray-400 mt-2">Введите email для входа</p>
           <p className="text-gray-500 text-xs mt-1">На этот email придёт код для входа</p>
         </div>
@@ -208,6 +208,15 @@ export default function TelegramAuthPage() {
               <p className="text-sm text-gray-400 mt-1">Перенаправление...</p>
             </div>
           )}
+        </div>
+
+        <div className="mt-6 text-center space-y-2">
+          <p className="text-gray-400 text-xs">
+            📧 На этот email будет доставлена eSIM после оплаты
+          </p>
+          <p className="text-gray-500 text-xs">
+            Если письмо не пришло — проверьте папку «Спам»
+          </p>
         </div>
       </div>
     </div>
