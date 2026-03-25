@@ -72,6 +72,15 @@ const TravelArticles = () => {
                 </div>
                 <button
                   onClick={() => {
+                    const input = document.querySelector('input[placeholder*="Поиск"]') || document.querySelector('input[type="text"]');
+                    if (input) {
+                      input.value = article.country;
+                      input.dispatchEvent(new Event('input', { bubbles: true }));
+                      input.dispatchEvent(new Event('change', { bubbles: true }));
+                      const nativeSet = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value').set;
+                      nativeSet.call(input, article.country);
+                      input.dispatchEvent(new Event('input', { bubbles: true }));
+                    }
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                   }}
                   className="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors"
