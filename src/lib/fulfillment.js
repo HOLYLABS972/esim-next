@@ -76,6 +76,65 @@ async function sendEsimEmail(order, sim) {
 }
 
 export async function fulfillOrder(orderId) {
+
+// Push notification messages by language
+const PUSH_MESSAGES = {
+  ru: {
+    title: '✅ Ваш eSIM готов!',
+    bodyFn: (country, plan) => (country ? country + ' — ' : '') + plan + '. Откройте приложение для установки.',
+  },
+  en: {
+    title: '✅ Your eSIM is ready!',
+    bodyFn: (country, plan) => (country ? country + ' — ' : '') + plan + '. Open the app to install.',
+  },
+  he: {
+    title: '✅ !ה-eSIM שלך מוכן',
+    bodyFn: (country, plan) => (country ? country + ' — ' : '') + plan + '. פתח את האפליקציה להתקנה.',
+  },
+  ar: {
+    title: '✅ !eSIM جاهزة',
+    bodyFn: (country, plan) => (country ? country + ' — ' : '') + plan + '. افتح التطبيق للتثبيت.',
+  },
+};
+
+async function sendEsimPush(order) {
+  try {
+    const email = order.customer_email;
+    if (!email) return;
+
+    const { data: user } = await supabaseAdmin
+      .from('users')
+      .select('expo_push_token, push_notifications_enabled, preferred_language')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (!user?.expo_push_token || user.push_notifications_enabled === false) {
+      console.log('📱 No push token or notifications disabled for', email);
+      return;
+    }
+
+    const lang = user.preferred_language || 'ru';
+    const msgs = PUSH_MESSAGES[lang] || PUSH_MESSAGES.ru;
+    const country = order.country_name || '';
+    const plan = order.plan_name || order.metadata?.package_slug || 'eSIM';
+
+    const res = await fetch('https://exp.host/--/api/v2/push/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: user.expo_push_token,
+        title: msgs.title,
+        body: msgs.bodyFn(country, plan),
+        sound: 'default',
+        data: { screen: '/my-esims', orderId: String(order.id) },
+      }),
+    });
+    const result = await res.json();
+    console.log('📱 Push sent:', result?.data?.status || 'unknown', 'to', email);
+  } catch (err) {
+    console.error('📱 Push failed (non-fatal):', err.message);
+  }
+}
   console.log(`🚀 Starting fulfillment for order #${orderId}`);
 
   const { data: order } = await supabaseAdmin.from('esim_orders').select('*').eq('id', orderId).single();
@@ -113,6 +172,9 @@ export async function fulfillOrder(orderId) {
 
     // Send email
     await sendEsimEmail(order, sim);
+
+    // Send push notification
+    await sendEsimPush(order);
 
     return { success: true, iccid: sim.iccid };
   } catch (err) {
