@@ -15,16 +15,7 @@ export default function CheckoutPageClient() {
   const emailFromUrl = searchParams.get('email');
   const paymentFromUrl = searchParams.get('payment');
 
-  // Handle Paddle transaction — redirect to Paddle hosted checkout
-  const ptxn = searchParams.get('_ptxn');
-
   useEffect(() => {
-    // Paddle transaction — redirect to Paddle hosted checkout
-    if (ptxn) {
-      window.location.href = `https://checkout.paddle.com/checkout/${ptxn}`;
-      return;
-    }
-
     const loadPlan = async () => {
       try {
         const planId = searchParams.get('plan');
