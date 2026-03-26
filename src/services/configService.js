@@ -105,7 +105,7 @@ class ConfigService {
           androidUrl: ''
         },
         regular: {
-          discountPercentage: 20,
+          discountPercentage: 0,
           minimumPrice: 0.5
         },
         robokassa: {

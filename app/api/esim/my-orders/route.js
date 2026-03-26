@@ -27,6 +27,8 @@ export async function GET(request) {
 
     const { data: orders, error } = await query
       .not('status', 'eq', 'pending')
+      .not('status', 'eq', 'fulfillment_failed')
+      .not('iccid', 'is', 'null')
       .order('created_at', { ascending: false })
       .limit(20);
 

@@ -6,6 +6,7 @@ import WhatIsEsim from '../src/components/WhatIsEsim';
 import EsimTutorial from '../src/components/EsimTutorial';
 import TravelArticles from '../src/components/TravelArticles';
 import DeviceCompatibility from '../src/components/DeviceCompatibility';
+import AppPromoCard from '../src/components/AppPromoCard';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,6 +28,11 @@ export default function HomePage() {
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
         <DeviceCompatibility />
+      </div>
+
+      {/* App Download Promo */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-10">
+        <AppPromoCard />
       </div>
 
       <TravelArticles />

@@ -73,7 +73,7 @@ const defaultSettings = {
   
   // Regular Settings
   regular: {
-    discountPercentage: 20,
+    discountPercentage: 0,
     minimumPrice: 0.5
   },
   

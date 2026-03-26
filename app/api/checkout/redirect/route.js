@@ -39,12 +39,16 @@ export async function GET(request) {
     }
     
     // 2. Create pending order in DB
+    // Validate user_id is a proper UUID (not MongoDB ObjectId)
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    const validUserId = (userId && uuidRegex.test(userId)) ? userId : null;
+
     const { data: order, error: orderError } = await supabaseAdmin
       .from('esim_orders')
       .insert({
         package_id: packageId,
         customer_email: email,
-        user_id: userId,
+        user_id: validUserId,
         price_rub: finalAmount,
         currency: 'RUB',
         status: 'pending',

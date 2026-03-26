@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 
 const APP_LINKS = {
-  ios: 'https://apps.apple.com/us/app/globalbanka/id6754914283',
+  ios: 'https://apps.apple.com/us/app/global-travel-data/id6751737433',
   android: 'https://play.google.com/store/apps/details?id=com.theholylabs.bank',
 };
 

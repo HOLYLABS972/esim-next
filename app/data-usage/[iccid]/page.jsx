@@ -225,7 +225,7 @@ export default function DataUsagePage() {
             <p className="text-green-100 text-sm">Пополнение доступно в приложении Globalbanka</p>
             <div className="flex gap-2">
               <a
-                href="https://apps.apple.com/us/app/globalbanka/id6754914283"
+                href="https://apps.apple.com/us/app/global-travel-data/id6751737433"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 bg-black text-white rounded-xl hover:bg-gray-800 transition-colors text-sm font-medium"
